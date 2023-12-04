@@ -1,6 +1,7 @@
 package com.example.yetiproject.entity;
 
-import com.example.yetiproject.dto.stadium.StadiumCreateDto;
+import com.example.yetiproject.dto.stadium.StadiumCreateRequestDto;
+import com.example.yetiproject.dto.stadium.StadiumModifyRequestDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +27,11 @@ public class Stadium {
 	@Column(nullable = false)
 	private String stadiumName;
 
-	public Stadium(StadiumCreateDto requestDto) {
+	public Stadium(StadiumCreateRequestDto requestDto) {
+		this.stadiumName = requestDto.getStadiumName();
+	}
+
+	public void update(StadiumModifyRequestDto requestDto) {
 		this.stadiumName = requestDto.getStadiumName();
 	}
 }
