@@ -3,6 +3,7 @@ package com.example.yetiproject.service;
 import com.example.yetiproject.dto.ticketinfo.TicketInfoRequestDto;
 import com.example.yetiproject.dto.ticketinfo.TicketInfoResponseDto;
 import com.example.yetiproject.entity.TicketInfo;
+import com.example.yetiproject.exception.entity.TicketInfo.TicketInfoNotFoundException;
 import com.example.yetiproject.repository.TicketInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class TicketInfoService {
 
     private final TicketInfoRepository ticketInfoRepository;
-
 
     // 티켓 정보 생성
     public TicketInfoResponseDto createTicketInfo(TicketInfoRequestDto ticketRequestDto) {
@@ -45,7 +45,8 @@ public class TicketInfoService {
 
     // 티켓 정보 찾기
     private TicketInfo findTicketInfo(Long id) {
-        TicketInfo ticketInfo = ticketInfoRepository.findById(id).orElseThrow();
+        TicketInfo ticketInfo = ticketInfoRepository.findById(id)
+                .orElseThrow(() -> new TicketInfoNotFoundException("TicketInfo를 찾을 수 없습니다."));
         return ticketInfo;
     }
 }
