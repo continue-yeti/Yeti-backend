@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StadiumCreateDto {
+public class StadiumCreateRequestDto {
 	private String stadiumName;
 }
