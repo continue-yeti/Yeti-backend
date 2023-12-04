@@ -26,4 +26,9 @@ public class TicketInfoController {
         return ResponseEntity.status(HttpStatus.OK).body(ticketInfoService.getTicketInfo(id));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<TicketInfoResponseDto> updateTicketInfo(@PathVariable Long id, @RequestBody TicketInfoRequestDto requestDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(ticketInfoService.updateTicketInfo(id, requestDto));
+    }
+
 }

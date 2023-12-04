@@ -27,6 +27,12 @@ public class TicketInfoService {
         return new TicketInfoResponseDto(ticketInfo);
     }
 
+    // 티켓 정보 수정
+    public TicketInfoResponseDto updateTicketInfo(Long id, TicketInfoRequestDto requestDto) {
+        TicketInfo ticketInfo = findTicketInfo(id);
+        ticketInfo.update(requestDto);
+        return new TicketInfoResponseDto(ticketInfo);
+    }
 
     // 티켓 정보 찾기
     private TicketInfo findTicketInfo(Long id) {

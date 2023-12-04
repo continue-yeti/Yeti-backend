@@ -39,4 +39,11 @@ public class TicketInfo {
         this.openDate = ticketRequestDto.getOpenDate();
         this.closeDate = ticketRequestDto.getCloseDate();
     }
+
+    public void update(TicketInfoRequestDto requestDto) {
+        this.ticketPrice = requestDto.getTicketPrice();
+        this.stock = requestDto.getStock();
+        this.openDate = requestDto.getOpenDate();
+        this.closeDate = requestDto.getCloseDate();
+    }
 }
