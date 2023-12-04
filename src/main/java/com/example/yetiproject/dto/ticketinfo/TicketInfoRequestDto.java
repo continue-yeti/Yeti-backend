@@ -1,5 +1,6 @@
 package com.example.yetiproject.dto.ticketinfo;
 
+import com.example.yetiproject.entity.Stadium;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

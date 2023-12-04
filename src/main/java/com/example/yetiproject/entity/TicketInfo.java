@@ -30,6 +30,9 @@ public class TicketInfo {
     @Column(nullable = false)
     private Date closeDate;
 
+    // TODO: Stadium
+//    private Stadium stadium;
+
     public TicketInfo(TicketInfoRequestDto ticketRequestDto) {
         this.ticketPrice = ticketRequestDto.getTicketPrice();
         this.stock = ticketRequestDto.getStock();

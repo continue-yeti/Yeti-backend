@@ -21,5 +21,16 @@ public class TicketInfoService {
         return new TicketInfoResponseDto(ticketInfo);
     }
 
+    // 티켓 정보 조회
+    public TicketInfoResponseDto getTicketInfo(Long id) {
+        TicketInfo ticketInfo = findTicketInfo(id);
+        return new TicketInfoResponseDto(ticketInfo);
+    }
 
+
+    // 티켓 정보 찾기
+    private TicketInfo findTicketInfo(Long id) {
+        TicketInfo ticketInfo = ticketInfoRepository.findById(id).orElseThrow();
+        return ticketInfo;
+    }
 }
