@@ -31,4 +31,9 @@ public class TicketInfoController {
         return ResponseEntity.status(HttpStatus.OK).body(ticketInfoService.updateTicketInfo(id, requestDto));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteTicketInfo(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(ticketInfoService.deleteTicketInfo(id));
+    }
+
 }

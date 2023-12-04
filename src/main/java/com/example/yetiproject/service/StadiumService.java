@@ -1,17 +1,14 @@
 package com.example.yetiproject.service;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.example.yetiproject.dto.stadium.StadiumCreateRequestDto;
 import com.example.yetiproject.dto.stadium.StadiumModifyRequestDto;
 import com.example.yetiproject.dto.stadium.StadiumResponseDto;
 import com.example.yetiproject.entity.Stadium;
 import com.example.yetiproject.repository.StadiumRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
