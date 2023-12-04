@@ -12,4 +12,7 @@ import com.example.yetiproject.entity.Ticket;
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
 	@Query(value="select * from tickets where user_id = ? ", nativeQuery = true)
 	List<Ticket> findUserTicketList(Long userId);
+
+	@Query(value="select * from tickets where user_id = ? and ticket_id = ? ", nativeQuery = true)
+	Ticket findUserShowDetailTicket(Long userId, Long ticketId);
 }

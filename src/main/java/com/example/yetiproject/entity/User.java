@@ -10,9 +10,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,13 +25,13 @@ public class User{
 	Long userId;
 
 	@Column(name = "email")
-	Long email;
+	String email;
 	@Column(name = "poassword")
-	Long password;
+	String password;
 	@Column(name = "username")
-	Long username;
+	String username;
 	@Column(name = "phoneNumber")
-	Long phoneNumber;
+	String phoneNumber;
 	@Column(name = "address")
-	Long address;
+	String address;
 }

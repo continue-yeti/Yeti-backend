@@ -1,5 +1,7 @@
 package com.example.yetiproject.entity;
 
+import com.example.yetiproject.dto.ticket.TicketRequestDto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,4 +35,15 @@ public class Ticket {
 	@JoinColumn(name = "user_id")
 	private User user;
 
+	@ManyToOne
+	@JoinColumn(name = "ticketInfo_id")
+	private TicketInfo ticketInfo;
+
+	public Ticket(Long ticketId, TicketRequestDto ticketRequestDto) {
+		this.ticketId = ticketId;
+		this.posX = ticketRequestDto.getPosX();
+		this.posY = ticketRequestDto.getPosY();
+		this.user.setUserId(ticketRequestDto.getUserId());
+		this.ticketInfo.setTicketInfoId(ticketRequestDto.getTicketInfoId());
+	}
 }
