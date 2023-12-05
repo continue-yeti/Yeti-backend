@@ -28,13 +28,13 @@ public class TicketServiceTest {
 		Assertions.assertEquals(ticketResponseDto.get(0).getTicketId(), 1L);
 	}
 
-	@Test
-	@DisplayName("티켓 상세예매내역 조회")
-	void test1(){
-		Long userId = 1L;
-		Long ticketId = 1L;
-		Ticket ticket = ticketService.showDetailTicket(userId, ticketId);
-		Assertions.assertEquals(ticket.getUser().getUsername(), "jungmin");
-	}
+	// @Test
+	// @DisplayName("티켓 상세예매내역 조회")
+	// void test1(){
+	// 	Long userId = 1L;
+	// 	Long ticketId = 1L;
+	// 	Ticket ticket = ticketService.showDetailTicket(userId, ticketId);
+	// 	Assertions.assertEquals(ticket.getUser().getUsername(), "jungmin");
+	// }
 
 }

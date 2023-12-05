@@ -16,4 +16,12 @@ GET http://localhost:8080/api/mytickets
 Content-Type: application/json
 Authorization: {{access_token}}
 
+### 2. 예매한 티켓 상세 조회
+GET http://localhost:8080/api/mytickets/userId/1/ticketId/1
+Authorization: {{access_token}}
+
+### 4. 예매한 티켓 상세 조회
+DELETE http://localhost:8080/api/mytickets/2
+Authorization: {{access_token}}
+
 

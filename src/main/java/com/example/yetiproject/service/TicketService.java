@@ -20,8 +20,9 @@ public class TicketService {
 	public List<TicketResponseDto> getUserTicketList() {
 		return ticketRepository.findUserTicketList().stream().map(TicketResponseDto::new).toList();
 	}
-	public Ticket showDetailTicket(Long userId, Long ticketId) {
-		return ticketRepository.findUserShowDetailTicket(userId, ticketId);
+	public TicketResponseDto showDetailTicket(Long userId, Long ticketId) {
+		System.out.println("userID = " +  userId);
+		return new TicketResponseDto(ticketRepository.findUserShowDetailTicket(userId, ticketId));
 	}
 
 	public TicketResponseDto reserveTicket(Long userId, Long ticketId, TicketRequestDto ticketRequestDto) {

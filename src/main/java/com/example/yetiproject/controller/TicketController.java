@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +29,10 @@ public class TicketController {
 	}
 
 	// TODO. user jwt 토큰 받기 필요
+	// 예매한 티켓 상세 조회
 	@GetMapping("/userId/{userId}/ticketId/{ticketId}")
-	public ResponseEntity detailViewReservedTicket(Long userId, Long ticketId){
+	public ResponseEntity detailViewReservedTicket(@PathVariable(name = "userId") Long userId, @PathVariable(name = "ticketId") Long ticketId){
+		System.out.println("[Controller : detailViewReservedTicket userId = ] " + userId);
 		return new ResponseEntity(ticketService.showDetailTicket(userId, ticketId), HttpStatus.OK);
 	}
 
@@ -38,8 +41,10 @@ public class TicketController {
 		return new ResponseEntity(ticketService.reserveTicket(userId, ticketId, ticketRequestDto), HttpStatus.OK);
 	}
 
+
+	// 예매 취소
 	@DeleteMapping("/{ticketId}")
-	public ResponseEntity cancelTicket(Long ticketId){
+	public ResponseEntity cancelTicket(@PathVariable(name = "ticketId") Long ticketId){
 		return ticketService.cancelUserTicket(ticketId);
 	}
 
