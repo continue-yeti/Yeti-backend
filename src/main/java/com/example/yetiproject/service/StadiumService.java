@@ -32,15 +32,17 @@ public class StadiumService {
 
 	// 경기장 수정
 	@Transactional
-	public void updateStadium(Long stadiumId, StadiumModifyRequestDto requestDto) {
+	public StadiumResponseDto updateStadium(Long stadiumId, StadiumModifyRequestDto requestDto) {
 		Stadium stadium = findStadium(stadiumId);
 		stadium.update(requestDto);
+		return new StadiumResponseDto(stadium);
 	}
 
 	// 경기장 삭제
-	public void deleteStadium(Long stadiumId) {
+	public String deleteStadium(Long stadiumId) {
 		Stadium stadium = findStadium(stadiumId);
 		stadiumRepository.delete(stadium);
+		return "경기장 삭제가 완료되었습니다.";
 	}
 
 	// 경기장 찾기
