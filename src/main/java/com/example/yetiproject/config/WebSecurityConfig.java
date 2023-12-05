@@ -59,7 +59,7 @@ public class WebSecurityConfig {
 
 		http.authorizeHttpRequests((authorizeHttpRequests) ->
 			authorizeHttpRequests
-				.requestMatchers("/signup", "/login").permitAll()
+				.requestMatchers("/signup").permitAll()
 				.anyRequest().authenticated()
 		);
 
@@ -67,7 +67,7 @@ public class WebSecurityConfig {
 		http.formLogin((formLogin) ->
 			formLogin
 				//.loginPage("/login-page")
-				.defaultSuccessUrl("/")
+				.loginProcessingUrl("/login")
 				.permitAll()
 		);
 
