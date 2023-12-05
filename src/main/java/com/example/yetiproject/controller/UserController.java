@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.yetiproject.dto.user.UserSigninRequestDto;
 import com.example.yetiproject.dto.user.UserSignupRequestDto;
-import com.example.yetiproject.service.StadiumService;
 import com.example.yetiproject.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,11 +21,11 @@ public class UserController {
 	private final UserService userService;
 
 	// 회원가입
-	@PostMapping("/signup")
-	public ResponseEntity<String> signup(@RequestBody UserSignupRequestDto requestDto) {
-		userService.signup(requestDto);
-		return ResponseEntity.status(HttpStatus.CREATED).body("회원가입에 성공하였습니다.");
-	}
+	// @PostMapping("/signup")
+	// public ResponseEntity<String> signup(@RequestBody UserSignupRequestDto requestDto) {
+	// 	userService.signup(requestDto);
+	// 	return ResponseEntity.status(HttpStatus.CREATED).body("회원가입에 성공하였습니다.");
+	// }
 
 	// 로그인
 	@PostMapping("/signin")

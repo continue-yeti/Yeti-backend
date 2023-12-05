@@ -1,5 +1,7 @@
 package com.example.yetiproject.entity;
 
+import java.util.Date;
+
 import com.example.yetiproject.dto.ticketinfo.TicketInfoRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
