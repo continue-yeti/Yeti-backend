@@ -2,7 +2,7 @@ name: Seniors CICD(deploy)
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
