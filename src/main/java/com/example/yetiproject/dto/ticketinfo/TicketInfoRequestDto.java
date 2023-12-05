@@ -11,6 +11,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 public class TicketInfoRequestDto {
+    private Long sportsId;
     private Long ticketPrice;
     private Long stock;
     private Date openDate;

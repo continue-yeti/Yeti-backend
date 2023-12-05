@@ -2,8 +2,11 @@ package com.example.yetiproject.service;
 
 import com.example.yetiproject.dto.ticketinfo.TicketInfoRequestDto;
 import com.example.yetiproject.dto.ticketinfo.TicketInfoResponseDto;
+import com.example.yetiproject.entity.Sports;
 import com.example.yetiproject.entity.TicketInfo;
 import com.example.yetiproject.exception.entity.TicketInfo.TicketInfoNotFoundException;
+import com.example.yetiproject.exception.entity.sports.SportsNotFoundException;
+import com.example.yetiproject.repository.SportsRepository;
 import com.example.yetiproject.repository.TicketInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,10 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class TicketInfoService {
 
     private final TicketInfoRepository ticketInfoRepository;
+    private final SportsRepository sportsRepository;
 
     // 티켓 정보 생성
-    public TicketInfoResponseDto createTicketInfo(TicketInfoRequestDto ticketRequestDto) {
-        TicketInfo ticketInfo = new TicketInfo(ticketRequestDto);
+    public TicketInfoResponseDto createTicketInfo(TicketInfoRequestDto requestDto) {
+        TicketInfo ticketInfo = new TicketInfo(requestDto);
+
+        // sports 찾기
+        Sports sports = findSportsInfo(requestDto.getSportsId());
+
+        // ticketInfo에 sports 추가
+        ticketInfo.setSports(sports);
+
         ticketInfoRepository.save(ticketInfo);
         return new TicketInfoResponseDto(ticketInfo);
     }
@@ -48,5 +59,12 @@ public class TicketInfoService {
         TicketInfo ticketInfo = ticketInfoRepository.findById(id)
                 .orElseThrow(() -> new TicketInfoNotFoundException("TicketInfo를 찾을 수 없습니다."));
         return ticketInfo;
+    }
+
+    // 스포츠 정보 찾기
+    private Sports findSportsInfo(Long id) {
+        Sports sports = sportsRepository.findById(id)
+                .orElseThrow(() -> new SportsNotFoundException("Sports를 찾을 수  없습니다."));
+        return sports;
     }
 }

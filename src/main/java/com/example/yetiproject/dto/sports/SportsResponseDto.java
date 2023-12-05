@@ -11,14 +11,14 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SportsResponseDto {
     private Long id;
-    private String sportName;
+    private String sportsName;
     private String matchDate;
     private Long stadiumId;
     private String stadiumName;
 
     public SportsResponseDto(Sports sports) {
-        this.id = sports.getId();
-        this.sportName = sports.getSportName();
+        this.id = sports.getSportId();
+        this.sportsName = sports.getSportName();
         this.matchDate = sports.getMatchDate();
         this.stadiumId = sports.getStadium().getStadiumId();
         this.stadiumName = sports.getStadium().getStadiumName();
