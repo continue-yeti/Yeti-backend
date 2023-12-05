@@ -8,7 +8,11 @@ import org.springframework.stereotype.Service;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
 import com.example.yetiproject.entity.Ticket;
+import com.example.yetiproject.entity.TicketInfo;
+import com.example.yetiproject.entity.User;
+import com.example.yetiproject.repository.TicketInfoRepository;
 import com.example.yetiproject.repository.TicketRepository;
+import com.example.yetiproject.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TicketService {
 	private final TicketRepository ticketRepository;
+	private final UserRepository userRepository;
+	private final TicketInfoRepository ticketInfoRepository;
 	public List<TicketResponseDto> getUserTicketList() {
 		return ticketRepository.findUserTicketList().stream().map(TicketResponseDto::new).toList();
 	}
@@ -25,8 +31,10 @@ public class TicketService {
 		return new TicketResponseDto(ticketRepository.findUserShowDetailTicket(userId, ticketId));
 	}
 
-	public TicketResponseDto reserveTicket(Long userId, Long ticketId, TicketRequestDto ticketRequestDto) {
-		Ticket ticket = new Ticket(ticketId, ticketRequestDto);
+	public TicketResponseDto reserveTicket(Long ticketId, TicketRequestDto ticketRequestDto) {
+		User user = userRepository.findById(ticketRequestDto.getUserId()).get();
+		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
+		Ticket ticket = new Ticket(ticketId, user, ticketInfo, ticketRequestDto);
 		try {
 			ticketRepository.save(ticket);
 		}catch (Exception e){

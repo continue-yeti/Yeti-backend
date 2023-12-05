@@ -14,9 +14,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
@@ -39,11 +41,11 @@ public class Ticket {
 	@JoinColumn(name = "ticketInfo_id")
 	private TicketInfo ticketInfo;
 
-	public Ticket(Long ticketId, TicketRequestDto ticketRequestDto) {
+	public Ticket(Long ticketId, User user, TicketInfo ticketInfo, TicketRequestDto ticketRequestDto) {
 		this.ticketId = ticketId;
 		this.posX = ticketRequestDto.getPosX();
 		this.posY = ticketRequestDto.getPosY();
-		this.user.setUserId(ticketRequestDto.getUserId());
-		this.ticketInfo.setTicketInfoId(ticketRequestDto.getTicketInfoId());
+		this.user = user;
+		this.ticketInfo = ticketInfo;
 	}
 }
