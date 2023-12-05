@@ -23,15 +23,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 	public JwtAuthenticationFilter(JwtUtil jwtUtil) {
 		this.jwtUtil = jwtUtil;
-		setFilterProcessesUrl("/login");
+		//setFilterProcessesUrl("/login");
 	}
 
 	@Override
-	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws
-		AuthenticationException {
+	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 		log.info("로그인 시도");
-		try {
-			UserSigninRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(), UserSigninRequestDto.class);
+		// try {
+
+		// Login page 만들기 전까지 임시
+			UserSigninRequestDto requestDto = new UserSigninRequestDto();
+			requestDto.setUsername(request.getParameter("username"));
+			requestDto.setPassword(request.getParameter("password"));
 
 			return getAuthenticationManager().authenticate(
 				new UsernamePasswordAuthenticationToken(
@@ -40,20 +43,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 					null
 				)
 			);
-		} catch (IOException e) {
-			log.error(e.getMessage());
-			throw new RuntimeException(e.getMessage());
-		}
+	// 	} catch (IOException e) {
+	// 		log.error(e.getMessage());
+	// 		throw new RuntimeException(e.getMessage());
+	// 	}
 	}
 
 	@Override
-	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException,
-		ServletException {
+	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
 		log.info("로그인 성공 및 JWT 생성");
 		String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-		// UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
-		// 임시로 user만 사용
 		String token = jwtUtil.createToken(username, "user");
 		jwtUtil.addJwtToCookie(token, response);
 	}

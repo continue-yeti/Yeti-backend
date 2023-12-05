@@ -9,9 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.yetiproject.entity.User;
 
-import lombok.Data;
-
-@Data
 public class UserDetailsImpl implements UserDetails {
 
 	private final User user;
@@ -20,10 +17,8 @@ public class UserDetailsImpl implements UserDetails {
 		this.user = user;
 	}
 
-	// 권한 반환
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(new SimpleGrantedAuthority("user"));
+	public User getUser() {
+		return user;
 	}
 
 	@Override
@@ -34,6 +29,11 @@ public class UserDetailsImpl implements UserDetails {
 	@Override
 	public String getUsername() {
 		return user.getUsername();
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(new SimpleGrantedAuthority("user"));
 	}
 
 	@Override
