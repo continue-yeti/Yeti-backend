@@ -34,7 +34,7 @@ out/
 /.nb-gradle/
 
 ### Properties ###
-application-local.properties
+application-local.yml
 
 ### VS Code ###
 .vscode/
