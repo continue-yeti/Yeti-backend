@@ -33,12 +33,12 @@ public class User {
 
 	private String address;
 
-	public User(UserSignupRequestDto requestDto) {
-		this.email = requestDto.getEmail();
-		this.username = requestDto.getUsername();
-		this.phoneNumber = requestDto.getPhoneNumber();
-		this.address = requestDto.getAddress();
-	}
+	// public User(UserSignupRequestDto requestDto) {
+	// 	this.email = requestDto.getEmail();
+	// 	this.username = requestDto.getUsername();
+	// 	this.phoneNumber = requestDto.getPhoneNumber();
+	// 	this.address = requestDto.getAddress();
+	// }
 
 	public void updatePassword(String encodedPassword) {
 		this.password = encodedPassword;

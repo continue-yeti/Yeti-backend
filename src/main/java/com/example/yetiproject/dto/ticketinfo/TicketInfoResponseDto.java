@@ -1,5 +1,6 @@
 package com.example.yetiproject.dto.ticketinfo;
 
+import com.example.yetiproject.dto.sports.SportsResponseDto;
 import com.example.yetiproject.entity.TicketInfo;
 import lombok.Getter;
 

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.yetiproject.dto.user.UserSigninRequestDto;
 import com.example.yetiproject.dto.user.UserSignupRequestDto;
-import com.example.yetiproject.service.StadiumService;
 import com.example.yetiproject.service.UserService;
 
 import lombok.RequiredArgsConstructor;
