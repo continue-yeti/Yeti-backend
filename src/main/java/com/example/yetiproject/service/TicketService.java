@@ -17,8 +17,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TicketService {
 	private final TicketRepository ticketRepository;
-	public List<TicketResponseDto> getUserTicketList(Long userId) {
-		return ticketRepository.findUserTicketList(userId).stream().map(TicketResponseDto::new).toList();
+	public List<TicketResponseDto> getUserTicketList() {
+		return ticketRepository.findUserTicketList().stream().map(TicketResponseDto::new).toList();
 	}
 	public Ticket showDetailTicket(Long userId, Long ticketId) {
 		return ticketRepository.findUserShowDetailTicket(userId, ticketId);

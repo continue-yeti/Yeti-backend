@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.service.TicketService;
 
@@ -21,11 +20,14 @@ import lombok.RequiredArgsConstructor;
 public class TicketController {
 	private final TicketService ticketService;
 
+	// TODO. user jwt 토큰 받기 필요
+	// 예매한 티켓 목록 조회
 	@GetMapping("")
-	public ResponseEntity viewListOfReservedTickets(Long userId){
-		return new ResponseEntity(ticketService.getUserTicketList(userId), HttpStatus.OK);
+	public ResponseEntity viewListOfReservedTickets(){
+		return new ResponseEntity(ticketService.getUserTicketList(), HttpStatus.OK);
 	}
 
+	// TODO. user jwt 토큰 받기 필요
 	@GetMapping("/userId/{userId}/ticketId/{ticketId}")
 	public ResponseEntity detailViewReservedTicket(Long userId, Long ticketId){
 		return new ResponseEntity(ticketService.showDetailTicket(userId, ticketId), HttpStatus.OK);

@@ -23,7 +23,7 @@ public class TicketServiceTest {
 	@DisplayName("유저 예매내역 조회")
 	void test(){
 		Long userId = 1L;
-		List<TicketResponseDto> ticketResponseDto = ticketService.getUserTicketList(userId);
+		List<TicketResponseDto> ticketResponseDto = ticketService.getUserTicketList();
 		System.out.println("ticket Id = " + ticketResponseDto.get(0).getTicketId());
 		Assertions.assertEquals(ticketResponseDto.get(0).getTicketId(), 1L);
 	}

@@ -16,9 +16,4 @@ GET http://localhost:8080/api/mytickets
 Content-Type: application/json
 Authorization: {{access_token}}
 
-{
-  "name": "React project",
-  "bgColor": "black",
-  "description": "Spring hanghaero 업무공유"
-}
 
