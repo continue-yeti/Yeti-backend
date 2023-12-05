@@ -40,19 +40,18 @@ jobs:
           echo "$" > ./application.yml
         shell: bash
 
-      # Gradle로 빌드 실행
+      # Build Gradle
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: build  
+        run: ./gradlew build
+        shell: bash
 
       # AWS에 연결
       - name: Connect to AWS
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: $
-          aws-secret-access-key: $
-          aws-region: $
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       # 빌드파일을 ZIP 파일로 생성
       - name: Make zip file
@@ -89,5 +88,5 @@ jobs:
           SLACK_MESSAGE: 배포 결과 => $
           SLACK_TITLE: 배포 결과 알람
           SLACK_USERNAME: Yeti-Bot
-          SLACK_WEBHOOK: $
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: always()
