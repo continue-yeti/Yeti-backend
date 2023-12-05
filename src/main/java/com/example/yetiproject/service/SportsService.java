@@ -4,6 +4,8 @@ import com.example.yetiproject.dto.sports.SportsRequestDto;
 import com.example.yetiproject.dto.sports.SportsResponseDto;
 import com.example.yetiproject.entity.Sports;
 import com.example.yetiproject.entity.Stadium;
+import com.example.yetiproject.exception.entity.sports.SportsNotFoundException;
+import com.example.yetiproject.exception.entity.stadium.StadiumNotFoundException;
 import com.example.yetiproject.repository.SportsRepository;
 import com.example.yetiproject.repository.StadiumRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,11 +41,11 @@ public class SportsService {
 
     public String updateSport(Long sportId, SportsRequestDto sportsRequestDto) {
         Sports sports = sportsRepository.findById(sportId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 경기입니다"));
+                .orElseThrow(() -> new SportsNotFoundException("존재하지 않는 경기입니다"));
         Long stadiumId = sportsRequestDto.getStadiumId();
         if (stadiumId != null) {
             Stadium newStadium = stadiumRepository.findById(stadiumId)
-                    .orElseThrow(() -> new RuntimeException("New Stadium not found"));
+                    .orElseThrow(() -> new StadiumNotFoundException("New Stadium not found"));
 
             sports.setStadium(newStadium);
         }
@@ -59,9 +61,9 @@ public class SportsService {
     }
 
     private Stadium findById(Long stadiumId) {
-        return stadiumRepository.findById(stadiumId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 경기장 입니다"));
+        return stadiumRepository.findById(stadiumId).orElseThrow(() -> new StadiumNotFoundException("존재하지 않는 경기장 입니다"));
     }
     private Sports findSports(Long sportId) {
-        return sportsRepository.findById(sportId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 경기입니다"));
+        return sportsRepository.findById(sportId).orElseThrow(() -> new SportsNotFoundException("존재하지 않는 경기입니다"));
     }
 }
