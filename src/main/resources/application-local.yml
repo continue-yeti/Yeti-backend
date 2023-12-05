@@ -1,12 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-<<<<<<< HEAD
     url: jdbc:mysql://localhost:3306/yeti
     username: root
     password: "@wjdals96"
-=======
-    url: jdbc:mysql://localhost:3306/memo
-    username: root
-    password: 1234
->>>>>>> origin/feature/hong/ticketinfo
+

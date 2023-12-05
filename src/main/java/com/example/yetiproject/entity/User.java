@@ -1,37 +1,46 @@
 package com.example.yetiproject.entity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
-@Getter
 @Setter
-@Builder
+@Getter
+@Entity
+@Table(name = "user")
 @NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "users")
-public class User{
+public class User {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long userId;
+	private Long userId;
 
-	@Column(name = "email")
-	String email;
-	@Column(name = "poassword")
-	String password;
-	@Column(name = "username")
-	String username;
-	@Column(name = "phoneNumber")
-	String phoneNumber;
-	@Column(name = "address")
-	String address;
+	@Column(nullable = false, unique = true)
+	private String email;
+
+	@Column(nullable = false)
+	private String username;
+
+	@Column(nullable = false)
+	private String password;
+
+	private String phoneNumber;
+
+	private String address;
+
+	public User(UserSignupRequestDto requestDto) {
+		this.email = requestDto.getEmail();
+		this.username = requestDto.getUsername();
+		this.phoneNumber = requestDto.getPhoneNumber();
+		this.address = requestDto.getAddress();
+	}
+
+	public void updatePassword(String encodedPassword) {
+		this.password = encodedPassword;
+	}
 }

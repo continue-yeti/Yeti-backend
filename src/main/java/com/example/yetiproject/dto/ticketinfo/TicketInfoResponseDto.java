@@ -12,6 +12,7 @@ public class TicketInfoResponseDto {
     private Date closeDate;
     private Long ticketPrice;
     private Long stock;
+    private SportsResponseDto sports;
 
 
     public TicketInfoResponseDto(TicketInfo ticketInfo) {
@@ -20,5 +21,6 @@ public class TicketInfoResponseDto {
         this.closeDate = ticketInfo.getCloseDate();
         this.ticketPrice = ticketInfo.getTicketPrice();
         this.stock = ticketInfo.getStock();
+        this.sports = new SportsResponseDto(ticketInfo.getSports());
     }
 }
