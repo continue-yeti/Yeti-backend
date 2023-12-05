@@ -14,7 +14,9 @@ import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.service.TicketService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mytickets")
@@ -36,12 +38,15 @@ public class TicketController {
 		return new ResponseEntity(ticketService.showDetailTicket(userId, ticketId), HttpStatus.OK);
 	}
 
-	@PostMapping("")
-	public ResponseEntity reserveTicket(@RequestParam Long userId, @RequestParam Long ticketId, @RequestBody TicketRequestDto ticketRequestDto){
-		return new ResponseEntity(ticketService.reserveTicket(userId, ticketId, ticketRequestDto), HttpStatus.OK);
+	// TODO. user jwt 토큰 받기 필요
+	// 예매 하기
+	@PostMapping("/reserve/{ticketId}")
+	public ResponseEntity reserveTicket(@PathVariable(name = "ticketId") Long ticketId, @RequestBody TicketRequestDto ticketRequestDto){
+		log.info("TicketController ticket_id = {}", ticketId);
+		return new ResponseEntity(ticketService.reserveTicket(ticketId, ticketRequestDto), HttpStatus.OK);
 	}
 
-
+	// TODO. user jwt 토큰 받기 필요
 	// 예매 취소
 	@DeleteMapping("/{ticketId}")
 	public ResponseEntity cancelTicket(@PathVariable(name = "ticketId") Long ticketId){

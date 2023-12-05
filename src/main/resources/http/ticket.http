@@ -20,6 +20,18 @@ Authorization: {{access_token}}
 GET http://localhost:8080/api/mytickets/userId/1/ticketId/1
 Authorization: {{access_token}}
 
+### 3. 티켓 예매하기
+POST http://localhost:8080/api/mytickets/reserve/3
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "userId": 1,
+  "ticketInfoId" : 1,
+  "posX" : 12,
+  "posY" : 16
+}
+
 ### 4. 예매한 티켓 상세 조회
 DELETE http://localhost:8080/api/mytickets/2
 Authorization: {{access_token}}
