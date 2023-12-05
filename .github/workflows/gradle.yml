@@ -77,7 +77,7 @@ jobs:
         run: |
           aws deploy create-deployment --application-name yeti-codedeploy-app \
             --deployment-config-name CodeDeployDefault.OneAtATime \
-            --deployment-group-name my-codedeploy-deployment-group \
+            --deployment-group-name yeti-codedeploy-deployment-group \
             --s3-location bucket=yeti-github-actions-s3-bucket,bundleType=zip,key=seniors-build.zip
 
       # 배포 결과 Slack 알람 전송
