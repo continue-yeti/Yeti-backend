@@ -30,7 +30,7 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.23' // 추가
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0' // 추가
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-web'
