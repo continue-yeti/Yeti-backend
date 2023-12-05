@@ -39,7 +39,7 @@ public class SportsService {
         return new SportsResponseDto(sports);
     }
 
-    public String updateSport(Long sportId, SportsRequestDto sportsRequestDto) {
+    public SportsResponseDto updateSport(Long sportId, SportsRequestDto sportsRequestDto) {
         Sports sports = sportsRepository.findById(sportId)
                 .orElseThrow(() -> new SportsNotFoundException("존재하지 않는 경기입니다"));
         Long stadiumId = sportsRequestDto.getStadiumId();
@@ -51,7 +51,7 @@ public class SportsService {
         }
         sports.update(sportsRequestDto);
         sportsRepository.save(sports);
-        return "경기 내용이 변경되었습니다";
+        return new SportsResponseDto(sports);
     }
 
     public String deleteSport(Long sportId) {

@@ -1,5 +1,6 @@
 package com.example.yetiproject.controller;
 
+import com.example.yetiproject.dto.ApiResponse;
 import com.example.yetiproject.dto.sports.SportsRequestDto;
 import com.example.yetiproject.dto.sports.SportsResponseDto;
 import com.example.yetiproject.service.SportsService;
@@ -21,31 +22,28 @@ public class SportsController {
     private final SportsService sportsService;
 
     @PostMapping("/sports")
-    public ResponseEntity<String> createSports(@RequestBody SportsRequestDto sportsRequestDto) {
-        String successMessage = sportsService.createSports(sportsRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-                .body(successMessage);
+    public ApiResponse createSports(@RequestBody SportsRequestDto sportsRequestDto) {
+        return ApiResponse.success("Sports 생성에 성공했습니다.", sportsService.createSports(sportsRequestDto));
     }
 
     @GetMapping("/sports")
-    public List<SportsResponseDto> getSports() {
-        return sportsService.getSports();
+    public ApiResponse<List<SportsResponseDto>> getSports() {
+        return ApiResponse.success("Sports 리스트 조회에 성공했습니다.", sportsService.getSports());
     }
 
     @GetMapping("/sports/{sportId}")
-    public SportsResponseDto getSportsInfo(@PathVariable Long sportId) {
-        return sportsService.getSportsInfo(sportId);
+    public ApiResponse<SportsResponseDto> getSportsInfo(@PathVariable Long sportId) {
+        return ApiResponse.success("Sports 상세 조회에 성공했습니다.", sportsService.getSportsInfo(sportId));
     }
 
     @PutMapping("/sports/{sportId}")
-    public String updateSport(@PathVariable Long sportId, @RequestBody SportsRequestDto sportsRequestDto) {
-        return sportsService.updateSport(sportId, sportsRequestDto);
+    public ApiResponse<SportsResponseDto> updateSport(@PathVariable Long sportId, @RequestBody SportsRequestDto sportsRequestDto) {
+        return ApiResponse.success("Sports 수정에 성공했습니다.", sportsService.updateSport(sportId, sportsRequestDto));
     }
 
     @DeleteMapping("/sports/{sportId}")
-    public String deleteSport(@PathVariable Long sportId) {
-        return sportsService.deleteSport(sportId);
+    public ApiResponse deleteSport(@PathVariable Long sportId) {
+        return ApiResponse.successWithNoContent(sportsService.deleteSport(sportId));
     }
 
 }
