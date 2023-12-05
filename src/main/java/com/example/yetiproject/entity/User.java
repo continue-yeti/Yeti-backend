@@ -1,5 +1,7 @@
 package com.example.yetiproject.entity;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.example.yetiproject.dto.user.UserSignupRequestDto;
 
 import jakarta.persistence.Column;
@@ -26,7 +28,7 @@ public class User {
 	@Column(nullable = false, unique = true)
 	private String email;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String username;
 
 	@Column(nullable = false)

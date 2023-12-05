@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	// 임시
 	public void signup(UserSignupRequestDto requestDto) {
@@ -27,24 +28,9 @@ public class UserService {
 			throw new IllegalArgumentException("두 비밀번호가 다릅니다.");
 		}
 
-		// 비밀번호 암호화
-		// BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		// String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-
 		// 유저 객체를 만든 후 레포지토리에 저장
 		User user = new User(requestDto);
-		// user.updatePassword(encodedPassword);
-		user.updatePassword(requestDto.getPassword());
+		user.updatePassword(bCryptPasswordEncoder.encode(requestDto.getPassword()));
 		userRepository.save(user);
-	}
-
-	// 임시
-	public void signin(UserSigninRequestDto requestDto) {
-		User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
-			() -> new EntityNotFoundException("회원이 없습니다."));
-
-		if (!StringUtils.equals(user.getPassword(), requestDto.getPassword())) {
-			throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
-		}
 	}
 }
