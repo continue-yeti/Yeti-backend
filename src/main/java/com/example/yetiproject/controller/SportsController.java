@@ -36,17 +36,17 @@ public class SportsController {
     }
 
     @GetMapping("/sports/{sportId}")
-    public ApiResponse<SportsResponseDto> getSportsInfo(@PathVariable Long sportId) {
+    public ApiResponse<SportsResponseDto> getSportsInfo(@PathVariable(name = "sportId") Long sportId) {
         return ApiResponse.success("Sports 상세 조회에 성공했습니다.", sportsService.getSportsInfo(sportId));
     }
 
     @PutMapping("/sports/{sportId}")
-    public ApiResponse<SportsResponseDto> updateSport(@PathVariable Long sportId, @RequestBody SportsRequestDto sportsRequestDto) {
+    public ApiResponse<SportsResponseDto> updateSport(@PathVariable(name = "sportId") Long sportId, @RequestBody SportsRequestDto sportsRequestDto) {
         return ApiResponse.success("Sports 수정에 성공했습니다.", sportsService.updateSport(sportId, sportsRequestDto));
     }
 
     @DeleteMapping("/sports/{sportId}")
-    public ApiResponse deleteSport(@PathVariable Long sportId) {
+    public ApiResponse deleteSport(@PathVariable(name = "sportId") Long sportId) {
         return ApiResponse.successWithNoContent(sportsService.deleteSport(sportId));
     }
 
