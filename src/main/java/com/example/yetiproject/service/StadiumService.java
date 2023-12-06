@@ -34,7 +34,6 @@ public class StadiumService {
 	@Transactional
 	public StadiumResponseDto updateStadium(Long stadiumId, StadiumModifyRequestDto requestDto) {
 		Stadium stadium = findStadium(stadiumId);
-		System.out.println(requestDto.getStadiumName());
 		stadium.update(requestDto);
 		return new StadiumResponseDto(stadium);
 	}
