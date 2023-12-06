@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
@@ -67,6 +68,7 @@ public class TicketServiceTest {
 		TicketResponseDto result = ticketService.reserveTicket(ticketId, ticketRequestDto);
 
 		//then
+		// verify 메서드를 사용해 특정 메서드가 호출되었는지 확인할 수 있어
 		verify(userRepository, times(1)).findById(user.getUserId());
 		verify(ticketInfoRepository, times(1)).findById(ticketInfo.getTicketInfoId());
 		verify(ticketRepository, times(1)).save(any(Ticket.class));
@@ -74,5 +76,22 @@ public class TicketServiceTest {
 		System.out.println("result ticketId = " + result.getTicketId());
 		assertNotNull(result);
 		assertEquals(result.getTicketId(), 2L);
+	}
+
+	@Test
+	@DisplayName("예매 취소")
+	void test2(){
+		//given
+		Long ticketId = 2L;
+		Ticket ticket = Ticket.builder().posY(12L).build();
+		given(ticketRepository.findById(ticketId)).willReturn(Optional.of(ticket));
+
+		//when
+		ResponseEntity msg = ticketService.cancelUserTicket(ticketId);
+
+		//then
+		verify(ticketRepository, times(1)).findById(ticketId);
+		assertEquals("<200 OK OK,해당 티켓을 취소하였습니다.,[]>", msg.toString());
+
 	}
 }
