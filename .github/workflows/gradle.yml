@@ -83,9 +83,12 @@ jobs:
       # 배포 결과 Slack 알람 전송
       - name: Slack 알람 발송 test
         uses: rtCamp/action-slack-notify@v2
+        with:
+          status: ${{ job.status }}
         env:
           SLACK_COLOR: $ # or a specific color like 'good' or '#ff00ff'
-          SLACK_MESSAGE: 배포 결과 => SUCCESS
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 배포 결과 => ${{ job.status }}
           SLACK_TITLE: 배포 결과 알람
           SLACK_USERNAME: Yeti-Bot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
