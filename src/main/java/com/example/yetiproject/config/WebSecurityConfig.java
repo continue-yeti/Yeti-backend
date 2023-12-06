@@ -1,33 +1,40 @@
 package com.example.yetiproject.config;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.yetiproject.auth.AuthenticationSuccessHandlerImpl;
 import com.example.yetiproject.auth.jwt.JwtAuthenticationFilter;
 import com.example.yetiproject.auth.jwt.JwtAuthorizationFilter;
 import com.example.yetiproject.auth.jwt.JwtUtil;
 import com.example.yetiproject.auth.security.UserDetailsServiceImpl;
 
 @Configuration
+@Import(SecurityBeansConfig.class)
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
 public class WebSecurityConfig {
 
 	private final JwtUtil jwtUtil;
 	private final UserDetailsServiceImpl userDetailsService;
 	private final AuthenticationConfiguration authenticationConfiguration;
+	private final AuthenticationSuccessHandlerImpl authenticationSuccessHandler;
 
-	public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration) {
+	public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService,
+		AuthenticationConfiguration authenticationConfiguration,
+		AuthenticationSuccessHandlerImpl authenticationSuccessHandler) {
 		this.jwtUtil = jwtUtil;
 		this.userDetailsService = userDetailsService;
 		this.authenticationConfiguration = authenticationConfiguration;
+		this.authenticationSuccessHandler = authenticationSuccessHandler;
 	}
 
 	@Bean
@@ -68,6 +75,7 @@ public class WebSecurityConfig {
 			formLogin
 				//.loginPage("/login-page")
 				.loginProcessingUrl("/signin")
+				.successHandler(authenticationSuccessHandler)
 				.permitAll()
 		);
 
@@ -77,6 +85,4 @@ public class WebSecurityConfig {
 
 		return http.build();
 	}
-
-
 }

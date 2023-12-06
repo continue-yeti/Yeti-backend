@@ -1,7 +1,11 @@
 package com.example.yetiproject.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +18,11 @@ import com.example.yetiproject.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j(topic = "북마크 서비스")
 public class BookmarkService {
 
 	private final NotificationService notificationService;
@@ -44,8 +50,19 @@ public class BookmarkService {
 		}
 	}
 
+	@Scheduled(cron = "0 0/15 * * * *")
 	@Transactional
-	public void notificationToUser(Long bookmarkId, Long userId) {
+	public void notificationScheduler() {
+		log.info("스케쥴러에 의해 동작");
+		List<Bookmark> bookmarkList = bookmarkRepository.findByOpenDateJpql(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+		for (Bookmark bookmark : bookmarkList) {
+			Long bookmarkId = bookmark.getBookmarkId();
+			Long userId = bookmark.getUser().getUserId();
+			notificationToUser(bookmarkId, userId);
+		}
+	}
+
+	private void notificationToUser(Long bookmarkId, Long userId) {
 		Bookmark bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow(
 			() -> new EntityNotFoundException("찜 내역이 없습니다."));
 
@@ -53,8 +70,11 @@ public class BookmarkService {
 			() -> new EntityNotFoundException("회원정보가 없습니다."));
 
 		String sportName = bookmark.getTicketInfo().getSports().getSportName();
-		String date = bookmark.getTicketInfo().getSports().getMatchDate();
-		String content = "곧 " + date + "일자 " + sportName + "경기의 티켓 예매가 시작됩니다!";
+		String gameDate = bookmark.getTicketInfo().getSports().getMatchDate();
+		LocalDateTime openDate = bookmark.getTicketInfo().getOpenDate();
+		Duration diff = Duration.between(LocalDateTime.now(), openDate);
+		Long diffMins = diff.toMinutes();
+		String content = diffMins + "분 뒤 " + "[" + gameDate + " " + sportName + "] 경기의 예매가 시작됩니다.";
 		notificationService.send(content, user);
 	}
 }

@@ -4,21 +4,15 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.example.yetiproject.dto.notification.NotificationResponseDto;
-import com.example.yetiproject.entity.Bookmark;
 import com.example.yetiproject.entity.Notification;
 import com.example.yetiproject.entity.User;
-import com.example.yetiproject.repository.BookmarkRepository;
 import com.example.yetiproject.repository.EmitterRepository;
 import com.example.yetiproject.repository.EmitterRepositoryImpl;
 import com.example.yetiproject.repository.NotificationRepository;
-import com.example.yetiproject.repository.TicketInfoRepository;
-import com.example.yetiproject.repository.UserRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,12 +23,13 @@ public class NotificationService {
 
 	private final EmitterRepository emitterRepository = new EmitterRepositoryImpl();
 	private final NotificationRepository notificationRepository;
+	private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
 
 	public SseEmitter subscribe(Long userId, String lastEventId) {
 
 		// emitter와 event의 순서를 구별하기 위해 userId에 시간 추가
 		String emitterId = userId + "_" + System.currentTimeMillis();
-		SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(Long.MAX_VALUE));
+		SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
 		emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
 		emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
 

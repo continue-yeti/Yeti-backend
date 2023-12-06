@@ -13,9 +13,11 @@ public class NotificationResponseDto {
 
 	private Long notificationId;
 	private String content;
+	private String url;
 
 	public NotificationResponseDto(Notification notification) {
 		this.notificationId = notification.getNotificationId();
 		this.content = notification.getContent();
+		this.url = notification.getUrl();
 	}
 }

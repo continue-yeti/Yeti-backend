@@ -25,8 +25,8 @@ public class BookmarkController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(bookmarkService.bookmark(ticketInfoId, userId));
 	}
 
-	@GetMapping("/alert")
-	public void alert(@RequestParam("bookmarkId") Long bookmarkId, @RequestParam("userId") Long userId) {
-		bookmarkService.notificationToUser(bookmarkId, userId);
-	}
+	// @GetMapping("/alert")
+	// public void alert(@RequestParam("bookmarkId") Long bookmarkId, @RequestParam("userId") Long userId) {
+	// 	bookmarkService.notificationToUser(bookmarkId, userId);
+	// }
 }
