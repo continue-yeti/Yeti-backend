@@ -52,6 +52,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 		String token = jwtUtil.createToken(username, "user");
 		jwtUtil.addJwtToCookie(token, response);
+		response.sendRedirect("/api/sports/subscribe");
 	}
 
 	@Override
