@@ -23,7 +23,7 @@ public class BookmarkService {
 	private final TicketInfoRepository ticketInfoRepository;
 	private final UserRepository userRepository;
 
-	public void bookmark(Long ticketInfoId, Long userId) {
+	public String bookmark(Long ticketInfoId, Long userId) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketInfoId).orElseThrow(
 			() -> new EntityNotFoundException("티켓 정보가 없습니다."));
 
@@ -36,8 +36,10 @@ public class BookmarkService {
 		// 존재하면 삭제, 존재하지 않으면 생성
 		if (Objects.isNull(bookmark)) {
 			bookmarkRepository.save(new Bookmark(ticketInfo, user));
+			return "찜하기 완료";
 		} else {
 			bookmarkRepository.delete(bookmark);
+			return "찜하기 해제";
 		}
 	}
 }

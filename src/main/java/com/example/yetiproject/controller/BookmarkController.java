@@ -19,9 +19,8 @@ public class BookmarkController {
 
 	private final BookmarkService bookmarkService;
 
-	@PostMapping("/bookmark")
-	public ResponseEntity<String> bookmark(@RequestParam Long ticketInfoId, @RequestParam Long userId) {
-		bookmarkService.bookmark(ticketInfoId, userId);
-		return ResponseEntity.status(HttpStatus.CREATED).body("찜하기 완료");
+	@PostMapping("/bookmarks")
+	public ResponseEntity<String> bookmark(@RequestParam("ticketInfoId") Long ticketInfoId, @RequestParam("userId") Long userId) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(bookmarkService.bookmark(ticketInfoId, userId));
 	}
 }
