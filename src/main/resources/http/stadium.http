@@ -11,13 +11,12 @@ Content-Type: application/json
     client.log(client.global.get("access_token"));
 %}
 
+
 ### 1. 경기장 생성
 POST http://localhost:8080/api/stadiums
 Content-Type: application/json
 Authorization: {{access_token}}
 
 {
-  "stadiumId": 1,
-  "sportName" : "2023 K-리그 한국 vs 싱가포르",
-  "matchDate" : "2023-12-12"
+  "stadiumName": "잠실 체육 경기장"
 }
