@@ -1,5 +1,6 @@
 package com.example.yetiproject.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.example.yetiproject.dto.ticketinfo.TicketInfoRequestDto;
@@ -27,10 +28,10 @@ public class TicketInfo {
     private Long stock;
 
     @Column(nullable = false)
-    private Date openDate;
+    private LocalDateTime openDate;
 
     @Column(nullable = false)
-    private Date closeDate;
+    private LocalDateTime closeDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sports_id")

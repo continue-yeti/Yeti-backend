@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BookmarkService {
 
+	private final NotificationService notificationService;
 	private final BookmarkRepository bookmarkRepository;
 	private final TicketInfoRepository ticketInfoRepository;
 	private final UserRepository userRepository;
@@ -41,5 +42,19 @@ public class BookmarkService {
 			bookmarkRepository.delete(bookmark);
 			return "찜하기 해제";
 		}
+	}
+
+	@Transactional
+	public void notificationToUser(Long bookmarkId, Long userId) {
+		Bookmark bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow(
+			() -> new EntityNotFoundException("찜 내역이 없습니다."));
+
+		User user = userRepository.findById(userId).orElseThrow(
+			() -> new EntityNotFoundException("회원정보가 없습니다."));
+
+		String sportName = bookmark.getTicketInfo().getSports().getSportName();
+		String date = bookmark.getTicketInfo().getSports().getMatchDate();
+		String content = "곧 " + date + "일자 " + sportName + "경기의 티켓 예매가 시작됩니다!";
+		notificationService.send(content, user);
 	}
 }
