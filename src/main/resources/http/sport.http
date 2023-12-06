@@ -33,7 +33,7 @@ Content-Type: application/json
 Authorization: {{access_token}}
 
 ### 4. 경기 수정
-PUT http://localhost:8080/api/sports/2
+PUT http://localhost:8080/api/sports/1
 Content-Type: application/json
 Authorization: {{access_token}}
 
