@@ -34,6 +34,7 @@ public class StadiumService {
 	@Transactional
 	public StadiumResponseDto updateStadium(Long stadiumId, StadiumModifyRequestDto requestDto) {
 		Stadium stadium = findStadium(stadiumId);
+		System.out.println(requestDto.getStadiumName());
 		stadium.update(requestDto);
 		return new StadiumResponseDto(stadium);
 	}
@@ -47,7 +48,7 @@ public class StadiumService {
 
 	// 경기장 찾기
 	private Stadium findStadium(Long id) {
-		Stadium stadium = stadiumRepository.findById(id).orElseThrow(
+		Stadium stadium = stadiumRepository.findByStadiumId(id).orElseThrow(
 				() -> new StadiumNotFoundException("존재하지 않는 경기장입니다."));
 		return stadium;
 	}
