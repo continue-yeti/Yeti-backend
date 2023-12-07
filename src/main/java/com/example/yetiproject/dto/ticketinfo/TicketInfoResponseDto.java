@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -13,8 +14,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class TicketInfoResponseDto {
     private Long id;
-    private Date openDate;
-    private Date closeDate;
+    private LocalDateTime openDate;
+    private LocalDateTime closeDate;
     private Long ticketPrice;
     private Long stock;
     private SportsResponseDto sports;

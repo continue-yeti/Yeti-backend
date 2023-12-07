@@ -36,6 +36,9 @@ out/
 /nbdist/
 /.nb-gradle/
 
+### Properties ###
+application-local.yml
+
 ### VS Code ###
 .vscode/
 
