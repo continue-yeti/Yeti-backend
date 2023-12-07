@@ -2,6 +2,8 @@ package com.example.yetiproject.entity;
 
 import com.example.yetiproject.dto.sports.SportsRequestDto;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +11,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class Sports {
     @Id
@@ -17,7 +21,7 @@ public class Sports {
     private String sportName;
     private String matchDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "stadium_id")
     private Stadium stadium;
 

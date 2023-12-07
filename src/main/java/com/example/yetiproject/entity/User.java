@@ -1,10 +1,14 @@
 package com.example.yetiproject.entity;
+import com.example.yetiproject.dto.user.UserSignupRequestDto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +16,9 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "user")
+@Builder
+@Table(name = "users")
+@AllArgsConstructor
 @NoArgsConstructor
 public class User {
 
@@ -23,7 +29,7 @@ public class User {
 	@Column(nullable = false, unique = true)
 	private String email;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String username;
 
 	@Column(nullable = false)
@@ -33,12 +39,12 @@ public class User {
 
 	private String address;
 
-	// public User(UserSignupRequestDto requestDto) {
-	// 	this.email = requestDto.getEmail();
-	// 	this.username = requestDto.getUsername();
-	// 	this.phoneNumber = requestDto.getPhoneNumber();
-	// 	this.address = requestDto.getAddress();
-	// }
+	public User(UserSignupRequestDto requestDto) {
+		this.email = requestDto.getEmail();
+		this.username = requestDto.getUsername();
+		this.phoneNumber = requestDto.getPhoneNumber();
+		this.address = requestDto.getAddress();
+	}
 
 	public void updatePassword(String encodedPassword) {
 		this.password = encodedPassword;

@@ -10,6 +10,7 @@ import com.example.yetiproject.dto.ticket.TicketResponseDto;
 import com.example.yetiproject.entity.Ticket;
 import com.example.yetiproject.entity.TicketInfo;
 import com.example.yetiproject.entity.User;
+import com.example.yetiproject.exception.entity.Ticket.TicketNotFoundException;
 import com.example.yetiproject.repository.TicketInfoRepository;
 import com.example.yetiproject.repository.TicketRepository;
 import com.example.yetiproject.repository.UserRepository;
@@ -27,7 +28,6 @@ public class TicketService {
 		return ticketRepository.findUserTicketList().stream().map(TicketResponseDto::new).toList();
 	}
 	public TicketResponseDto showDetailTicket(Long userId, Long ticketId) {
-		System.out.println("userID = " +  userId);
 		return new TicketResponseDto(ticketRepository.findUserShowDetailTicket(userId, ticketId));
 	}
 
@@ -46,7 +46,7 @@ public class TicketService {
 	@Transactional
 	public ResponseEntity cancelUserTicket(Long ticketId) {
 		Ticket ticket = ticketRepository.findById(ticketId)
-			.orElseThrow(() -> new IllegalArgumentException("해당된 티켓정보가 없습니다."));
+			.orElseThrow(() -> new TicketNotFoundException("해당된 티켓정보가 없습니다."));
 		try {
 			ticketRepository.delete(ticket);
 		}catch (Exception e){

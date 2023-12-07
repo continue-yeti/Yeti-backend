@@ -33,7 +33,7 @@ Authorization: {{access_token}}
 }
 
 ### 4. 예매한 티켓 상세 조회
-DELETE http://localhost:8080/api/mytickets/2
+DELETE http://localhost:8080/api/mytickets/1
 Authorization: {{access_token}}
 
 
