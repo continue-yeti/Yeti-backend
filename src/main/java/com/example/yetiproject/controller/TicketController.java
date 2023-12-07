@@ -43,10 +43,10 @@ public class TicketController {
 	// TODO. user jwt 토큰 받기 필요
 	// 예매 하기
 	@PostMapping("/reserve/{ticketId}")
-	public ApiResponse<TicketResponseDto> reserveTicket(@PathVariable(name = "ticketId") Long ticketId, @RequestBody TicketRequestDto ticketRequestDto){
+	public ResponseEntity reserveTicket(@PathVariable(name = "ticketId") Long ticketId, @RequestBody TicketRequestDto ticketRequestDto){
 		log.info("TicketController ticket_id = {}", ticketId);
-		return ApiResponse.success("예매 성공" , ticketService.reserveTicket(ticketId, ticketRequestDto));
-	}
+		return new ResponseEntity(ticketService.reserveTicket(ticketId, ticketRequestDto), HttpStatus.OK);
+
 
 	// TODO. user jwt 토큰 받기 필요
 	// 예매 취소
