@@ -9,4 +9,3 @@ spring:
       - common
       - local
       - secret
-      - deploy
