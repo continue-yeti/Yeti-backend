@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://yeti-db.cvmqeno83ncx.ap-northeast-2.rds.amazonaws.com:5432/postgres
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: 12345678
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
