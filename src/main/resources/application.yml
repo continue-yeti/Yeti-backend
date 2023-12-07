@@ -7,4 +7,6 @@ spring:
       deploy:
     include:
       - common
+      - local
+      - secret
       - deploy
