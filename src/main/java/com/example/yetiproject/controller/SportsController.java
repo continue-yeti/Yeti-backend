@@ -1,17 +1,22 @@
 package com.example.yetiproject.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.yetiproject.dto.ApiResponse;
 import com.example.yetiproject.dto.sports.SportsRequestDto;
 import com.example.yetiproject.dto.sports.SportsResponseDto;
 import com.example.yetiproject.service.SportsService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,31 +26,28 @@ public class SportsController {
     private final SportsService sportsService;
 
     @PostMapping("/sports")
-    public ResponseEntity<String> createSports(@RequestBody SportsRequestDto sportsRequestDto) {
-        String successMessage = sportsService.createSports(sportsRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-                .body(successMessage);
+    public ApiResponse createSports(@RequestBody SportsRequestDto sportsRequestDto) {
+        return ApiResponse.success("Sports 생성에 성공했습니다.", sportsService.createSports(sportsRequestDto));
     }
 
     @GetMapping("/sports")
-    public List<SportsResponseDto> getSports() {
-        return sportsService.getSports();
+    public ApiResponse<List<SportsResponseDto>> getSports() {
+        return ApiResponse.success("Sports 리스트 조회에 성공했습니다.", sportsService.getSports());
     }
 
     @GetMapping("/sports/{sportId}")
-    public SportsResponseDto getSportsInfo(@PathVariable Long sportId) {
-        return sportsService.getSportsInfo(sportId);
+    public ApiResponse<SportsResponseDto> getSportsInfo(@PathVariable(name = "sportId") Long sportId) {
+        return ApiResponse.success("Sports 상세 조회에 성공했습니다.", sportsService.getSportsInfo(sportId));
     }
 
     @PutMapping("/sports/{sportId}")
-    public String updateSport(@PathVariable Long sportId, @RequestBody SportsRequestDto sportsRequestDto) {
-        return sportsService.updateSport(sportId, sportsRequestDto);
+    public ApiResponse<SportsResponseDto> updateSport(@PathVariable(name = "sportId") Long sportId, @RequestBody SportsRequestDto sportsRequestDto) {
+        return ApiResponse.success("Sports 수정에 성공했습니다.", sportsService.updateSport(sportId, sportsRequestDto));
     }
 
     @DeleteMapping("/sports/{sportId}")
-    public String deleteSport(@PathVariable Long sportId) {
-        return sportsService.deleteSport(sportId);
+    public ApiResponse deleteSport(@PathVariable(name = "sportId") Long sportId) {
+        return ApiResponse.successWithNoContent(sportsService.deleteSport(sportId));
     }
 
 }

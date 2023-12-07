@@ -1,12 +1,11 @@
 package com.example.yetiproject.controller;
 
+import com.example.yetiproject.dto.ApiResponse;
 import com.example.yetiproject.dto.stadium.StadiumCreateRequestDto;
 import com.example.yetiproject.dto.stadium.StadiumModifyRequestDto;
 import com.example.yetiproject.dto.stadium.StadiumResponseDto;
 import com.example.yetiproject.service.StadiumService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,27 +17,26 @@ public class StadiumController {
 
 	// 경기장 생성
 	@PostMapping("/stadiums")
-	public ResponseEntity<StadiumResponseDto> createStadium(@RequestBody StadiumCreateRequestDto requestDto) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(stadiumService.createStadium(requestDto));
+	public ApiResponse<StadiumResponseDto> createStadium(@RequestBody StadiumCreateRequestDto requestDto) {
+		return ApiResponse.success("경기장 생성에 성공했습니다.", stadiumService.createStadium(requestDto));
 	}
 
 	// 경기장 조회
 	@GetMapping("/stadiums/{stadiumId}")
-	public ResponseEntity<StadiumResponseDto> getStadium(@PathVariable Long stadiumId) {
-		return ResponseEntity.ok().body(stadiumService.getStadium(stadiumId));
+	public ApiResponse<StadiumResponseDto> getStadium(@PathVariable(name = "stadiumId") Long stadiumId) {
+		return ApiResponse.success("경기장 조회에 성공했습니다.", stadiumService.getStadium(stadiumId));
 	}
 
 	// 경기장 수정
 	@PutMapping("/stadiums/{stadiumId}")
-	public ResponseEntity<String> updateStadium(@PathVariable Long stadiumId, @RequestBody StadiumModifyRequestDto requestDto) {
-		stadiumService.updateStadium(stadiumId, requestDto);
-		return ResponseEntity.ok().body("경기장 수정이 완료되었습니다.");
+	public ApiResponse<StadiumResponseDto> updateStadium(@PathVariable(name = "stadiumId") Long stadiumId, @RequestBody StadiumModifyRequestDto requestDto) {
+		return ApiResponse.success("경기장 수정에 성공했습니다.", stadiumService.updateStadium(stadiumId, requestDto));
+
 	}
 
 	// 경기장 삭제
 	@DeleteMapping("/stadiums/{stadiumId}")
-	public ResponseEntity<String> deleteStadium(@PathVariable Long stadiumId) {
-		stadiumService.deleteStadium(stadiumId);
-		return ResponseEntity.ok().body("경기장 삭제가 완료되었습니다.");
+	public ApiResponse deleteStadium(@PathVariable(name = "stadiumId") Long stadiumId) {
+		return ApiResponse.successWithNoContent(stadiumService.deleteStadium(stadiumId));
 	}
 }

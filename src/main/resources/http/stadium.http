@@ -11,29 +11,34 @@ Content-Type: application/json
     client.log(client.global.get("access_token"));
 %}
 
-### 1. 예매한 티켓 목록 조회
-GET http://localhost:8080/api/mytickets
-Content-Type: application/json
-Authorization: {{access_token}}
 
-### 2. 예매한 티켓 상세 조회
-GET http://localhost:8080/api/mytickets/userId/1/ticketId/1
-Authorization: {{access_token}}
-
-### 3. 티켓 예매하기
-POST http://localhost:8080/api/mytickets/reserve/3
+### 1. 경기장 생성
+POST http://localhost:8080/api/stadiums
 Content-Type: application/json
 Authorization: {{access_token}}
 
 {
-  "userId": 1,
-  "ticketInfoId" : 1,
-  "posX" : 12,
-  "posY" : 16
+  "stadiumName": "잠실 체육 경기장"
 }
 
-### 4. 예매한 티켓 상세 조회
-DELETE http://localhost:8080/api/mytickets/1
+}
+
+### 2. 경기장 조회
+GET http://localhost:8080/api/stadiums/1
+Content-Type: application/json
 Authorization: {{access_token}}
 
+### 3. 경기장 수정
+PUT http://localhost:8080/api/stadiums/1
+Content-Type: application/json
+Authorization: {{access_token}}
 
+{
+  "stadiumName": "인천축구전용경기장"
+
+}
+
+### 4. 경기장 삭제
+DELETE http://localhost:8080/api/stadiums/1
+Content-Type: application/json
+Authorization: {{access_token}}

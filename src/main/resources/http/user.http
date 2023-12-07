@@ -8,7 +8,6 @@ Content-Type: application/json
   "name": "administrator",
   "address" : "111-400",
   "phoneNumber": "010-1111-1111",
-  "role" : "ADMIN"
 }
 
 ### 1.로그인후 토큰 받기
