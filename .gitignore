@@ -36,8 +36,12 @@ out/
 /nbdist/
 /.nb-gradle/
 
+### Properties ###
+application-local.yml
+
 ### VS Code ###
 .vscode/
+
 
 ### properties ###
 application-local.yml
@@ -47,3 +51,11 @@ application-dev.yml
 application-redis.yml
 ### log file ###
 *log.txt
+
+### application ###
+application.yml
+/src/main/resources/application.yml
+/src/main/resources/application-secret.yml
+/src/main/resources/application-deploy.yml
+/src/main/resources/application-common.yml
+
