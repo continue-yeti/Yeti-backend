@@ -21,7 +21,7 @@ public class Sports {
     private String sportName;
     private String matchDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "stadium_id")
     private Stadium stadium;
 

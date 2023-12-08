@@ -11,7 +11,6 @@ Content-Type: application/json
     client.log(client.global.get("access_token"));
 %}
 
-
 ### 1. 경기장 생성
 POST http://localhost:8080/api/stadiums
 Content-Type: application/json
@@ -20,3 +19,23 @@ Authorization: {{access_token}}
 {
   "stadiumName": "잠실 체육 경기장"
 }
+
+### 2. 경기장 조회
+GET http://localhost:8080/api/stadiums/1
+Content-Type: application/json
+Authorization: {{access_token}}
+
+### 3. 경기장 수정
+PUT http://localhost:8080/api/stadiums/1
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "stadiumName": "인천축구전용경기장"
+
+}
+
+### 4. 경기장 삭제
+DELETE http://localhost:8080/api/stadiums/1
+Content-Type: application/json
+Authorization: {{access_token}}

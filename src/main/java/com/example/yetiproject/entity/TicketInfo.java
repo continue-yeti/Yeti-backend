@@ -1,16 +1,10 @@
 package com.example.yetiproject.entity;
 
-import java.util.Date;
-
 import com.example.yetiproject.dto.ticketinfo.TicketInfoRequestDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -31,10 +25,10 @@ public class TicketInfo {
     private Long stock;
 
     @Column(nullable = false)
-    private Date openDate;
+    private LocalDateTime openDate;
 
     @Column(nullable = false)
-    private Date closeDate;
+    private LocalDateTime closeDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sports_id")
