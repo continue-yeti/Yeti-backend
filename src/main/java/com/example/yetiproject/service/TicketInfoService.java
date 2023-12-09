@@ -56,15 +56,13 @@ public class TicketInfoService {
 
     // 티켓 정보 찾기
     private TicketInfo findTicketInfo(Long id) {
-        TicketInfo ticketInfo = ticketInfoRepository.findById(id)
+        return ticketInfoRepository.findById(id)
                 .orElseThrow(() -> new TicketInfoNotFoundException("TicketInfo를 찾을 수 없습니다."));
-        return ticketInfo;
     }
 
     // 스포츠 정보 찾기
     private Sports findSportsInfo(Long id) {
-        Sports sports = sportsRepository.findById(id)
+        return sportsRepository.findById(id)
                 .orElseThrow(() -> new SportsNotFoundException("Sports를 찾을 수  없습니다."));
-        return sports;
     }
 }
