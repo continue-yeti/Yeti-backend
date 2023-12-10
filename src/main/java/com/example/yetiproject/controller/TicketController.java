@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/mytickets")
 public class TicketController {
 	private final TicketService ticketService;
+	private final RedissonLockTicketFacade redissonLockTicketFacade;
 
 	// 예매한 티켓 목록 조회
 	@GetMapping("")
@@ -48,7 +49,7 @@ public class TicketController {
 	@PostMapping("/reserve")
 	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
 		log.info("TicketController reserveTicket");
-		return ApiResponse.success("예매가 완료되었습니다.", RedissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
+		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
 	}
 
 	// 예매 취소
