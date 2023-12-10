@@ -2,6 +2,7 @@ package com.example.yetiproject.controller;
 
 import java.util.List;
 
+import com.example.yetiproject.facade.RedissonLockTicketFacade;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -47,7 +48,7 @@ public class TicketController {
 	@PostMapping("/reserve")
 	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
 		log.info("TicketController reserveTicket");
-		return ApiResponse.success("예매가 완료되었습니다.", ticketService.reserveTicket(userDetails.getUser(), ticketRequestDto));
+		return ApiResponse.success("예매가 완료되었습니다.", RedissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
 	}
 
 	// 예매 취소
