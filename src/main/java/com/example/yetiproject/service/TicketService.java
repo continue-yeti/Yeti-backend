@@ -39,7 +39,7 @@ public class TicketService {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 		try {
-			ticketInfo.updateStock(-1L); //좌석 차감
+			ticketInfo.updateStock(-1L); // 티켓 총 개수 차감
 			ticketRepository.save(ticket);
 		}catch (Exception e){
 			throw new TicketReserveException("예약을 할 수 없습니다.");
