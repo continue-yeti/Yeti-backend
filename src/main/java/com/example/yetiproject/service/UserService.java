@@ -2,9 +2,8 @@ package com.example.yetiproject.service;
 
 import com.example.yetiproject.dto.user.UserSignupRequestDto;
 import com.example.yetiproject.entity.User;
-import com.example.yetiproject.exception.entity.user.UserEmailDuplicatedException;
+import com.example.yetiproject.exception.entity.user.UserDuplicatedException;
 import com.example.yetiproject.exception.entity.user.UserUnauthorizedException;
-import com.example.yetiproject.exception.entity.user.UsernameDuplicatedException;
 import com.example.yetiproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,11 +24,11 @@ public class UserService {
 
 		// 이름 중복 확인
 		userRepository.findByUsername(username)
-				.ifPresent(user -> {throw new UsernameDuplicatedException("이미 사용중인 아이디입니다.");});
+				.ifPresent(user -> {throw new UserDuplicatedException("이미 사용중인 아이디입니다.");});
 
 		// 이메일 중복 확인
 		userRepository.findByEmail(email)
-				.ifPresent(user -> {throw new UserEmailDuplicatedException("이미 사용중인 이메일입니다.");});
+				.ifPresent(user -> {throw new UserDuplicatedException("이미 사용중인 이메일입니다.");});
 
 		// 비밀번호 두 개가 다르면 에러 발생
 		if (!StringUtils.equals(requestDto.getPassword(), requestDto.getPassword2())) {
