@@ -9,3 +9,4 @@ spring:
       - common
       #- deploy
       - secret
+feUrl: http://localhost:3000
