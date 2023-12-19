@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.yetiproject.facade.RedissonLockTicketFacade;
 import com.example.yetiproject.facade.WaitingQueueService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,7 +50,7 @@ public class TicketController {
 
 	// 예매 하기
 	@PostMapping("/reserve")
-	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
+	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		log.info("TicketController reserveTicket");
 //		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
 		waitingQueueService.addQueue(userDetails, ticketRequestDto);

@@ -18,20 +18,31 @@ public class TicketScheduler {
     private final RedisTemplate<String, Object> redisTemplate;
     private final WaitingQueueService waitingQueueService;
 
-//    @Scheduled(fixedDelay = 1000) // 1초마다 반복
-//    public void reserveTicket(QueueObject queueObject) {
+    @Scheduled(fixedDelay = 1000) // 1초마다 반복
+    public void reserveTicket() {
+//        if (waitingQueueService.scheduledQueueObject == null) {
+//            log.info("==== scheduledQueueObject NULL ====");
+//            return;
+//        }
+//
 //        // ticketInfo의 정보 가져오기
-//        TicketInfo ticketInfo = ticketInfoRepository.findById(queueObject.getTicketRequestDto().getTicketInfoId())
+//        TicketInfo ticketInfo = ticketInfoRepository.findById(scheduledQueueObject.getTicketInfoId())
 //                .orElseThrow(() -> new TicketInfoNotFoundException("티켓 정보를 찾을 수 없습니다."));
+//
 //        // 해당 티켓 정보에 속한 대기열의 크기 가져오기
 //        Long queueSize = redisTemplate.opsForZSet().zCard(ticketInfo.getTicketInfoId().toString());
 //
-//        if (ticketInfo.getStock() >= queueSize) {
-//            log.info("==== 티켓이 매진되었습니다. ====");
+//        if (queueSize >= ticketInfo.getStock()) {
+//            log.info("==== 티켓이 매진되었습니다. {}, {} ====", ticketInfo.getStock(), queueSize);
 //            return;
 //        }
-//        // 해당 키에 대기열 또는
-//        waitingQueueService.publish(queueObject);
-//        waitingQueueService.getOrder(queueObject);
-//    }
+//
+//        log.info("scheduledQueueObject : {}", scheduledQueueObject); // TODO: 삭제 예정
+//
+//        waitingQueueService.publish(scheduledQueueObject);
+//        waitingQueueService.getOrder(scheduledQueueObject);
+//
+//        // 처리가 끝나면 scheduledQueueObject 초기화
+//        scheduledQueueObject = null;
+    }
 }

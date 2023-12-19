@@ -11,6 +11,7 @@ import com.example.yetiproject.exception.entity.user.UserNotFoundException;
 import com.example.yetiproject.repository.TicketInfoRepository;
 import com.example.yetiproject.repository.UserRepository;
 import com.example.yetiproject.service.TicketService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,6 @@ import java.util.Set;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class WaitingQueueService {
     private final RedisTemplate<String, Object> redisTemplate;
@@ -37,18 +37,30 @@ public class WaitingQueueService {
     private static final long PUBLISH_SIZE = 10;
 
     private QueueObject scheduledQueueObject;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Queue에 추가
-    public void addQueue(UserDetailsImpl userDetails, TicketRequestDto requestDto){
-        Long ticketInfoId = requestDto.getTicketInfoId();
-        QueueObject queueObject = new QueueObject(userDetails, requestDto);
+    public Boolean addQueue(UserDetailsImpl userDetails, TicketRequestDto requestDto) throws JsonProcessingException {
+        requestDto.setUserId(userDetails.getUser().getUserId());
+        String jsonObject = objectMapper.writeValueAsString(requestDto);
         final long now = System.currentTimeMillis();
-        redisTemplate.opsForZSet().add(ticketInfoId.toString(), queueObject, (int)now);
-        log.info("대기열에 추가 - {} ({}초)", queueObject, now);
+        log.info("대기열에 추가 - userId : {} requestDto : {} ({}초)", userDetails.getUser().getUserId(), jsonObject, now);
+//KEY = "ticket"+ticketRequestDto.getTicketInfoId();
+        return redisTemplate.opsForZSet().add( "ticket", jsonObject, (int) now);
+//        Long ticketInfoId = requestDto.getTicketInfoId();
+////        QueueObject queueObject = new QueueObject(userDetails, requestDto);
+//        requestDto.setUserId(userDetails.getUser().getUserId());
+//        String jsonObject = objectMapper.writeValueAsString(requestDto);
+//
+//        String redisKey = "ticket";
+//        final long now = System.currentTimeMillis();
+//        redisTemplate.opsForZSet().add(redisKey, jsonObject, now);
+//        log.info("대기열에 추가 - Key : {}  Value : {} ({}초)", redisKey, jsonObject, now);
+//        log.info("Redis에 추가된 멤버: {}", redisTemplate.opsForZSet().range(redisKey, 0, -1));
 
         // 대기열 등록
 //        ticketScheduler.reserveTicket(queueObject); // TicketScheduler.class 안쓰면 삭제
-        setScheduledQueueObject(queueObject);
+//        setScheduledQueueObject(queueObject);
     }
 
     // scheduledQueueObject 설정하는 메서드 추가
@@ -59,7 +71,7 @@ public class WaitingQueueService {
     @Scheduled(fixedDelay = 1000) // 1초마다 반복
     public void reserveTicket() {
         if (scheduledQueueObject == null) {
-            log.info("==== scheduledQueueObject NULL ====");
+//            log.info("==== scheduledQueueObject NULL ====");
             return;
         }
 
@@ -81,7 +93,7 @@ public class WaitingQueueService {
         getOrder(scheduledQueueObject);
 
         // 처리가 끝나면 scheduledQueueObject 초기화
-        scheduledQueueObject = null;
+//        scheduledQueueObject = null;
     }
 
     // 대기자 생성
@@ -93,11 +105,11 @@ public class WaitingQueueService {
         // RedisQueue에 등록된 Key
         String key = queueObject.getTicketInfoId().toString();
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
-        Set<Object> queue = redisTemplate.opsForZSet().range(key, start, end);
+        Set<Object> queue = redisTemplate.opsForZSet().range("ticket"+key, start, end);
 
         // 대기열 상황
         for (Object data : queue) {
-            Long rank = redisTemplate.opsForZSet().rank(key, data);
+            Long rank = redisTemplate.opsForZSet().rank("ticket"+key, data);
             log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
         }
     }
