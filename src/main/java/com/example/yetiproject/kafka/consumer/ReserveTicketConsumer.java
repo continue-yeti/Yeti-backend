@@ -16,14 +16,14 @@ import org.springframework.stereotype.Component;
 public class ReserveTicketConsumer {
     private final ObjectMapper objectMapper;
     private final TicketService ticketService;
-//    @KafkaListener(topics = "ticketReserve", groupId = "ticket")
-//    public void consume(ConsumerRecord<String, String> record){
-//        try{
-//            TicketRequestDto ticketRequestDto= objectMapper.readValue(record.value(), TicketRequestDto.class);
-//            User user = User.builder().userId(ticketRequestDto.getUserId()).build();
-//            ticketService.reserveTicket(user, ticketRequestDto);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//    }
+    @KafkaListener(topics = "ticketReserve", groupId = "ticket")
+    public void consume(ConsumerRecord<String, String> record){
+        try{
+            TicketRequestDto ticketRequestDto= objectMapper.readValue(record.value(), TicketRequestDto.class);
+            User user = User.builder().userId(ticketRequestDto.getUserId()).build();
+            ticketService.reserveTicket(user, ticketRequestDto);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
