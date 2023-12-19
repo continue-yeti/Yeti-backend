@@ -9,17 +9,17 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 @Getter
-@Data // redis에서 사용할 Serializable 인터페이스를 구현
 @NoArgsConstructor
-public class QueueObject implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class QueueObject {
     private Long userId;
+    private Double now;
     private Long ticketInfoId;
     private Long posX;
     private Long posY;
 
-    public QueueObject(UserDetailsImpl userDetails, TicketRequestDto ticketRequestDto) {
+    public QueueObject(UserDetailsImpl userDetails, TicketRequestDto ticketRequestDto, double now) {
         this.userId = userDetails.getUser().getUserId();
+        this.now = now;
         this.ticketInfoId = ticketRequestDto.getTicketInfoId();
         this.posX = ticketRequestDto.getPosX();
         this.posY = ticketRequestDto.getPosY();

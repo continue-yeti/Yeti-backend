@@ -54,6 +54,7 @@ public class TicketController {
 		log.info("TicketController reserveTicket");
 //		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
 		waitingQueueService.addQueue(userDetails, ticketRequestDto);
+//		log.info("test : {}",test);
 		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
 	}
 
