@@ -42,7 +42,12 @@ public class TicketService {
 	public TicketResponseDto reserveTicket(User user, TicketRequestDto ticketRequestDto) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
+
+		log.info("Ticket state: " + entityManager.contains(ticket)); //Ticket state: false
 		ticketRepository.save(ticket);
+		log.info("Ticket state after save: " + entityManager.contains(ticket)); // Ticket state : true
+
+
 //		try {
 //			ticketInfo.updateStock(-1L); // 티켓 총 개수 차감
 //			ticketRepository.save(ticket);
