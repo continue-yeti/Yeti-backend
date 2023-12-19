@@ -3,6 +3,7 @@ package com.example.yetiproject.controller;
 import java.util.List;
 
 import com.example.yetiproject.facade.RedissonLockTicketFacade;
+import com.example.yetiproject.facade.WaitingQueueService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TicketController {
 	private final TicketService ticketService;
 	private final RedissonLockTicketFacade redissonLockTicketFacade;
+	private final WaitingQueueService waitingQueueService;
 
 	// 예매한 티켓 목록 조회
 	@GetMapping("")
@@ -49,7 +51,9 @@ public class TicketController {
 	@PostMapping("/reserve")
 	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
 		log.info("TicketController reserveTicket");
-		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
+//		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
+		waitingQueueService.addQueue(userDetails, ticketRequestDto);
+		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
 	}
 
 	// 예매 취소
