@@ -1,5 +1,6 @@
 package com.example.yetiproject.kafka.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import org.springframework.kafka.core.ProducerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j(topic = "kafkaProducerConfig")
 @Configuration
 public class KafkaProducerConfig {
 	@Value("${spring.kafka.producer.bootstrap-servers}")
