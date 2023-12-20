@@ -20,6 +20,7 @@ import com.example.yetiproject.auth.security.UserDetailsImpl;
 import com.example.yetiproject.dto.ApiResponse;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
+import com.example.yetiproject.kafka.service.TicketKafkaService;
 import com.example.yetiproject.service.TicketService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/mytickets")
 public class TicketController {
 	private final TicketService ticketService;
+	private final TicketKafkaService ticketKafkaService;
 	private final RedissonLockTicketFacade redissonLockTicketFacade;
 	private final WaitingQueueService waitingQueueService;
 
@@ -52,10 +54,13 @@ public class TicketController {
 	@PostMapping("/reserve")
 	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		log.info("TicketController reserveTicket");
-//		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
-		waitingQueueService.addQueue(userDetails, ticketRequestDto);
+		//return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
+		ticketKafkaService.sendReserveTicket(userDetails.getUser().getUserId(), ticketRequestDto);
+		return ApiResponse.success("예매가 완료되었습니다.", null);
+
+//		waitingQueueService.addQueue(userDetails, ticketRequestDto);
 //		log.info("test : {}",test);
-		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
+//		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
 	}
 
 	// 예매 취소
