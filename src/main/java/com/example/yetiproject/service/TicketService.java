@@ -39,6 +39,7 @@ public class TicketService {
 	public TicketResponseDto reserveTicket(User user, TicketRequestDto ticketRequestDto) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
 		log.info("UserId : " + user.getUserId());
+		log.info("TicketRequestDto Y: " + ticketRequestDto.getPosY());
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 		try {
 			ticketInfo.updateStock(-1L); // 티켓 총 개수 차감

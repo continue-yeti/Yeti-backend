@@ -21,6 +21,7 @@ public class ReserveTicketConsumer {
         try{
             TicketRequestDto ticketRequestDto= objectMapper.readValue(record.value(), TicketRequestDto.class);
             User user = User.builder().userId(ticketRequestDto.getUserId()).build();
+            log.info("객체 생성");
             ticketService.reserveTicket(user, ticketRequestDto);
         }catch (Exception e){
             e.printStackTrace();
