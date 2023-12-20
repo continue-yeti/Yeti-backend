@@ -3,6 +3,8 @@ package com.example.yetiproject.service;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
@@ -27,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TicketService {
 	private final TicketRepository ticketRepository;
 	private final TicketInfoRepository ticketInfoRepository;
+	private final EntityManager entityManager;
 	public List<TicketResponseDto> getUserTicketList(User user) {
 		return ticketRepository.findUserTicketList(user.getUserId()).stream().map(TicketResponseDto::new).toList();
 	}
@@ -41,12 +44,7 @@ public class TicketService {
 		log.info("UserId : " + user.getUserId());
 		log.info("TicketRequestDto Y: " + ticketRequestDto.getPosY());
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
-		try {
-			ticketInfo.updateStock(-1L); // 티켓 총 개수 차감
-			ticketRepository.save(ticket);
-		}catch (Exception e){
-			throw new TicketReserveException("예약을 할 수 없습니다.");
-		}
+		ticketRepository.save(ticket);
 		return new TicketResponseDto(ticket);
 	}
 
