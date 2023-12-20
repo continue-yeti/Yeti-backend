@@ -2,12 +2,9 @@ package com.example.yetiproject.facade;
 
 import com.example.yetiproject.auth.security.UserDetailsImpl;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
-import com.example.yetiproject.dto.ticket.TicketResponseDto;
-import com.example.yetiproject.entity.Ticket;
 import com.example.yetiproject.entity.TicketInfo;
 import com.example.yetiproject.entity.User;
 import com.example.yetiproject.exception.entity.TicketInfo.TicketInfoNotFoundException;
-import com.example.yetiproject.exception.entity.user.UserNotFoundException;
 import com.example.yetiproject.repository.TicketInfoRepository;
 import com.example.yetiproject.repository.UserRepository;
 import com.example.yetiproject.service.TicketService;
@@ -19,7 +16,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -75,19 +71,19 @@ public class WaitingQueueService {
             return;
         }
 
-        // ticketInfo의 정보 가져오기
-        TicketInfo ticketInfo = ticketInfoRepository.findById(scheduledQueueObject.getTicketInfoId())
-                .orElseThrow(() -> new TicketInfoNotFoundException("티켓 정보를 찾을 수 없습니다."));
-
-        // 해당 티켓 정보에 속한 대기열의 크기 가져오기
-        Long ticketCount = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
-        log.info("ticketCount : {}", ticketCount);
-
-        if (ticketCount >= ticketInfo.getStock()) {
-            log.info("==== 티켓이 매진되었습니다. ====");
-            // TODO: 티켓매진시 대기열도 삭제??
-            return;
-        }
+//        // ticketInfo의 정보 가져오기
+//        TicketInfo ticketInfo = ticketInfoRepository.findById(scheduledQueueObject.getTicketInfoId())
+//                .orElseThrow(() -> new TicketInfoNotFoundException("티켓 정보를 찾을 수 없습니다."));
+//
+//        // 해당 티켓 정보에 속한 대기열의 크기 가져오기
+//        Long ticketCount = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
+//        log.info("ticketCount : {}", ticketCount);
+//
+//        if (ticketCount >= ticketInfo.getStock()) {
+//            log.info("==== 티켓이 매진되었습니다. ====");
+//            // TODO: 티켓매진시 대기열도 삭제??
+//            return;
+//        }
 
         publish(scheduledQueueObject);
         getOrder(scheduledQueueObject);
@@ -127,6 +123,20 @@ public class WaitingQueueService {
 
         // 발급 시작
         for (String queue : queues) {
+            // ticketInfo의 정보 가져오기
+            TicketInfo ticketInfo = ticketInfoRepository.findById(scheduledQueueObject.getTicketInfoId())
+                    .orElseThrow(() -> new TicketInfoNotFoundException("티켓 정보를 찾을 수 없습니다."));
+
+            // 해당 티켓 정보에 속한 대기열의 크기 가져오기
+            Long ticketCount = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
+            log.info("ticketCount : {}", ticketCount);
+
+            if (ticketCount >= ticketInfo.getStock()) {
+                log.info("==== 티켓이 매진되었습니다. ====");
+                // TODO: 티켓매진시 대기열도 삭제??
+                return;
+            }
+
             // JSON 문자열을 QueueObject 객체로 변환
             ObjectMapper objectmapper = new ObjectMapper();
             QueueObject queueData = objectmapper.readValue(queue, QueueObject.class);
@@ -170,7 +180,6 @@ public class WaitingQueueService {
 
         // GET 명령어 실행 후 값을 가져오기
         String stringValue = valueOps.get(key);
-        log.info("stringValue : {}", stringValue);
 
         Long ticketCount;
         if (stringValue == null) {
