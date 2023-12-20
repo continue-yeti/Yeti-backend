@@ -13,7 +13,6 @@ public class TicketRequestDto {
 	private Long ticketInfoId;
 	private Long posX;
 	private Long posY;
-	private Long userId;
 
 	public void setUserId(Long userId) {
 		this.userId = userId;

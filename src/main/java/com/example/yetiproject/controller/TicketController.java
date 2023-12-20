@@ -52,13 +52,13 @@ public class TicketController {
 
 	// 예매 - redission
 	@PostMapping("/reserve")
-	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
 		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
 	}
 
 	// 예매 - kafka
 	@PostMapping("/reserve/kafka")
-	public ApiResponse reserveTicketKafka(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+	public ApiResponse reserveTicketKafka(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
 		ticketKafkaService.sendReserveTicket(userDetails.getUser().getUserId(), ticketRequestDto);
 		return ApiResponse.success("예매가 완료되었습니다.", null);
 	}
