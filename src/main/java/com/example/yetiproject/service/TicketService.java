@@ -19,7 +19,9 @@ import com.example.yetiproject.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TicketService {
@@ -31,12 +33,12 @@ public class TicketService {
 	public TicketResponseDto showDetailTicket(Long userId, Long ticketId) {
 		return new TicketResponseDto(ticketRepository.findUserTicket(userId, ticketId).
 				orElseThrow(() -> new TicketNotFoundException("잘못된 티켓 조회입니다.")));
-		//return new TicketResponseDto(ticketRepository.findUserShowDetailTicket(userId, ticketId));
 	}
 
 	@Transactional
 	public TicketResponseDto reserveTicket(User user, TicketRequestDto ticketRequestDto) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
+		log.info("UserId : " + user.getUserId());
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 		try {
 			ticketInfo.updateStock(-1L); // 티켓 총 개수 차감
