@@ -15,6 +15,7 @@ public class TicketKafkaService {
 	private final ReserveTicketProducer reserveTicketProducer;
 
 	public void sendReserveTicket(Long userId, TicketRequestDto ticketRequestDto){
+		log.info("Producer 데이터 보냄");
 		reserveTicketProducer.send(userId, ticketRequestDto);
 	}
 }
