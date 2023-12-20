@@ -50,17 +50,24 @@ public class TicketController {
 		return ApiResponse.success("티켓 상세 조회에 성공했습니다", ticketService.showDetailTicket(userDetails.getUser().getUserId(), ticketId));
 	}
 
-	// 예매 하기
+	// 예매 - redission
 	@PostMapping("/reserve")
 	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-		log.info("TicketController reserveTicket");
-		//return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
+		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
+	}
+
+	// 예매 - kafka
+	@PostMapping("/reserve/kafka")
+	public ApiResponse reserveTicketKafka(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		ticketKafkaService.sendReserveTicket(userDetails.getUser().getUserId(), ticketRequestDto);
 		return ApiResponse.success("예매가 완료되었습니다.", null);
+	}
 
-//		waitingQueueService.addQueue(userDetails, ticketRequestDto);
-//		log.info("test : {}",test);
-//		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
+	// 예매 - redis queue
+	@PostMapping("/reserve/queue")
+	public ApiResponse reserveTicketQueue(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+		waitingQueueService.addQueue(userDetails, ticketRequestDto);
+		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
 	}
 
 	// 예매 취소
