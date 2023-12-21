@@ -45,6 +45,9 @@ public class TicketService {
 		log.info("TicketRequestDto Y: " + ticketRequestDto.getPosY());
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 		ticketRepository.save(ticket);
+
+		ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId());
+		ticketInfo.updateStock(-1L);
 		return new TicketResponseDto(ticket);
 	}
 
