@@ -3,6 +3,7 @@ package com.example.yetiproject.facade;
 import com.example.yetiproject.auth.security.UserDetailsImpl;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
+import com.example.yetiproject.entity.Seat;
 import com.example.yetiproject.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,9 @@ public class RedissonLockTicketFacade {
 
     // 예매하기 부분에 Redisson으로 락을 걸어줌
     public TicketResponseDto reserveTicket(UserDetailsImpl userDetails, TicketRequestDto requestDto) {
-        Long ticketInfoId = requestDto.getTicketInfoId();
-        RLock lock = redissonClient.getLock(ticketInfoId.toString());
+        //Long ticketInfoId = requestDto.getTicketInfoId();
+        Seat seat = new Seat(requestDto.getPosX(), requestDto.getPosY());
+        RLock lock = redissonClient.getLock("ticket seat- " + seat);
         TicketResponseDto responseDto;
 
         try {
