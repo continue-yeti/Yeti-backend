@@ -45,8 +45,22 @@ public class TicketService {
 		log.info("TicketRequestDto Y: " + ticketRequestDto.getPosY());
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 		ticketRepository.save(ticket);
+
+		ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId());
+		ticketInfo.updateStock(-1L);
 		return new TicketResponseDto(ticket);
 	}
+
+	public TicketResponseDto reserveTicketQueue(User user, TicketRequestDto ticketRequestDto) {
+		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
+		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
+
+		log.info("Ticket state: " + entityManager.contains(ticket)); //Ticket state: false
+		ticketRepository.save(ticket);
+		log.info("Ticket state after save: " + entityManager.contains(ticket)); // Ticket state : true
+		return new TicketResponseDto(ticket);
+	}
+
 
 	@Transactional
 	public ResponseEntity cancelUserTicket(User user, Long ticketId) {

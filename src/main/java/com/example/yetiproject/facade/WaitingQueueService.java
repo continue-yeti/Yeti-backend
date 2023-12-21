@@ -152,7 +152,7 @@ public class WaitingQueueService {
             User user = User.builder().userId(queueData.getUserId()).build();
 
             // 티켓 발급
-            ticketService.reserveTicket(user, ticketRequestDto);
+            ticketService.reserveTicketQueue(user, ticketRequestDto);
             // 티켓 개수 증가
             incrementTicketCounter(COUNT_KEY + queueObject.getTicketInfoId().toString());
             log.info("'{}'님의 {}번 티켓이 발급되었습니다 (좌석 : {}, {})",
