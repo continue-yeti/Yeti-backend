@@ -41,9 +41,24 @@ public class RedissonLockTicketFacade {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-            lock.unlock();
+            //lock.unlock();
+            unlock("ticket seat- " + seat , lock);
         }
 
         return responseDto;
+    }
+
+    /**
+     * 기존에 leaseTimeoutMills 보다 작업이 오래될 경우 LOCK 이 자동적으로 풀려 IllegalMonitorException 이 발생할 수 있다.
+     */
+    private void unlock(String lockName, RLock lock){
+        try{
+            lock.unlock();
+            log.debug("[DistributedLockProvider][execute] {} 정상적으로 LOCK 해제", lockName);
+        } catch(IllegalMonitorStateException e){
+            log.error("[DistributedLockProvider][execute] {} 이미 해제된 Lock 입니다.", lockName);
+        } catch (Exception e){
+            log.error("[DistributedLockProvider][execute] {} LOCK 해제시 문제 발생", lockName, e);
+        }
     }
 }
