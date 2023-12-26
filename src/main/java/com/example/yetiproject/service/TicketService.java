@@ -51,6 +51,7 @@ public class TicketService {
 		return new TicketResponseDto(ticket);
 	}
 
+	@Transactional
 	public TicketResponseDto reserveTicketQueue(User user, TicketRequestDto ticketRequestDto) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
