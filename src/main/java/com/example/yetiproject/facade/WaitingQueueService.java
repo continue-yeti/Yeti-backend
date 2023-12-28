@@ -96,7 +96,7 @@ public class WaitingQueueService {
 
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
         Set<String> queues = redisTemplate.opsForZSet().range(KEY, start, end);
-        log.info("queue : {}", queues);
+//        log.info("queue : {}", queues);
 
         // 발급 시작
         for (String queue : queues) {
