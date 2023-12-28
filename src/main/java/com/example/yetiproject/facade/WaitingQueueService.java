@@ -35,7 +35,7 @@ public class WaitingQueueService {
     private static final long FIRST_ELEMENT = 0;
     private static final long LAST_ELEMENT = -1;
     private static final long PUBLISH_SIZE = 10;
-    private long publishSize = 10;
+    private long publishSize = 100;
     private static final String KEY = "ticket";
     private static final String COUNT_KEY = "ticket_count";
 
