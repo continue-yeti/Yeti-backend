@@ -41,8 +41,9 @@ public class RedissonLockTicketFacade {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-            //lock.unlock();
-            unlock("ticket seat- " + seat , lock);
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
 
         return responseDto;
