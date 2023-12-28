@@ -32,7 +32,7 @@ public class WaitingQueueListService {
 
     private static final long FIRST_ELEMENT = 0;
     private static final long LAST_ELEMENT = -1;
-    private static final long PUBLISH_SIZE = 10;
+    private static final long PUBLISH_SIZE = 100;
     private static final String KEY = "ticket";
     private static final String COUNT_KEY = "ticket_count";
 
@@ -93,7 +93,7 @@ public class WaitingQueueListService {
         for (String data : queue) {
 //            Long rank = redisTemplate.opsForZSet().rank(KEY+key, data);
             Long rank = redisTemplate.opsForList().indexOf(KEY+key, data);
-            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
+//            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
         }
     }
 
@@ -118,12 +118,11 @@ public class WaitingQueueListService {
 
             // 해당 티켓 정보에 속한 대기열의 크기 가져오기
             Long ticketCount = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
-            log.info("ticketCount : {}", ticketCount);
+//            log.info("ticketCount : {}", ticketCount);
 
             if (ticketCount >= ticketInfo.getStock()) {
                 log.info("==== 티켓이 매진되었습니다. ====");
                 log.info("queue end : {}", System.currentTimeMillis());
-                // TODO: 티켓매진시 대기열도 삭제??
                 return;
             }
 
@@ -145,12 +144,12 @@ public class WaitingQueueListService {
             ticketService.reserveTicketQueue(user, ticketRequestDto);
             // 티켓 개수 증가
             incrementTicketCounter(COUNT_KEY + queueObject.getTicketInfoId().toString());
-            log.info("'{}'님의 {}번 티켓이 발급되었습니다 (좌석 : {}, {})",
+            /*log.info("'{}'님의 {}번 티켓이 발급되었습니다 (좌석 : {}, {})",
                     user.getUserId(),
                     queueData.getTicketInfoId(),
                     queueData.getPosX(),
                     queueData.getPosY());
-
+            */
             // 대기열 제거
 //            redisTemplate.opsForZSet().remove(key, queue);
             redisTemplate.opsForList().leftPop(key);
