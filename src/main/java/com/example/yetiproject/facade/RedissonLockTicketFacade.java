@@ -39,7 +39,9 @@ public class RedissonLockTicketFacade {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-            lock.unlock();
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
 
         return responseDto;
