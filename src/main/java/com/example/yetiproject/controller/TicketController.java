@@ -55,6 +55,7 @@ public class TicketController {
 	// 예매 - redisson
 	@PostMapping("/reserve")
 	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
+		log.info("User 인증");
 		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
 	}
 
