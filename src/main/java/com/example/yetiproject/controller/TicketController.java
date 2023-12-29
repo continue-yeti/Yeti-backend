@@ -76,7 +76,7 @@ public class TicketController {
 
 	@PostMapping("/reserve/queueList")
 	public ApiResponse reserveTicketQueueList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-		log.info("queue start : {}", System.currentTimeMillis());
+//		log.info("queue start : {}", System.currentTimeMillis());
 		waitingQueueListService.addQueue(userDetails, ticketRequestDto);
 		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
 	}
