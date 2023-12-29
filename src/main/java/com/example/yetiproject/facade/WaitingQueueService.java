@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Set;
 
 @Slf4j
@@ -55,7 +56,9 @@ public class WaitingQueueService {
 
         // redis에 저장
         redisTemplate.opsForZSet().add(KEY, jsonString, now);
-        log.info("대기열에 추가 - Key : {}  Value : {} ({}초)", KEY, jsonString, now);
+        final long nowTime = System.currentTimeMillis();
+        Date currentDate = new Date(nowTime);
+        log.info("대기열에 추가 - Key : {}  Value : {} ({}초)", KEY, jsonString, currentDate);
     }
 
     @Scheduled(fixedDelay = 1000) // 1초마다 반복
@@ -84,7 +87,7 @@ public class WaitingQueueService {
         // 대기열 상황
         for (String data : queue) {
             Long rank = redisTemplate.opsForZSet().rank(KEY, data);
-            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
+            //log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
         }
     }
 
@@ -110,11 +113,13 @@ public class WaitingQueueService {
 
             // 해당 티켓 정보에 속한 대기열의 크기 가져오기
             Long ticketCount = getTicketCounter(COUNT_KEY);
-            log.info("ticketCount : {}", ticketCount);
+//            log.info("ticketCount : {}", ticketCount);
 
             if (ticketCount >= ticketInfo.getStock()) {
                 log.info("==== 티켓이 매진되었습니다. ====");
-                log.info("queue end : {}", System.currentTimeMillis());
+                final long now = System.currentTimeMillis();
+                Date currentDate = new Date(now);
+                log.info("queue end : {}", currentDate);
                 return;
             }
 
@@ -132,11 +137,12 @@ public class WaitingQueueService {
             ticketService.reserveTicketQueue(user, ticketRequestDto);
             // 티켓 개수 증가
             incrementTicketCounter(COUNT_KEY + queueData.getTicketInfoId().toString());
+            /*
             log.info("'{}'님의 {}번 티켓이 발급되었습니다 (좌석 : {}, {})",
                     user.getUserId(),
                     queueData.getTicketInfoId(),
                     queueData.getPosX(),
-                    queueData.getPosY());
+                    queueData.getPosY());*/
 
             // 대기열 제거
             redisTemplate.opsForZSet().remove(KEY, queue);
