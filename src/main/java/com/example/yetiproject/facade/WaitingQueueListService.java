@@ -50,8 +50,8 @@ public class WaitingQueueListService {
         String redisKey = KEY + requestDto.getTicketInfoId();
 
         // redis에 저장
-        redisTemplate.opsForZSet().add(redisKey, jsonString, now);
-//        redisTemplate.opsForList().rightPush(redisKey, jsonString);
+//        redisTemplate.opsForZSet().add(redisKey, jsonString, now);
+        redisTemplate.opsForList().rightPush(redisKey, jsonString);
         final long nowTime = System.currentTimeMillis();
         Date currentDate = new Date(nowTime);
         log.info("대기열에 추가 - Key : {}  Value : {} ({}초)", redisKey, jsonString, currentDate);
@@ -88,13 +88,13 @@ public class WaitingQueueListService {
         // RedisQueue에 등록된 Key
         String key = queueObject.getTicketInfoId().toString();
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
-        Set<String> queue = redisTemplate.opsForZSet().range(KEY+key, start, end);
-//        List<String> queue = redisTemplate.opsForList().range(KEY+key, start, end);
+//        Set<String> queue = redisTemplate.opsForZSet().range(KEY+key, start, end);
+        List<String> queue = redisTemplate.opsForList().range(KEY+key, start, end);
 
         // 대기열 상황
         for (String data : queue) {
-            Long rank = redisTemplate.opsForZSet().rank(KEY+key, data);
-//            Long rank = redisTemplate.opsForList().indexOf(KEY+key, data);
+//            Long rank = redisTemplate.opsForZSet().rank(KEY+key, data);
+            Long rank = redisTemplate.opsForList().indexOf(KEY+key, data);
 //            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
         }
     }
@@ -108,8 +108,8 @@ public class WaitingQueueListService {
         // RedisQueue에 등록된 Key
         String key = KEY + queueObject.getTicketInfoId().toString();
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
-        Set<String> queues = redisTemplate.opsForZSet().range(key, start, end);
-//        List<String> queues = redisTemplate.opsForList().range(key, start, end);
+//        Set<String> queues = redisTemplate.opsForZSet().range(key, start, end);
+        List<String> queues = redisTemplate.opsForList().range(key, start, end);
 //        log.info("queue : {}", queues);
 
         // 발급 시작
@@ -153,8 +153,8 @@ public class WaitingQueueListService {
                     queueData.getPosY());
             */
             // 대기열 제거
-            redisTemplate.opsForZSet().remove(key, queue);
-//            redisTemplate.opsForList().leftPop(key);
+//            redisTemplate.opsForZSet().remove(key, queue);
+            redisTemplate.opsForList().leftPop(key);
         }
     }
 
