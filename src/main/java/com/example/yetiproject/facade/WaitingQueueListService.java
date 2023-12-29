@@ -28,8 +28,6 @@ public class WaitingQueueListService {
     private final RedisTemplate<String, String> redisTemplate;
     private final TicketService ticketService;
     private final TicketInfoRepository ticketInfoRepository;
-    private final UserRepository userRepository;
-
     private static final long FIRST_ELEMENT = 0;
     private static final long LAST_ELEMENT = -1;
     private static final long PUBLISH_SIZE = 100;
@@ -40,11 +38,12 @@ public class WaitingQueueListService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Queue에 추가
-    public void addQueue(UserDetailsImpl userDetails, TicketRequestDto requestDto) throws JsonProcessingException {
+    public void addQueue(User user, TicketRequestDto requestDto) throws JsonProcessingException {
+
         final double now = System.currentTimeMillis();
         // DTO 객체를 JSON 문자열로 변환
-        requestDto.setUserId(userDetails.getUser().getUserId());
-        requestDto.setNow(now);
+        requestDto.setUserId(user.getUserId());
+        //requestDto.setNow(now);
         String jsonString = objectMapper.writeValueAsString(requestDto);
         String redisKey = KEY + requestDto.getTicketInfoId();
 
