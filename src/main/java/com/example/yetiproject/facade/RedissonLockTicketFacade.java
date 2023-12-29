@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 @Component
-@Slf4j(topic = "예매하기")
+@Slf4j(topic = "redisson")
 @RequiredArgsConstructor
 public class RedissonLockTicketFacade {
 
@@ -29,11 +29,12 @@ public class RedissonLockTicketFacade {
         try {
             // lock 획득 시도 시간, lock 점유 시간
             boolean available = lock.tryLock(30, 1, TimeUnit.SECONDS);
-
+            log.info("lock 획득 시도");
             if (!available) {
                 log.info("lock 획득 실패");
                 return new TicketResponseDto();
             }
+            log.info("lock 획득 성공");
             responseDto = ticketService.reserveTicket(userDetails.getUser(), requestDto);
 
         } catch (InterruptedException e) {
