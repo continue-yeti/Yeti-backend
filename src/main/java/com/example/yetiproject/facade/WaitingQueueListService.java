@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -51,7 +52,9 @@ public class WaitingQueueListService {
         // redis에 저장
 //        redisTemplate.opsForZSet().add(redisKey, jsonString, now);
         redisTemplate.opsForList().rightPush(redisKey, jsonString);
-        log.info("대기열에 추가 - Key : {}  Value : {} ({}초)", redisKey, jsonString, now);
+        final long nowTime = System.currentTimeMillis();
+        Date currentDate = new Date(nowTime);
+        log.info("대기열에 추가 - Key : {}  Value : {} ({}초)", redisKey, jsonString, currentDate);
 
         // JSON 문자열을 QueueObject 객체로 변환
         ObjectMapper objectmapper = new ObjectMapper();
@@ -108,7 +111,7 @@ public class WaitingQueueListService {
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
 //        Set<String> queues = redisTemplate.opsForZSet().range(key, start, end);
         List<String> queues = redisTemplate.opsForList().range(key, start, end);
-        log.info("queue : {}", queues);
+//        log.info("queue : {}", queues);
 
         // 발급 시작
         for (String queue : queues) {
