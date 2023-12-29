@@ -44,7 +44,7 @@ public class WaitingQueueService {
 
     // Queue에 추가
     public void addQueue(UserDetailsImpl userDetails, TicketRequestDto requestDto) throws JsonProcessingException {
-        final double now = System.currentTimeMillis();
+        final Long now = System.currentTimeMillis();
         // DTO 객체를 JSON 문자열로 변환
 //        requestDto.setUserId(userDetails.getUser().getUserId());
         requestDto.setNow(now);
@@ -61,20 +61,20 @@ public class WaitingQueueService {
         log.info("대기열에 추가 - Key : {}  Value : {} ({}초)", KEY, jsonString, currentDate);
     }
 
-    @Scheduled(fixedDelay = 1000) // 1초마다 반복
-    public void reserveTicket() throws JsonProcessingException {
-        // 동적으로 publishSize를 조절
-//        Long requestSize = redisTemplate.opsForZSet().zCard(KEY);
-//        if (requestSize > 1000) {
-//            setPublishSize(1000);
-//        } else if (requestSize > 100) {
-//            setPublishSize(100);
-//        } else {
-//            setPublishSize(10);
-//        }
-        publish();
-        getOrder();
-    }
+//    @Scheduled(fixedDelay = 1000) // 1초마다 반복
+//    public void reserveTicket() throws JsonProcessingException {
+//        // 동적으로 publishSize를 조절
+////        Long requestSize = redisTemplate.opsForZSet().zCard(KEY);
+////        if (requestSize > 1000) {
+////            setPublishSize(1000);
+////        } else if (requestSize > 100) {
+////            setPublishSize(100);
+////        } else {
+////            setPublishSize(10);
+////        }
+//        publish();
+//        getOrder();
+//    }
 
     // 대기열 생성
     public void getOrder(){
@@ -104,15 +104,14 @@ public class WaitingQueueService {
         // 발급 시작
         for (String queue : queues) {
             // JSON 문자열을 QueueObject 객체로 변환
-            ObjectMapper objectmapper = new ObjectMapper();
-            QueueObject queueData = objectmapper.readValue(queue, QueueObject.class);
+            QueueObject queueData = objectMapper.readValue(queue, QueueObject.class);
 
             // ticketInfo의 정보 가져오기
             TicketInfo ticketInfo = ticketInfoRepository.findById(queueData.getTicketInfoId())
                     .orElseThrow(() -> new TicketInfoNotFoundException("티켓 정보를 찾을 수 없습니다."));
 
             // 해당 티켓 정보에 속한 대기열의 크기 가져오기
-            Long ticketCount = getTicketCounter(COUNT_KEY);
+            Long ticketCount = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
 //            log.info("ticketCount : {}", ticketCount);
 
             if (ticketCount >= ticketInfo.getStock()) {
