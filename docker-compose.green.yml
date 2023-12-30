@@ -6,7 +6,7 @@ services:
       - "8082:8080"
     container_name: seniors-green
     environment:
-      - REDIS_HOST = 13.209.247.218
+      - REDIS_HOST = 43.203.78.235
       - REDIS_PORT = 6379
 volumes:
   redis_data:
