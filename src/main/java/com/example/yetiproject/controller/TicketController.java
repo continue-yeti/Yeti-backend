@@ -1,31 +1,20 @@
 package com.example.yetiproject.controller;
 
-import java.util.List;
-
-import com.example.yetiproject.facade.RedissonLockTicketFacade;
-import com.example.yetiproject.facade.WaitingQueueListService;
-import com.example.yetiproject.facade.WaitingQueueService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.example.yetiproject.auth.security.UserDetailsImpl;
 import com.example.yetiproject.dto.ApiResponse;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
-import com.example.yetiproject.kafka.service.TicketKafkaService;
+import com.example.yetiproject.facade.RedissonLockTicketFacade;
+import com.example.yetiproject.facade.WaitingQueueListService;
+import com.example.yetiproject.facade.WaitingQueueService;
 import com.example.yetiproject.service.TicketService;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j(topic = "Ticket Controller")
 @RestController
@@ -33,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/mytickets")
 public class TicketController {
 	private final TicketService ticketService;
-	private final TicketKafkaService ticketKafkaService;
+//	private final TicketKafkaService ticketKafkaService;
 	private final RedissonLockTicketFacade redissonLockTicketFacade;
 	private final WaitingQueueService waitingQueueService;
 	private final WaitingQueueListService waitingQueueListService;
@@ -59,11 +48,11 @@ public class TicketController {
 	}
 
 	// 예매 - kafka
-	@PostMapping("/reserve/kafka")
-	public ApiResponse reserveTicketKafka(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
-		ticketKafkaService.sendReserveTicket(userDetails.getUser().getUserId(), ticketRequestDto);
-		return ApiResponse.success("예매가 완료되었습니다.", null);
-	}
+//	@PostMapping("/reserve/kafka")
+//	public ApiResponse reserveTicketKafka(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
+//		ticketKafkaService.sendReserveTicket(userDetails.getUser().getUserId(), ticketRequestDto);
+//		return ApiResponse.success("예매가 완료되었습니다.", null);
+//	}
 
 	// 예매 - redis queue
 	@PostMapping("/reserve/queue")
