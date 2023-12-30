@@ -41,8 +41,6 @@ public class TicketService {
 	@Transactional
 	public TicketResponseDto reserveTicket(User user, TicketRequestDto ticketRequestDto) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
-		log.info("UserId : " + user.getUserId());
-		log.info("TicketRequestDto Y: " + ticketRequestDto.getPosY());
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 		ticketRepository.save(ticket);
 
