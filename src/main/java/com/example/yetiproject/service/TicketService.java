@@ -41,7 +41,8 @@ public class TicketService {
 	@Transactional
 	public TicketResponseDto reserveTicket(User user, TicketRequestDto ticketRequestDto) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
-		log.info("ticketRequestDto 좌석 : " + ticketRequestDto.getPosX() + " , " + ticketRequestDto.getPosY());
+
+		// log.info("ticketRequestDto 좌석 : " + ticketRequestDto.getPosX() + " , " + ticketRequestDto.getPosY());
 
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 		ticketRepository.save(ticket);
@@ -57,6 +58,7 @@ public class TicketService {
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 
 		ticketRepository.save(ticket);
+//		log.info("{}, {} 티켓 발급에 성공하였습니다.", ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
 		return new TicketResponseDto(ticket);
 	}
 

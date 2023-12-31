@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class TicketRequestDto {
 	private Long userId;
+	private Long now;
 	private Long ticketInfoId;
 	private Long posX;
 	private Long posY;

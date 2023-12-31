@@ -20,6 +20,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -80,20 +81,20 @@ public class WaitingQueueService {
         log.info("waitingQueueService" + "ticketInfo" + ticketInfoId + " : setting");
     }
 
-    @Scheduled(fixedDelay = 1000) // 1초마다 반복
-    public void reserveTicket() throws JsonProcessingException {
-        // 동적으로 publishSize를 조절
-//        Long requestSize = redisTemplate.opsForZSet().zCard(KEY);
-//        if (requestSize > 1000) {
-//            setPublishSize(1000);
-//        } else if (requestSize > 100) {
-//            setPublishSize(100);
-//        } else {
-//            setPublishSize(10);
-//        }
-        publish();
-        getOrder();
-    }
+//    @Scheduled(fixedDelay = 1000) // 1초마다 반복
+//    public void reserveTicket() throws JsonProcessingException {
+//        // 동적으로 publishSize를 조절
+////        Long requestSize = redisTemplate.opsForZSet().zCard(KEY);
+////        if (requestSize > 1000) {
+////            setPublishSize(1000);
+////        } else if (requestSize > 100) {
+////            setPublishSize(100);
+////        } else {
+////            setPublishSize(10);
+////        }
+//        publish();
+//        getOrder();
+//    }
 
     // 대기열 생성
     public void getOrder(){
@@ -138,13 +139,13 @@ public class WaitingQueueService {
             User user = User.builder().userId(ticketRequestDto.getUserId()).build();
             ticketService.reserveTicketQueue(user, ticketRequestDto);
             // 티켓 개수 증가
-            incrementTicketCounter("ticketInfo" + ticketRequestDto.getTicketInfoId() + "_cnt");
+            incrementTicketCounter("ticketInfo" + ti12312cketRequestDto.getTicketInfoId() + "_cnt");
+            /*
             log.info("'{}'님의 {}번 티켓이 발급되었습니다 (좌석 : {}, {})",
                     user.getUserId(),
-                    ticketRequestDto.getTicketInfoId(),
-                    ticketRequestDto.getPosX(),
-                    ticketRequestDto.getPosY());
-
+                    queueData.getTicketInfoId(),
+                    queueData.getPosX(),
+                    queueData.getPosY());*/
             // 대기열 제거
             redisRepository.zRemove(KEY, ticketRequest);
             return;

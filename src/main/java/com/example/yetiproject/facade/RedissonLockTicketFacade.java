@@ -27,12 +27,12 @@ public class RedissonLockTicketFacade {
         Long ticketInfoId = requestDto.getTicketInfoId();
         RLock lock = redissonClient.getLock(ticketInfoId.toString());
         TicketResponseDto responseDto;
-
-        log.info("try 전");
+      
+        log.info("lock 획득 시도");
         try {
             // lock 획득 시도 시간, lock 점유 시간
-            boolean available = lock.tryLock(20, 1, TimeUnit.SECONDS);
-            log.info("lock 획득 시도");
+            boolean available = lock.tryLock(30, 1, TimeUnit.SECONDS);
+
             if (!available) {
                 log.info("lock 획득 실패");
                 return new TicketResponseDto();
