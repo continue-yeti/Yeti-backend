@@ -52,7 +52,7 @@ public class WaitingQueueListService {
         // redis에 저장
         redisTemplate.opsForList().rightPush(KEY, jsonString);
 
-        log.info("대기열에 추가 - Value : {} ({}초)", jsonString, nowTime);
+//        log.info("대기열에 추가 - Value : {} ({}초)", jsonString, nowTime);
     }
 
     @Scheduled(fixedDelay = 1000) // 1초마다 반복
@@ -73,7 +73,7 @@ public class WaitingQueueListService {
         // 대기열 상황
         for (String data : queue) {
             Long rank = redisTemplate.opsForList().indexOf(KEY, data);
-            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
+//            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
         }
     }
 
