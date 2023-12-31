@@ -139,7 +139,7 @@ public class WaitingQueueService {
             User user = User.builder().userId(ticketRequestDto.getUserId()).build();
             ticketService.reserveTicketQueue(user, ticketRequestDto);
             // 티켓 개수 증가
-            incrementTicketCounter("ticketInfo" + ti12312cketRequestDto.getTicketInfoId() + "_cnt");
+            incrementTicketCounter("ticketInfo" + ticketRequestDto.getTicketInfoId() + "_cnt");
             /*
             log.info("'{}'님의 {}번 티켓이 발급되었습니다 (좌석 : {}, {})",
                     user.getUserId(),
