@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ### 1.로그인후 토큰 받기 - EC2
-POST http://13.209.247.218/api/user/signin
+POST https://yetiyt.shop/api/user/signin
 Content-Type: application/json
 
 {
