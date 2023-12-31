@@ -6,6 +6,7 @@ import com.example.yetiproject.entity.TicketInfo;
 import com.example.yetiproject.entity.User;
 import com.example.yetiproject.exception.entity.Ticket.TicketDuplicateSeatException;
 import com.example.yetiproject.exception.entity.TicketInfo.TicketInfoNotFoundException;
+import com.example.yetiproject.facade.repository.RedisRepository;
 import com.example.yetiproject.repository.TicketInfoRepository;
 import com.example.yetiproject.repository.TicketRepository;
 import com.example.yetiproject.repository.UserRepository;
@@ -19,15 +20,19 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class WaitingQueueService {
-    private final RedisTemplate<String, String> redisTemplate;
+    //private final RedisTemplate<String, String> redisTemplate;
     //    private final TicketScheduler ticketScheduler;
+    private final RedisRepository redisRepository;
     private final TicketService ticketService;
     private final TicketInfoRepository ticketInfoRepository;
     private final UserRepository userRepository;
@@ -39,26 +44,41 @@ public class WaitingQueueService {
     private long publishSize = 100;
     private static final String KEY = "ticket";
     private static final String COUNT_KEY = "ticket_count";
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     // Queue에 추가
-    public void addQueue(UserDetailsImpl userDetails, TicketRequestDto requestDto) throws JsonProcessingException {
-        final Long now = System.currentTimeMillis();
-        // DTO 객체를 JSON 문자열로 변환
-//        requestDto.setUserId(userDetails.getUser().getUserId());
-        requestDto.setNow(now);
-        String jsonString = objectMapper.writeValueAsString(requestDto);
+    public Boolean registerQueue(User user, TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+        // 해당 TicketInfo 객체를 생성한다.
+        TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
 
-        // 이미 저장된 좌석인지 확인
-//        ticketRepository.findByTicketPosition(requestDto.getTicketInfoId(), requestDto.getPosX(), requestDto.getPosY())
-//                .ifPresent(ticket -> {throw new TicketDuplicateSeatException("이미 지정된 좌석입니다.");});
+        // 오픈날짜 종료날짜를 체크한다.
+        if(checkTicketInfoDate(ticketInfo.getOpenDate(), ticketInfo.getCloseDate()) == false){
+            log.info("예매가능한 날짜가 아닙니다.");
+            return false;
+        }
 
+        // redis ticketInfo check
+        setTicketStock(ticketInfo.getTicketInfoId(), ticketInfo.getStock());
+
+        // DTO 객체를 JSON 문자열로 반환
+        // TODO. Controller에서 다른곳에서 User을 쓰는지 보고 안쓰면 userDetails 객체가 아닌 아이디만 넘어오도록 해야한다.
+        ticketRequestDto.setUserId(user.getUserId());
+        String jsonObject = objectMapper.writeValueAsString(ticketRequestDto);
+
+        final double now = System.currentTimeMillis();
         // redis에 저장
-        redisTemplate.opsForZSet().add(KEY, jsonString, now);
-        final long nowTime = System.currentTimeMillis();
-        Date currentDate = new Date(nowTime);
-        log.info("대기열에 추가 - Key : {}  Value : {} ({}초)", KEY, jsonString, currentDate);
+        log.info("대기열에 추가 - Key : {}  Value : {} ({}초)", KEY, jsonObject, now);
+        return redisRepository.zAddIfAbsent("ticket", jsonObject, now);
+    }
+
+    public void setTicketStock(Long ticketInfoId, Long stock) throws JsonProcessingException {
+        // Redis에 해당 stock가 없으면 redis에 넣기
+        if(redisRepository.get("ticketInfo"+ticketInfoId)==null){
+            // Redis에 해당 stock가 없으면 redis에 넣는다.
+            redisRepository.set("ticketInfo"+ticketInfoId, String.valueOf(stock));
+            redisRepository.set("ticketInfo"+ticketInfoId+"_cnt", String.valueOf(0));
+        }
+        log.info("waitingQueueService" + "ticketInfo" + ticketInfoId + " : setting");
     }
 
 //    @Scheduled(fixedDelay = 1000) // 1초마다 반복
@@ -83,11 +103,13 @@ public class WaitingQueueService {
         final long end = LAST_ELEMENT;
 
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
-        Set<String> queue = redisTemplate.opsForZSet().range(KEY, start, end);
+        //Set<String> queue = redisTemplate.opsForZSet().range(KEY, start, end);
+        Set<String> queue = redisRepository.zRange(KEY, start, end);
         // 대기열 상황
         for (String data : queue) {
-            Long rank = redisTemplate.opsForZSet().rank(KEY, data);
-            //log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
+            //Long rank = redisTemplate.opsForZSet().rank(KEY, data);
+            Long rank = redisRepository.zRank(KEY, data);
+            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
         }
     }
 
@@ -97,84 +119,78 @@ public class WaitingQueueService {
         final long start = FIRST_ELEMENT;
         final long end = publishSize - 1;
 
-        // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
-        Set<String> queues = redisTemplate.opsForZSet().range(KEY, start, end);
-//        log.info("queue : {}", queues);
+        Set<String> queues = redisRepository.zRange(KEY, start, end);
 
         // 발급 시작
-        for (String queue : queues) {
-            // JSON 문자열을 QueueObject 객체로 변환
-            QueueObject queueData = objectMapper.readValue(queue, QueueObject.class);
+        for (String ticketRequest : queues) {
+            // JSON 문자열을 ticketRequestDto로 바꾼다.
+            TicketRequestDto ticketRequestDto = objectMapper.readValue(ticketRequest, TicketRequestDto.class);
 
-            // ticketInfo의 정보 가져오기
-            TicketInfo ticketInfo = ticketInfoRepository.findById(queueData.getTicketInfoId())
-                    .orElseThrow(() -> new TicketInfoNotFoundException("티켓 정보를 찾을 수 없습니다."));
+            //log.info(redisRepository.get("ticketInfo"+ticketRequestDto.getTicketInfoId()+"_cnt"));
+            //log.info(redisRepository.get("ticketInfo"+ticketRequestDto.getTicketInfoId()));
 
-            // 해당 티켓 정보에 속한 대기열의 크기 가져오기
-            Long ticketCount = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
-//            log.info("ticketCount : {}", ticketCount);
-
-            if (ticketCount >= ticketInfo.getStock()) {
-                log.info("==== 티켓이 매진되었습니다. ====");
-                final long now = System.currentTimeMillis();
-                Date currentDate = new Date(now);
-                log.info("queue end : {}", currentDate);
+            if ( Integer.parseInt(redisRepository.get("ticketInfo"+ticketRequestDto.getTicketInfoId()+"_cnt")) ==
+                Integer.parseInt(redisRepository.get("ticketInfo"+ticketRequestDto.getTicketInfoId())) ){
+                log.info("매진입니다.");
                 return;
             }
 
-            // 티켓 발급을 위한 TicketRequestDto 생성
-            TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
-                    .ticketInfoId(queueData.getTicketInfoId())
-                    .posX(queueData.getPosX())
-                    .posY(queueData.getPosY())
-                    .build();
-
-            // 티켓 발급을 위한 User build
-            User user = User.builder().userId(queueData.getUserId()).build();
-
             // 티켓 발급
+            User user = User.builder().userId(ticketRequestDto.getUserId()).build();
             ticketService.reserveTicketQueue(user, ticketRequestDto);
             // 티켓 개수 증가
-            incrementTicketCounter(COUNT_KEY + queueData.getTicketInfoId().toString());
+            incrementTicketCounter("ticketInfo" + ti12312cketRequestDto.getTicketInfoId() + "_cnt");
             /*
             log.info("'{}'님의 {}번 티켓이 발급되었습니다 (좌석 : {}, {})",
                     user.getUserId(),
                     queueData.getTicketInfoId(),
                     queueData.getPosX(),
                     queueData.getPosY());*/
-
             // 대기열 제거
-            redisTemplate.opsForZSet().remove(KEY, queue);
+            redisRepository.zRemove(KEY, ticketRequest);
+            return;
         }
     }
 
     // 예매한 티켓 개수 증가
-    public void incrementTicketCounter(String key) {
-        // ValueOperations를 이용하여 INCR 명령어 실행
-        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
-        valueOps.increment(key);
+    public Long incrementTicketCounter(String key) {
+        return redisRepository.increase(key);
     }
 
     // 예매한 티켓 개수 GET
-    public Long getTicketCounter(String key) {
-        // ValueOperations를 이용하여 GET 명령어 실행
-        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+    // public Long getTicketCounter(String key) {
+    //     // ValueOperations를 이용하여 GET 명령어 실행
+    //     ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+    //
+    //     // GET 명령어 실행 후 값을 가져오기
+    //     String stringValue = valueOps.get(key);
+    //
+    //     Long ticketCount;
+    //     if (stringValue == null) {
+    //         // 키가 없을 경우 초기값 설정
+    //         ticketCount = 0L;
+    //     } else {
+    //         ticketCount = Long.parseLong(stringValue);
+    //     }
+    //     return ticketCount;
+    // }
 
-        // GET 명령어 실행 후 값을 가져오기
-        String stringValue = valueOps.get(key);
+    // // 요청 수에 따른 동적으로 처리 개수 변경
+    // public void setPublishSize(int publishSize) {
+    //     this.publishSize = publishSize;
+    // }
 
-        Long ticketCount;
-        if (stringValue == null) {
-            // 키가 없을 경우 초기값 설정
-            ticketCount = 0L;
-        } else {
-            ticketCount = Long.parseLong(stringValue);
+    //오픈날짜 종료날짜를 확인
+    public Boolean checkTicketInfoDate(LocalDateTime openDate, LocalDateTime closeDate){
+        LocalDateTime today = LocalDateTime.now(); //현재시간
+
+        if(
+            (ChronoUnit.SECONDS.between(openDate, today) > 0) &&
+                (ChronoUnit.SECONDS.between(today, closeDate) > 0)
+        ){
+            log.info("티켓 예약이 가능합니다.");
+            return true;
         }
-        return ticketCount;
-    }
-
-    // 요청 수에 따른 동적으로 처리 개수 변경
-    public void setPublishSize(int publishSize) {
-        this.publishSize = publishSize;
+        return false;
     }
 }

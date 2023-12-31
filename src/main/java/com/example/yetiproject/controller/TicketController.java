@@ -57,15 +57,15 @@ public class TicketController {
 	// 예매 - redis queue
 	@PostMapping("/reserve/queue")
 	public ApiResponse reserveTicketQueue(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-		log.info("queue start : {}", System.currentTimeMillis());
-		waitingQueueService.addQueue(userDetails, ticketRequestDto);
+		//log.info("queue start : {}", System.currentTimeMillis());
+		waitingQueueService.registerQueue(userDetails.getUser(), ticketRequestDto);
 		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
 	}
 
 	@PostMapping("/reserve/queueList")
 	public ApiResponse reserveTicketQueueList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+		waitingQueueListService.addQueue(userDetails.getUser(), ticketRequestDto);
 //		log.info("queue start : {}", System.currentTimeMillis());
-		waitingQueueListService.addQueue(userDetails, ticketRequestDto);
 		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
 	}
 
