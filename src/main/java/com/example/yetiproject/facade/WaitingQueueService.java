@@ -125,7 +125,6 @@ public class WaitingQueueService {
             User user = User.builder().userId(ticketRequestDto.getUserId()).build();
             ticketService.reserveTicketQueue(user, ticketRequestDto);
             // 티켓 개수 증가
-
             incrementTicketCounter(COUNT_KEY + queueObject.getTicketInfoId().toString());
             // 대기열 제거
             redisTemplate.opsForZSet().remove(KEY);
