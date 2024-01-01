@@ -4,10 +4,8 @@ import com.example.yetiproject.auth.security.UserDetailsImpl;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.entity.TicketInfo;
 import com.example.yetiproject.entity.User;
-import com.example.yetiproject.exception.entity.Ticket.TicketDuplicateSeatException;
 import com.example.yetiproject.exception.entity.TicketInfo.TicketInfoNotFoundException;
 import com.example.yetiproject.repository.TicketInfoRepository;
-import com.example.yetiproject.repository.TicketRepository;
 import com.example.yetiproject.repository.UserRepository;
 import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,75 +17,63 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Set;
+
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class WaitingQueueService {
     private final RedisTemplate<String, String> redisTemplate;
-    //    private final TicketScheduler ticketScheduler;
     private final TicketService ticketService;
     private final TicketInfoRepository ticketInfoRepository;
     private final UserRepository userRepository;
-    private final TicketRepository ticketRepository;
 
     private static final long FIRST_ELEMENT = 0;
     private static final long LAST_ELEMENT = -1;
-    private static final long PUBLISH_SIZE = 10;
-    private long publishSize = 100;
+    private static final long PUBLISH_SIZE = 100;
     private static final String KEY = "ticket";
     private static final String COUNT_KEY = "ticket_count";
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Queue에 추가
     public void addQueue(UserDetailsImpl userDetails, TicketRequestDto requestDto) throws JsonProcessingException {
-        final Long now = System.currentTimeMillis();
         // DTO 객체를 JSON 문자열로 변환
-//        requestDto.setUserId(userDetails.getUser().getUserId());
+        final long now = System.currentTimeMillis();
+        LocalDateTime nowTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.systemDefault());
+
+        requestDto.setUserId(userDetails.getUser().getUserId());
         requestDto.setNow(now);
         String jsonString = objectMapper.writeValueAsString(requestDto);
 
-        // 이미 저장된 좌석인지 확인
-//        ticketRepository.findByTicketPosition(requestDto.getTicketInfoId(), requestDto.getPosX(), requestDto.getPosY())
-//                .ifPresent(ticket -> {throw new TicketDuplicateSeatException("이미 지정된 좌석입니다.");});
-
         // redis에 저장
         redisTemplate.opsForZSet().add(KEY, jsonString, now);
-        final long nowTime = System.currentTimeMillis();
-        Date currentDate = new Date(nowTime);
-        log.info("대기열에 추가 - Key : {}  Value : {} ({}초)", KEY, jsonString, currentDate);
+
+//        log.info("대기열에 추가 - Value : {} ({}초)", jsonString, nowTime);
     }
 
-//    @Scheduled(fixedDelay = 1000) // 1초마다 반복
-//    public void reserveTicket() throws JsonProcessingException {
-//        // 동적으로 publishSize를 조절
-////        Long requestSize = redisTemplate.opsForZSet().zCard(KEY);
-////        if (requestSize > 1000) {
-////            setPublishSize(1000);
-////        } else if (requestSize > 100) {
-////            setPublishSize(100);
-////        } else {
-////            setPublishSize(10);
-////        }
-//        publish();
-//        getOrder();
-//    }
+    @Scheduled(fixedDelay = 1000) // 1초마다 반복
+    public void reserveTicket() throws JsonProcessingException {
+        publish();
+        getOrder();
+    }
 
-    // 대기열 생성
-    public void getOrder(){
+    // 대기열 조회
+    public void getOrder() {
         // Redis Sorted Set에서 가져올 범위 설정
         final long start = FIRST_ELEMENT;
         final long end = LAST_ELEMENT;
 
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
         Set<String> queue = redisTemplate.opsForZSet().range(KEY, start, end);
+
         // 대기열 상황
         for (String data : queue) {
             Long rank = redisTemplate.opsForZSet().rank(KEY, data);
-            //log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
+//            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
         }
     }
 
@@ -95,56 +81,47 @@ public class WaitingQueueService {
     public void publish() throws JsonProcessingException {
         // Redis Sorted Set에서 가져올 범위 설정
         final long start = FIRST_ELEMENT;
-        final long end = publishSize - 1;
+        final long end = PUBLISH_SIZE - 1;
 
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
         Set<String> queues = redisTemplate.opsForZSet().range(KEY, start, end);
-//        log.info("queue : {}", queues);
 
         // 발급 시작
         for (String queue : queues) {
-            // JSON 문자열을 QueueObject 객체로 변환
-            QueueObject queueData = objectMapper.readValue(queue, QueueObject.class);
+            // String Object > QueueObject
+            QueueObject queueObject = objectMapper.readValue(queue, QueueObject.class);
 
             // ticketInfo의 정보 가져오기
-            TicketInfo ticketInfo = ticketInfoRepository.findById(queueData.getTicketInfoId())
+            TicketInfo ticketInfo = ticketInfoRepository.findById(queueObject.getTicketInfoId())
                     .orElseThrow(() -> new TicketInfoNotFoundException("티켓 정보를 찾을 수 없습니다."));
 
             // 해당 티켓 정보에 속한 대기열의 크기 가져오기
             Long ticketCount = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
-//            log.info("ticketCount : {}", ticketCount);
+            log.info("ticket Count : {}", ticketCount);
 
             if (ticketCount >= ticketInfo.getStock()) {
+                LocalDateTime nowTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneId.systemDefault());
                 log.info("==== 티켓이 매진되었습니다. ====");
-                final long now = System.currentTimeMillis();
-                Date currentDate = new Date(now);
-                log.info("queue end : {}", currentDate);
+                log.info("queue end : {}", nowTime);
+//                break;
                 return;
             }
 
             // 티켓 발급을 위한 TicketRequestDto 생성
             TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
-                    .ticketInfoId(queueData.getTicketInfoId())
-                    .posX(queueData.getPosX())
-                    .posY(queueData.getPosY())
+                    .ticketInfoId(queueObject.getTicketInfoId())
+                    .posX(queueObject.getPosX())
+                    .posY(queueObject.getPosY())
                     .build();
-
             // 티켓 발급을 위한 User build
-            User user = User.builder().userId(queueData.getUserId()).build();
+            User user = User.builder().userId(queueObject.getUserId()).build();
 
             // 티켓 발급
             ticketService.reserveTicketQueue(user, ticketRequestDto);
             // 티켓 개수 증가
-            incrementTicketCounter(COUNT_KEY + queueData.getTicketInfoId().toString());
-            /*
-            log.info("'{}'님의 {}번 티켓이 발급되었습니다 (좌석 : {}, {})",
-                    user.getUserId(),
-                    queueData.getTicketInfoId(),
-                    queueData.getPosX(),
-                    queueData.getPosY());*/
-
+            incrementTicketCounter(COUNT_KEY + queueObject.getTicketInfoId().toString());
             // 대기열 제거
-            redisTemplate.opsForZSet().remove(KEY, queue);
+            redisTemplate.opsForZSet().remove(KEY);
         }
     }
 
@@ -165,16 +142,11 @@ public class WaitingQueueService {
 
         Long ticketCount;
         if (stringValue == null) {
-            // 키가 없을 경우 초기값 설정
+            // 키가 없을 경우 초기값 설정 (예: "0")
             ticketCount = 0L;
         } else {
             ticketCount = Long.parseLong(stringValue);
         }
         return ticketCount;
-    }
-
-    // 요청 수에 따른 동적으로 처리 개수 변경
-    public void setPublishSize(int publishSize) {
-        this.publishSize = publishSize;
     }
 }
