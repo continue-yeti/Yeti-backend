@@ -75,7 +75,8 @@ public class TicketController {
 	@PostMapping("/reserve/queue/sortedset")
 	public ApiResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		// log.info("queue start : {}", System.currentTimeMillis());
-		return ApiResponse.success("예매 완료", waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
+		waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto);
+		return ApiResponse.success("예매 완료", null);
 	}
 
 	// 예매 취소

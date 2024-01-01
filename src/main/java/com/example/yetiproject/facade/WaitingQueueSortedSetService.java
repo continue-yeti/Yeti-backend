@@ -27,12 +27,12 @@ public class WaitingQueueSortedSetService {
 	private static final long FIRST_ELEMENT = 0;
 	private static final long LAST_ELEMENT = -1;
 
-	public Boolean registerQueue(Long userId, TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+	public void registerQueue(Long userId, TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		// 오픈날짜 종료날짜를 체크한다.
-		if(checkTicketInfoDate(ticketRequestDto.getTicketInfoId()) == false){
-			log.info("예매가능한 날짜가 아닙니다.");
-			return false;
-		}
+		// if(checkTicketInfoDate(ticketRequestDto.getTicketInfoId()) == false){
+		// 	log.info("예매가능한 날짜가 아닙니다.");
+		// 	return;
+		// }
 		// redis ticketInfo check
 		setTicketStock(ticketRequestDto.getTicketInfoId());
 
@@ -42,8 +42,7 @@ public class WaitingQueueSortedSetService {
 
 		final long now = System.currentTimeMillis();
 		log.info("대기열에 추가 - userId : {} requestDto : {} ({}초)", userId, jsonObject, System.currentTimeMillis());
-		return redisRepository.zAddIfAbsent("ticket", jsonObject, now);
-
+		redisRepository.zAddIfAbsent("ticket", jsonObject, now);
 	}
 
 	public void setTicketStock(Long ticketInfoId) throws JsonProcessingException {
@@ -52,9 +51,7 @@ public class WaitingQueueSortedSetService {
 		if(redisRepository.get("ticketInfo"+ticketInfoId)==null){
 			// Redis에 해당 stock가 없으면 redis에 넣는다.
 			redisRepository.set("ticketInfo"+ticketInfoId, String.valueOf(ticketInfo.getStock()));
-
 		}
-		log.info("waitingQueueService" + "ticketInfo" + ticketInfoId + " : setting");
 	}
 
 	public void getWaitingNumber() throws JsonProcessingException {
@@ -73,10 +70,6 @@ public class WaitingQueueSortedSetService {
 		LocalDateTime today = LocalDateTime.now();
 		LocalDateTime openDate = ticketInfoRepository.findById(ticketInfoId).get().getOpenDate();
 		LocalDateTime closeDate = ticketInfoRepository.findById(ticketInfoId).get().getCloseDate();
-
-		// log.info("오늘 날짜는 "+ String.valueOf(today));
-		// log.info("오픈 날짜는 "+ String.valueOf(openDate));
-		// log.info("종료 날짜는 "+ String.valueOf(closeDate));
 
 		log.info(String.valueOf(ChronoUnit.SECONDS.between(openDate, today)));
 		log.info(String.valueOf((ChronoUnit.SECONDS.between(today, closeDate))));
