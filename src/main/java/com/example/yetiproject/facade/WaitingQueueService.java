@@ -4,7 +4,6 @@ import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.entity.TicketInfo;
 import com.example.yetiproject.entity.User;
 import com.example.yetiproject.exception.entity.TicketInfo.TicketInfoNotFoundException;
-import com.example.yetiproject.facade.repository.RedisRepository;
 import com.example.yetiproject.repository.TicketInfoRepository;
 import com.example.yetiproject.repository.UserRepository;
 import com.example.yetiproject.service.TicketService;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-
 import java.util.Set;
 
 
@@ -38,7 +36,6 @@ public class WaitingQueueService {
     private static final long PUBLISH_SIZE = 100;
     private static final String KEY = "ticket";
     private static final String COUNT_KEY = "ticket_count";
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Queue에 추가
@@ -70,7 +67,6 @@ public class WaitingQueueService {
         final long end = LAST_ELEMENT;
 
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
-
         Set<String> queue = redisTemplate.opsForZSet().range(KEY, start, end);
 
         // 대기열 상황
@@ -85,7 +81,6 @@ public class WaitingQueueService {
         // Redis Sorted Set에서 가져올 범위 설정
         final long start = FIRST_ELEMENT;
         final long end = PUBLISH_SIZE - 1;
-
 
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
         Set<String> queues = redisTemplate.opsForZSet().range(KEY, start, end);
@@ -121,7 +116,6 @@ public class WaitingQueueService {
             User user = User.builder().userId(queueObject.getUserId()).build();
 
             // 티켓 발급
-            User user = User.builder().userId(ticketRequestDto.getUserId()).build();
             ticketService.reserveTicketQueue(user, ticketRequestDto);
             // 티켓 개수 증가
             incrementTicketCounter(COUNT_KEY + queueObject.getTicketInfoId().toString());
@@ -131,8 +125,10 @@ public class WaitingQueueService {
     }
 
     // 예매한 티켓 개수 증가
-    public Long incrementTicketCounter(String key) {
-        return redisRepository.increase(key);
+    public void incrementTicketCounter(String key) {
+        // ValueOperations를 이용하여 INCR 명령어 실행
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        valueOps.increment(key);
     }
 
     // 예매한 티켓 개수 GET
