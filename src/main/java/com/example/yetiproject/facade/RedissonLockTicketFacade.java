@@ -22,9 +22,12 @@ public class RedissonLockTicketFacade {
 
     // 예매하기 부분에 Redisson으로 락을 걸어줌
     public TicketResponseDto reserveTicket(UserDetailsImpl userDetails, TicketRequestDto requestDto) {
+        log.info("Redission 실행 중");
+
         Long ticketInfoId = requestDto.getTicketInfoId();
         RLock lock = redissonClient.getLock(ticketInfoId.toString());
         TicketResponseDto responseDto;
+      
         log.info("lock 획득 시도");
         try {
             // lock 획득 시도 시간, lock 점유 시간
@@ -42,6 +45,7 @@ public class RedissonLockTicketFacade {
         } finally {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
+                log.info("lock 해제");
             }
         }
 
