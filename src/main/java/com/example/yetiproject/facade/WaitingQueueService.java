@@ -34,8 +34,8 @@ public class WaitingQueueService {
     private static final long FIRST_ELEMENT = 0;
     private static final long LAST_ELEMENT = -1;
     private static final long PUBLISH_SIZE = 100;
-    private static final String KEY = "ticket";
-    private static final String COUNT_KEY = "ticket_count";
+    private static final String KEY = "ticketSorted";
+    private static final String COUNT_KEY = "ticketSortedCount";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Queue에 추가
@@ -56,8 +56,8 @@ public class WaitingQueueService {
 
     @Scheduled(fixedDelay = 1000) // 1초마다 반복
     public void reserveTicket() throws JsonProcessingException {
-        publish();
         getOrder();
+        publish();
     }
 
     // 대기열 조회
@@ -120,7 +120,7 @@ public class WaitingQueueService {
             // 티켓 개수 증가
             incrementTicketCounter(COUNT_KEY + queueObject.getTicketInfoId().toString());
             // 대기열 제거
-            redisTemplate.opsForZSet().remove(KEY);
+            redisTemplate.opsForZSet().remove(KEY, queue);
         }
     }
 
