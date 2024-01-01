@@ -61,6 +61,7 @@ public class WaitingQueueService {
     //     publish();
     // }
 
+
     // 대기열 조회
     public void getOrder() {
         // Redis Sorted Set에서 가져올 범위 설정
