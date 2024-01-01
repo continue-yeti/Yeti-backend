@@ -56,8 +56,8 @@ public class WaitingQueueService {
 
     @Scheduled(fixedDelay = 1000) // 1초마다 반복
     public void reserveTicket() throws JsonProcessingException {
-        getOrder();
-        publish();
+        //getOrder();
+        //publish();
     }
 
     // 대기열 조회
