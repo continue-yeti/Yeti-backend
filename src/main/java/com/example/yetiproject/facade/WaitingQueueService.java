@@ -96,12 +96,12 @@ public class WaitingQueueService {
 
             // 해당 티켓 정보에 속한 대기열의 크기 가져오기
             Long ticketCount = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
-            log.info("ticket Count : {}", ticketCount);
+//            log.info("ticket Count : {}", ticketCount);
 
             if (ticketCount >= ticketInfo.getStock()) {
                 LocalDateTime nowTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneId.systemDefault());
-                log.info("==== 티켓이 매진되었습니다. ====");
-                log.info("queue end : {}", nowTime);
+//                log.info("==== 티켓이 매진되었습니다. ====");
+//                log.info("queue end : {}", nowTime);
 //                break;
                 return;
             }
