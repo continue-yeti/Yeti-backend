@@ -59,6 +59,17 @@ public class TicketService {
 		return new TicketResponseDto(ticket);
 	}
 
+	@Transactional
+	public TicketResponseDto reserveTicketSortedSet(Long userId, TicketRequestDto ticketRequestDto) {
+		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
+		User user = User.builder().userId(userId).email("admin@test.com").username("jungmin").build();
+		log.info("ticketRequestDto 좌석 : " + ticketRequestDto.getPosX() + " , " + ticketRequestDto.getPosY());
+
+		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
+		ticketRepository.save(ticket);
+		return new TicketResponseDto(ticket);
+	}
+
 
 	@Transactional
 	public ResponseEntity cancelUserTicket(User user, Long ticketId) {
