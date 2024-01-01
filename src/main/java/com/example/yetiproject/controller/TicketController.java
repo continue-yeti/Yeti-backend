@@ -7,6 +7,7 @@ import com.example.yetiproject.dto.ticket.TicketResponseDto;
 import com.example.yetiproject.facade.RedissonLockTicketFacade;
 import com.example.yetiproject.facade.WaitingQueueListService;
 import com.example.yetiproject.facade.WaitingQueueService;
+import com.example.yetiproject.facade.WaitingQueueSortedSetService;
 import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class TicketController {
 	private final RedissonLockTicketFacade redissonLockTicketFacade;
 	private final WaitingQueueService waitingQueueService;
 	private final WaitingQueueListService waitingQueueListService;
+	private final WaitingQueueSortedSetService waitingQueueSortedSetService;
 
 	// 예매한 티켓 목록 조회
 	@GetMapping("")
@@ -67,6 +69,13 @@ public class TicketController {
 //		log.info("queue start : {}", System.currentTimeMillis());
 		waitingQueueListService.addQueue(userDetails.getUser(), ticketRequestDto);
 		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
+	}
+
+	//jungmin sorted set
+	@PostMapping("/reserve/queue/sortedset")
+	public ApiResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+		// log.info("queue start : {}", System.currentTimeMillis());
+		return ApiResponse.success("예매 완료", waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
 	}
 
 	// 예매 취소
