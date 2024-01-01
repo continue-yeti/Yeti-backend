@@ -1,6 +1,5 @@
 package com.example.yetiproject.facade;
 
-import com.example.yetiproject.auth.security.UserDetailsImpl;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.entity.TicketInfo;
 import com.example.yetiproject.entity.User;
@@ -40,12 +39,12 @@ public class WaitingQueueListService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Queue에 추가
-    public void addQueue(UserDetailsImpl userDetails, TicketRequestDto requestDto) throws JsonProcessingException {
+    public void addQueue(User user, TicketRequestDto requestDto) throws JsonProcessingException {
         // DTO 객체를 JSON 문자열로 변환
         final long now = System.currentTimeMillis();
         LocalDateTime nowTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.systemDefault());
 
-        requestDto.setUserId(userDetails.getUser().getUserId());
+        requestDto.setUserId(user.getUserId());
         requestDto.setNow(now);
         String jsonString = objectMapper.writeValueAsString(requestDto);
 
