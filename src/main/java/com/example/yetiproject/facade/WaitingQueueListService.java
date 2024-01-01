@@ -30,8 +30,6 @@ public class WaitingQueueListService {
     private final RedisTemplate<String, String> redisTemplate;
     private final TicketService ticketService;
     private final TicketInfoRepository ticketInfoRepository;
-    private final UserRepository userRepository;
-
     private static final long FIRST_ELEMENT = 0;
     private static final long LAST_ELEMENT = -1;
     private static final long PUBLISH_SIZE = 100;
@@ -47,6 +45,7 @@ public class WaitingQueueListService {
 
         requestDto.setUserId(userDetails.getUser().getUserId());
         requestDto.setNow(now);
+
         String jsonString = objectMapper.writeValueAsString(requestDto);
 
         // redis에 저장
@@ -96,7 +95,7 @@ public class WaitingQueueListService {
                     .orElseThrow(() -> new TicketInfoNotFoundException("티켓 정보를 찾을 수 없습니다."));
 
             // 해당 티켓 정보에 속한 대기열의 크기 가져오기
-            Long ticketCount = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
+            Long ticke = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
             log.info("ticket Count : {}", ticketCount);
 
             if (ticketCount >= ticketInfo.getStock()) {

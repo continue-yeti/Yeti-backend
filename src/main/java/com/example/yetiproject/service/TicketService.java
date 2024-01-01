@@ -41,10 +41,13 @@ public class TicketService {
 	@Transactional
 	public TicketResponseDto reserveTicket(User user, TicketRequestDto ticketRequestDto) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
+
+		// log.info("ticketRequestDto 좌석 : " + ticketRequestDto.getPosX() + " , " + ticketRequestDto.getPosY());
+
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 		ticketRepository.save(ticket);
 
-		//ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId());
+		ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId());
 		ticketInfo.updateStock(-1L);
 		return new TicketResponseDto(ticket);
 	}
