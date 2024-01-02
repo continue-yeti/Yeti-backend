@@ -34,7 +34,7 @@ public class WaitingQueueSortedSetService {
 		// 	return;
 		// }
 		// redis ticketInfo check
-		setTicketStock(ticketRequestDto.getTicketInfoId());
+		//setTicketStock(ticketRequestDto.getTicketInfoId());
 
 		//객체 -> String 변형
 		ticketRequestDto.setUserId(userId); //user
