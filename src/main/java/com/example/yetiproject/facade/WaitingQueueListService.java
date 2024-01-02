@@ -29,6 +29,7 @@ public class WaitingQueueListService {
     private final RedisTemplate<String, String> redisTemplate;
     private final TicketService ticketService;
     private final TicketInfoRepository ticketInfoRepository;
+    private final UserRepository userRepository;
 
     private static final long FIRST_ELEMENT = 0;
     private static final long LAST_ELEMENT = -1;
@@ -41,26 +42,23 @@ public class WaitingQueueListService {
     public void addQueue(User user, TicketRequestDto requestDto) throws JsonProcessingException {
         // DTO 객체를 JSON 문자열로 변환
         final long now = System.currentTimeMillis();
-        //LocalDateTime nowTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.systemDefault());
+        LocalDateTime nowTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.systemDefault());
 
         requestDto.setUserId(user.getUserId());
         requestDto.setNow(now);
         String jsonString = objectMapper.writeValueAsString(requestDto);
 
-        // ticket count 초기화
-        setTicketCount(COUNT_KEY+requestDto.getTicketInfoId());
-
         // redis에 저장
         redisTemplate.opsForList().rightPush(KEY, jsonString);
 
-        log.info("대기열에 추가 - Value : {} ({}초)", jsonString, now);
+//        log.info("대기열에 추가 - Value : {} ({}초)", jsonString, nowTime);
     }
 
-//    @Scheduled(fixedDelay = 1000) // 1초마다 반복
-//    public void reserveTicket() throws JsonProcessingException {
-//        getOrder();
-//        publish();
-//    }
+    @Scheduled(fixedDelay = 1000) // 1초마다 반복
+    public void reserveTicket() throws JsonProcessingException {
+        getOrder();
+        publish();
+    }
 
     // 대기열 조회
     public void getOrder() {
@@ -74,7 +72,7 @@ public class WaitingQueueListService {
         // 대기열 상황
         for (String data : queue) {
             Long rank = redisTemplate.opsForList().indexOf(KEY, data);
-            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
+//            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
         }
     }
 
@@ -90,39 +88,37 @@ public class WaitingQueueListService {
         // 발급 시작
         for (String queue : queues) {
             // String Object > QueueObject
-            //QueueObject queueObject = objectMapper.readValue(queue, QueueObject.class);
-            TicketRequestDto ticketRequestDto = objectMapper.readValue(queue, TicketRequestDto.class);
+            QueueObject queueObject = objectMapper.readValue(queue, QueueObject.class);
+
             // ticketInfo의 정보 가져오기
-            TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId())
+            TicketInfo ticketInfo = ticketInfoRepository.findById(queueObject.getTicketInfoId())
                     .orElseThrow(() -> new TicketInfoNotFoundException("티켓 정보를 찾을 수 없습니다."));
 
             // 해당 티켓 정보에 속한 대기열의 크기 가져오기
-            //Long ticketCount = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
-            //log.info("ticket Count : {}", ticketCount);
+            Long ticketCount = getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId());
+//            log.info("ticket Count : {}", ticketCount);
 
-            if (getTicketCounter(COUNT_KEY+ticketInfo.getTicketInfoId()) >= ticketInfo.getStock()) {
-                //LocalDateTime nowTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneId.systemDefault());
-                log.info("==== 티켓이 매진되었습니다. ====");
-                ticketInfo.updateStock(0L);
-                redisTemplate.delete(KEY);
-                //log.info("queue end : {}", nowTime);
+            if (ticketCount >= ticketInfo.getStock()) {
+                LocalDateTime nowTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneId.systemDefault());
+//                log.info("==== 티켓이 매진되었습니다. ====");
+//                log.info("queue end : {}", nowTime);
 //                break;
                 return;
             }
 
             // 티켓 발급을 위한 TicketRequestDto 생성
-            // TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
-            //         .ticketInfoId(queueObject.getTicketInfoId())
-            //         .posX(queueObject.getPosX())
-            //         .posY(queueObject.getPosY())
-            //         .build();
+            TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
+                    .ticketInfoId(queueObject.getTicketInfoId())
+                    .posX(queueObject.getPosX())
+                    .posY(queueObject.getPosY())
+                    .build();
             // 티켓 발급을 위한 User build
-            User user = User.builder().userId(ticketRequestDto.getUserId()).build();
+            User user = User.builder().userId(queueObject.getUserId()).build();
 
             // 티켓 발급
             ticketService.reserveTicketQueue(user, ticketRequestDto);
             // 티켓 개수 증가
-            incrementTicketCounter(COUNT_KEY + ticketInfo.getTicketInfoId().toString());
+            incrementTicketCounter(COUNT_KEY + queueObject.getTicketInfoId().toString());
             // 대기열 제거
             redisTemplate.opsForList().leftPop(KEY);
         }
@@ -131,34 +127,25 @@ public class WaitingQueueListService {
     // 예매한 티켓 개수 증가
     public void incrementTicketCounter(String key) {
         // ValueOperations를 이용하여 INCR 명령어 실행
-        // ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
-        // valueOps.increment(key);
-        redisTemplate.opsForValue().increment(key);
-    }
-
-    public void setTicketCount(String key){
-        if(redisTemplate.opsForValue().get(key) == null){
-            redisTemplate.opsForValue().set(key, String.valueOf(0L));
-        }
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        valueOps.increment(key);
     }
 
     // 예매한 티켓 개수 GET
     public Long getTicketCounter(String key) {
         // ValueOperations를 이용하여 GET 명령어 실행
-        //ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
 
         // GET 명령어 실행 후 값을 가져오기
-        //String stringValue = valueOps.get(key);
+        String stringValue = valueOps.get(key);
 
-        // Long ticketCount;
-        // if (stringValue == null) {
-        //     // 키가 없을 경우 초기값 설정 (예: "0")
-        //     ticketCount = 0L;
-        // } else {
-        //     ticketCount = Long.parseLong(stringValue);
-        // }
-
-        return Long.parseLong(redisTemplate.opsForValue().get(key));
-        //return ticketCount;
+        Long ticketCount;
+        if (stringValue == null) {
+            // 키가 없을 경우 초기값 설정 (예: "0")
+            ticketCount = 0L;
+        } else {
+            ticketCount = Long.parseLong(stringValue);
+        }
+        return ticketCount;
     }
 }

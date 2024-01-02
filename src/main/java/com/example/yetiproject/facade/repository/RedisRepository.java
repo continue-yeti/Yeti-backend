@@ -70,5 +70,9 @@ public class RedisRepository {
 			.decrement(key);
 	}
 
+	public Long increase(String key) {
+		return redisTemplate.opsForValue().increment(key);
+	}
+
 
 }
