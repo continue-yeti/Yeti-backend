@@ -1,7 +1,11 @@
 package com.example.yetiproject.facade;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
+import com.example.yetiproject.entity.Ticket;
 import org.springframework.stereotype.Service;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
@@ -35,25 +39,30 @@ public class TicketIssueService {
 		final long end = PUBLISH_SIZE - LAST_INDEX;
 
 		Set<String> queue = redisRepository.zRange("ticket", start, end);
+		List<TicketRequestDto> ticketRequests = new ArrayList<>();
 
 		for (String ticketRequest : queue) {
 			TicketRequestDto ticketRequestDto = objectMapper.readValue(ticketRequest, TicketRequestDto.class);
-			ticketService.reserveTicketSortedSet(ticketRequestDto.getUserId(), ticketRequestDto); //티켓발행
+			ticketRequests.add(ticketRequestDto);
+//			if (Integer.parseInt(redisRepository.get("ticketInfo" + ticketRequestDto.getTicketInfoId())) == 0) {
+//				ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get().updateStockCount(0L);
+//				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
+//				redisRepository.delete("ticket"); //destory
+//				return;
+//			}
 
-			log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
-				ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
-			redisRepository.zRemove("ticket", ticketRequest);
+//			ticketService.reserveTicketSortedSet(ticketRequestDto.getUserId(), ticketRequestDto); //티켓발행
 
-			if (Integer.parseInt(redisRepository.get("ticketInfo" + ticketRequestDto.getTicketInfoId())) == 0) {
-				ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get().updateStockCount(0L);
-				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
-				redisRepository.delete("ticket"); //destory
-				return;
-			}
-			decrease(ticketRequestDto.getTicketInfoId());
-			log.info("남은 티켓 수 " + redisRepository.get("ticketInfo" + ticketRequestDto.getTicketInfoId()));
+//			log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
+//				ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
+//			redisRepository.zRemove("ticket", ticketRequest);
+//
+//			decrease(ticketRequestDto.getTicketInfoId());
+//			log.info("남은 티켓 수 " + redisRepository.get("ticketInfo" + ticketRequestDto.getTicketInfoId()));
 		}
 
+		// 티켓 일괄 발급
+		ticketService.reserveTicketsInBatch(ticketRequests);
 	}
 
 	public Long decrease(Long ticketInfoId){

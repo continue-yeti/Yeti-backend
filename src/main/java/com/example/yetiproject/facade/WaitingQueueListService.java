@@ -110,12 +110,6 @@ public class WaitingQueueListService {
                 return;
             }
 
-            // 티켓 발급을 위한 TicketRequestDto 생성
-            // TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
-            //         .ticketInfoId(queueObject.getTicketInfoId())
-            //         .posX(queueObject.getPosX())
-            //         .posY(queueObject.getPosY())
-            //         .build();
             // 티켓 발급을 위한 User build
             User user = User.builder().userId(ticketRequestDto.getUserId()).build();
 
