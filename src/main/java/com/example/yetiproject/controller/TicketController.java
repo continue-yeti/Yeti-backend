@@ -4,10 +4,7 @@ import com.example.yetiproject.auth.security.UserDetailsImpl;
 import com.example.yetiproject.dto.ApiResponse;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
-import com.example.yetiproject.facade.RedissonLockTicketFacade;
-import com.example.yetiproject.facade.WaitingQueueListService;
-import com.example.yetiproject.facade.WaitingQueueService;
-import com.example.yetiproject.facade.WaitingQueueSortedSetService;
+import com.example.yetiproject.facade.*;
 import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +24,7 @@ public class TicketController {
 	private final RedissonLockTicketFacade redissonLockTicketFacade;
 	private final WaitingQueueService waitingQueueService;
 	private final WaitingQueueListService waitingQueueListService;
+	private final WaitingQueueListBulkService waitingQueueListBulkService;
 	private final WaitingQueueSortedSetService waitingQueueSortedSetService;
 
 	// 예매한 티켓 목록 조회
@@ -64,7 +62,7 @@ public class TicketController {
 		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
 	}
 
-	@PostMapping("/reserve/queueList")
+	@PostMapping("/reserve/queue/list")
 	public ApiResponse reserveTicketQueueList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 //		log.info("queue start : {}", System.currentTimeMillis());
 		waitingQueueListService.addQueue(userDetails.getUser(), ticketRequestDto);
@@ -76,6 +74,13 @@ public class TicketController {
 	public ApiResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		// log.info("queue start : {}", System.currentTimeMillis());
 		waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto);
+		return ApiResponse.success("예매 완료", null);
+	}
+
+	@PostMapping("/reserve/queue/list/bulk")
+	public ApiResponse reserveTicketQueueListBulk(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+		// log.info("queue start : {}", System.currentTimeMillis());
+		waitingQueueListBulkService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto);
 		return ApiResponse.success("예매 완료", null);
 	}
 

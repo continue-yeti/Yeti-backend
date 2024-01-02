@@ -6,13 +6,11 @@ import com.example.yetiproject.entity.User;
 import com.example.yetiproject.exception.entity.TicketInfo.TicketInfoNotFoundException;
 import com.example.yetiproject.facade.repository.RedisRepository;
 import com.example.yetiproject.repository.TicketInfoRepository;
-import com.example.yetiproject.repository.UserRepository;
 import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +28,6 @@ public class WaitingQueueListService {
     private final RedisRepository redisRepository;
     private final TicketService ticketService;
     private final TicketInfoRepository ticketInfoRepository;
-    private final UserRepository userRepository;
 
     private static final long FIRST_ELEMENT = 0;
     private static final long LAST_ELEMENT = -1;
