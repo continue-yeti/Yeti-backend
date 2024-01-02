@@ -4,6 +4,7 @@ import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.entity.TicketInfo;
 import com.example.yetiproject.entity.User;
 import com.example.yetiproject.exception.entity.TicketInfo.TicketInfoNotFoundException;
+import com.example.yetiproject.facade.repository.RedisRepository;
 import com.example.yetiproject.repository.TicketInfoRepository;
 import com.example.yetiproject.repository.UserRepository;
 import com.example.yetiproject.service.TicketService;
@@ -11,7 +12,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,14 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
 
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class WaitingQueueListService {
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisRepository redisRepository;
     private final TicketService ticketService;
     private final TicketInfoRepository ticketInfoRepository;
     private final UserRepository userRepository;
@@ -49,7 +50,7 @@ public class WaitingQueueListService {
         String jsonString = objectMapper.writeValueAsString(requestDto);
 
         // redis에 저장
-        redisTemplate.opsForList().rightPush(KEY, jsonString);
+        redisRepository.listRightPush(KEY, jsonString);
 
 //        log.info("대기열에 추가 - Value : {} ({}초)", jsonString, nowTime);
     }
@@ -67,11 +68,11 @@ public class WaitingQueueListService {
         final long end = LAST_ELEMENT;
 
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
-        List<String> queue = redisTemplate.opsForList().range(KEY, start, end);
+        List<String> queue = redisRepository.listRange(KEY, start, end);
 
         // 대기열 상황
         for (String data : queue) {
-            Long rank = redisTemplate.opsForList().indexOf(KEY, data);
+            Long rank = redisRepository.indexOfRank(KEY, data);
 //            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
         }
     }
@@ -83,7 +84,7 @@ public class WaitingQueueListService {
         final long end = PUBLISH_SIZE - 1;
 
         // Redis Sorted Set에서 범위 내의 멤버들을 가져옴
-        List<String> queues = redisTemplate.opsForList().range(KEY, start, end);
+        List<String> queues = redisRepository.listRange(KEY, start, end);
 
         // 발급 시작
         for (String queue : queues) {
@@ -120,32 +121,30 @@ public class WaitingQueueListService {
             // 티켓 개수 증가
             incrementTicketCounter(COUNT_KEY + queueObject.getTicketInfoId().toString());
             // 대기열 제거
-            redisTemplate.opsForList().leftPop(KEY);
+            redisRepository.listLeftPop(KEY);
         }
     }
 
     // 예매한 티켓 개수 증가
     public void incrementTicketCounter(String key) {
         // ValueOperations를 이용하여 INCR 명령어 실행
-        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
-        valueOps.increment(key);
+        redisRepository.increase(key);
     }
 
     // 예매한 티켓 개수 GET
     public Long getTicketCounter(String key) {
-        // ValueOperations를 이용하여 GET 명령어 실행
-        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
-
         // GET 명령어 실행 후 값을 가져오기
-        String stringValue = valueOps.get(key);
-
+        String ticketCountString = redisRepository.get(key);
         Long ticketCount;
-        if (stringValue == null) {
-            // 키가 없을 경우 초기값 설정 (예: "0")
-            ticketCount = 0L;
-        } else {
-            ticketCount = Long.parseLong(stringValue);
+        log.info("ticketCountString : {}", ticketCountString);
+        if (Objects.equals(ticketCountString, null)) {
+            // Redis에 해당 stock가 없으면 redis에 넣는다.
+            redisRepository.set(key, "0");
+            ticketCountString = redisRepository.get(key); // 처음에 초기화 에러 방지
         }
+
+        ticketCount = Long.parseLong(ticketCountString);
+
         return ticketCount;
     }
 }

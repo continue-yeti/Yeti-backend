@@ -1,5 +1,6 @@
 package com.example.yetiproject.facade.repository;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -74,5 +75,21 @@ public class RedisRepository {
 		return redisTemplate.opsForValue().increment(key);
 	}
 
+
+	public Long listRightPush(String key, String value){
+		return redisTemplate.opsForList().rightPush(key, value);
+	}
+
+	public List<String> listRange(String key, long start, long end) {
+		return redisTemplate.opsForList().range(key, start, end);
+	}
+
+	public Long indexOfRank(String key, String value) {
+		return redisTemplate.opsForList().indexOf(key, value);
+	}
+
+	public String listLeftPop(String key) {
+		return redisTemplate.opsForList().leftPop(key);
+	}
 
 }
