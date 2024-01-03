@@ -41,7 +41,7 @@ public class WaitingQueueSortedSetService {
 		String jsonObject = objectMapper.writeValueAsString(ticketRequestDto); //ticketRequestDto -> String
 
 		final long now = System.currentTimeMillis();
-		log.info("대기열에 추가 - userId : {} requestDto : {} ({}초)", userId, jsonObject, System.currentTimeMillis());
+//		log.info("대기열에 추가 - userId : {} requestDto : {} ({}초)", userId, jsonObject, System.currentTimeMillis());
 		redisRepository.zAddIfAbsent("ticket", jsonObject, now);
 	}
 
@@ -62,7 +62,7 @@ public class WaitingQueueSortedSetService {
 
 		for ( String ticketRequest : queue) {
 			Long rank = redisRepository.zRank("ticket", ticketRequest);
-			log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", ticketRequest, rank);
+//			log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", ticketRequest, rank);
 		}
 	}
 
@@ -78,7 +78,7 @@ public class WaitingQueueSortedSetService {
 			(ChronoUnit.SECONDS.between(openDate, today) > 0) &&
 				(ChronoUnit.SECONDS.between(today, closeDate) > 0)
 		){
-			log.info("티켓 예약이 가능합니다.");
+//			log.info("티켓 예약이 가능합니다.");
 			return true;
 		}
 		return false;
