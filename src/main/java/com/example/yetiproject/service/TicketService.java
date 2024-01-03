@@ -129,7 +129,6 @@ public class TicketService {
 
 		// 티켓 일괄 발급 처리
 		for (TicketRequestDto ticketRequestDto : ticketRequestDtos) {
-			log.info("ticketRequestDto : {}", ticketRequestDto);
 			TicketInfo ticketInfo = ticketInfoMap.get(ticketRequestDto.getTicketInfoId());
 			Long ticketCount = getTicketCounter("ticketInfo" + ticketInfo.getTicketInfoId());
 
