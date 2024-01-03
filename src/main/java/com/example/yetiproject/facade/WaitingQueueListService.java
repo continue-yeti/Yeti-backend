@@ -52,11 +52,11 @@ public class WaitingQueueListService {
 //        log.info("대기열에 추가 - Value : {} ({}초)", jsonString, nowTime);
     }
 
-//    @Scheduled(fixedDelay = 1000) // 1초마다 반복
-//    public void reserveTicket() throws JsonProcessingException {
-//        getOrder();
-//        publish();
-//    }
+    @Scheduled(fixedDelay = 1000) // 1초마다 반복
+    public void reserveTicket() throws JsonProcessingException {
+        getOrder();
+        publish();
+    }
 
     // 대기열 조회
     public void getOrder() {

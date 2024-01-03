@@ -27,12 +27,12 @@ public class WaitingQueueListBulkService {
 	private static final long FIRST_ELEMENT = 0;
 	private static final long LAST_ELEMENT = -1;
 
-	@Scheduled(fixedDelay = 1000)
-	private void ticketReserveScheduler() throws JsonProcessingException {
-		//log.info("======== 예매가 시작됩니다.==========");
-		ticketIssueListService.publish();
-		getWaitingNumber();
-	}
+//	@Scheduled(fixedDelay = 1000)
+//	private void ticketReserveScheduler() throws JsonProcessingException {
+//		//log.info("======== 예매가 시작됩니다.==========");
+//		ticketIssueListService.publish();
+//		getWaitingNumber();
+//	}
 
 	public void registerQueue(Long userId, TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		//객체 -> String 변형
