@@ -8,12 +8,14 @@ import com.example.yetiproject.facade.RedissonLockTicketFacade;
 import com.example.yetiproject.facade.WaitingQueueListService;
 import com.example.yetiproject.facade.WaitingQueueService;
 import com.example.yetiproject.facade.WaitingQueueSortedSetService;
+import com.example.yetiproject.service.NotificationService;
 import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -28,6 +30,9 @@ public class TicketController {
 	private final WaitingQueueService waitingQueueService;
 	private final WaitingQueueListService waitingQueueListService;
 	private final WaitingQueueSortedSetService waitingQueueSortedSetService;
+
+	// SSE
+	private final NotificationService notificationService;
 
 	// 예매한 티켓 목록 조회
 	@GetMapping("")
@@ -72,11 +77,19 @@ public class TicketController {
 	}
 
 	//jungmin sorted set
-	@PostMapping("/reserve/queue/sortedset")
-	public ApiResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-		// log.info("queue start : {}", System.currentTimeMillis());
+	// @PostMapping("/reserve/queue/sortedset")
+	// public ApiResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+	// 	// log.info("queue start : {}", System.currentTimeMillis());
+	// 	waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto);
+	// 	return ApiResponse.success("예매 완료", null);
+	// }
+
+	// Sorted Set 연결시 SSE 연결
+	@GetMapping(value = "/reserve/queue/sortedset", produces = "text/event-stream")
+	public SseEmitter reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto,
+		@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) throws JsonProcessingException {
 		waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto);
-		return ApiResponse.success("예매 완료", null);
+		return notificationService.subscribe(userDetails.getUser().getUserId(), lastEventId);
 	}
 
 	// 예매 취소

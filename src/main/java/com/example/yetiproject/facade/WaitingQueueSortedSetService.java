@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.entity.TicketInfo;
 import com.example.yetiproject.facade.repository.RedisRepository;
+import com.example.yetiproject.facade.service.QueueSseService;
 import com.example.yetiproject.repository.TicketInfoRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 public class WaitingQueueSortedSetService {
 	private final RedisRepository redisRepository;
 	private final TicketInfoRepository ticketInfoRepository;
+
+	//sse
+	private final QueueSseService queueSseService;
 
 	private final ObjectMapper objectMapper;
 	private static final long FIRST_ELEMENT = 0;
@@ -63,6 +67,7 @@ public class WaitingQueueSortedSetService {
 		for ( String ticketRequest : queue) {
 			Long rank = redisRepository.zRank("ticket", ticketRequest);
 			log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", ticketRequest, rank);
+			queueSseService.sortedSetQueueStatus(rank, ticketRequest);
 		}
 	}
 

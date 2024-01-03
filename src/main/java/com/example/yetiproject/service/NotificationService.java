@@ -13,6 +13,7 @@ import com.example.yetiproject.repository.EmitterRepository;
 import com.example.yetiproject.repository.EmitterRepositoryImpl;
 import com.example.yetiproject.repository.NotificationRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +26,7 @@ public class NotificationService {
 	private final NotificationRepository notificationRepository;
 	private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
 
+	@Transactional
 	public SseEmitter subscribe(Long userId, String lastEventId) {
 
 		// emitter와 event의 순서를 구별하기 위해 userId에 시간 추가
@@ -72,5 +74,8 @@ public class NotificationService {
 			// 에러 발생시 Emitter 삭제
 			emitterRepository.deleteById(emitterId);
 		}
+	}
+
+	private void completeNotification(SseEmitter s) {
 	}
 }

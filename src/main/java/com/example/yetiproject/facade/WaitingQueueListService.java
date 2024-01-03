@@ -151,7 +151,7 @@ public class WaitingQueueListService {
         //String stringValue = valueOps.get(key);
 
         // Long ticketCount;
-        // if (stringValue == null) {
+        // if (stringValue == null) {e
         //     // 키가 없을 경우 초기값 설정 (예: "0")
         //     ticketCount = 0L;
         // } else {
