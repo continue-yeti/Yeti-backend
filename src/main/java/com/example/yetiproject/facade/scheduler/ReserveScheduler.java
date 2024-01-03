@@ -18,11 +18,11 @@ public class ReserveScheduler {
 	private final WaitingQueueSortedSetService waitingQueueSortedSetService;
 	private final TicketIssueService ticketIssueService;
 
-//	@Scheduled(fixedDelay = 1000)
-//	private void ticketReserveScheduler() throws JsonProcessingException {
-//		//log.info("======== 예매가 시작됩니다.==========");
-//		ticketIssueService.publish();
-//		waitingQueueSortedSetService.getWaitingNumber();
-//	}
+	@Scheduled(fixedDelay = 1000)
+	private void ticketReserveScheduler() throws JsonProcessingException {
+		//log.info("======== 예매가 시작됩니다.==========");
+		ticketIssueService.publish();
+		waitingQueueSortedSetService.getWaitingNumber();
+	}
 
 }
