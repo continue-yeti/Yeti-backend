@@ -39,7 +39,7 @@ public class WaitingQueueListBulkService {
 		ticketRequestDto.setUserId(userId); //user
 		String jsonObject = objectMapper.writeValueAsString(ticketRequestDto); //ticketRequestDto -> String
 
-		log.info("대기열에 추가 - userId : {} requestDto : {} ({}초)", userId, jsonObject, System.currentTimeMillis());
+//		log.info("대기열에 추가 - userId : {} requestDto : {} ({}초)", userId, jsonObject, System.currentTimeMillis());
 		redisRepository.listRightPush("ticket", jsonObject);
 	}
 
@@ -60,7 +60,7 @@ public class WaitingQueueListBulkService {
 
 		for ( String ticketRequest : queue) {
 			Long rank = redisRepository.indexOfRank("ticket", ticketRequest);
-			log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", ticketRequest, rank);
+//			log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", ticketRequest, rank);
 		}
 	}
 

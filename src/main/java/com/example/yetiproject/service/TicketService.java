@@ -188,7 +188,7 @@ public class TicketService {
 		// GET 명령어 실행 후 값을 가져오기
 		String ticketCountString = redisRepository.get(key);
 		Long ticketCount;
-		log.info("ticketCountString : {}", ticketCountString);
+
 		if (Objects.equals(ticketCountString, null)) {
 			// Redis에 해당 stock가 없으면 redis에 넣는다.
 			redisRepository.set(key, "0");
@@ -196,7 +196,6 @@ public class TicketService {
 		}
 
 		ticketCount = Long.parseLong(ticketCountString);
-
 		return ticketCount;
 	}
 
