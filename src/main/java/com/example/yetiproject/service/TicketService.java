@@ -143,11 +143,11 @@ public class TicketService {
 
 					redisRepository.listLeftPop("ticket");
 				} else {
-					redisRepository.delete("ticket");
 					log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 에 이미 예약된 자리가 있습니다.]");
 				}
 			} else {
 				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
+				redisRepository.delete("ticket");
 				// 티켓이 매진된 경우 처리
 				return Collections.emptyList();
 			}
