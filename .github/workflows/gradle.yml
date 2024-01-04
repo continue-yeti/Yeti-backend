@@ -78,6 +78,13 @@ jobs:
           aws deploy create-deployment --application-name yeti-codedeploy-app \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name yeti-codedeploy-deployment-group \
+            --s3-location bucket=yeti-github-actions-s3-bucket,bundleType=zip,key=seniors-build.zip
+
+      # CodeDeploy에 배포 요청
+      - name: Code Deploy Deployment Request
+        run: |
+          aws deploy create-deployment --application-name yeti-codedeploy-app \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name yeti-codedeploy-deployment-group2 \
             --s3-location bucket=yeti-github-actions-s3-bucket,bundleType=zip,key=seniors-build.zip
 
