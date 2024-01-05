@@ -92,4 +92,9 @@ public class RedisRepository {
 		return redisTemplate.opsForList().leftPop(key);
 	}
 
+	public Boolean hashSetNx(String key, String field, Long userId){
+		// 값이 없을때만 값을 설정
+		return redisTemplate.opsForHash().putIfAbsent(key, field, userId.toString());
+	}
+
 }

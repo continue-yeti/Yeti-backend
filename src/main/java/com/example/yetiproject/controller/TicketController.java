@@ -4,7 +4,9 @@ import com.example.yetiproject.auth.security.UserDetailsImpl;
 import com.example.yetiproject.dto.ApiResponse;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
+import com.example.yetiproject.dto.user.RegisterUserResponse;
 import com.example.yetiproject.facade.*;
+import com.example.yetiproject.facade.wait.UserQueueService;
 import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.List;
 @RequestMapping("/api/mytickets")
 public class TicketController {
 	private final TicketService ticketService;
+	private final UserQueueService userQueueService;
 //	private final TicketKafkaService ticketKafkaService;
 	private final RedissonLockTicketFacade redissonLockTicketFacade;
 	private final WaitingQueueService waitingQueueService;
@@ -82,6 +85,14 @@ public class TicketController {
 		// log.info("queue start : {}", System.currentTimeMillis());
 		waitingQueueListBulkService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto);
 		return ApiResponse.success("예매 완료", null);
+	}
+
+	// new 대기열 등록 sortedset
+	@PostMapping("/reserve/waiting/queue")
+	public RegisterUserResponse registerReserveUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws
+		JsonProcessingException {
+		// user는 jwt 인증으로만 사용한다.
+		return new RegisterUserResponse(userQueueService.registerWaitQueue(ticketRequestDto));
 	}
 
 	// 예매 취소
