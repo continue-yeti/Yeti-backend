@@ -6,8 +6,9 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum ErrorCode {
-	// queue-already-register
-	QUEUE_ALREADY_REGISTERED_USER(HttpStatus.CONFLICT, "not possible", "Already registered in queue");
+	QUEUE_ALREADY_REGISTERED_USER(HttpStatus.CONFLICT, "not possible", "Already registered in queue"),
+
+	NOT_AVAILABLE_RESERVATION_DATES(HttpStatus.FORBIDDEN, "not available", "not_available reservation dates");
 	private final HttpStatus httpStatus;
 	private final String code;
 	private final String reason;

@@ -74,10 +74,10 @@ public class TicketController {
 
 	//jungmin sorted set
 	@PostMapping("/reserve/queue/sortedset")
-	public ApiResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+	public RegisterUserResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		// log.info("queue start : {}", System.currentTimeMillis());
-		waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto);
-		return ApiResponse.success("예매 완료", null);
+		// user는 jwt 인증으로만 사용한다.
+		return new RegisterUserResponse(waitingQueueSortedSetService.registerQueue(ticketRequestDto));
 	}
 
 	@PostMapping("/reserve/queue/list/bulk")
@@ -87,13 +87,16 @@ public class TicketController {
 		return ApiResponse.success("예매 완료", null);
 	}
 
-	// new 대기열 등록 sortedset
-	@PostMapping("/reserve/waiting/queue")
-	public RegisterUserResponse registerReserveUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws
-		JsonProcessingException {
-		// user는 jwt 인증으로만 사용한다.
-		return new RegisterUserResponse(userQueueService.registerWaitQueue(ticketRequestDto));
+	@GetMapping("/rank")
+	public Long getRankUser(@AuthenticationPrincipal UserDetailsImpl userDetails,
+		@RequestParam(name="ticketInfo_id") Long ticketInfoId,
+		@RequestParam(name="user_id") Long userId,
+		@RequestParam(name="posx") Long posX,
+		@RequestParam(name = "posy") Long posY) throws JsonProcessingException {
+		return waitingQueueSortedSetService.getRank(ticketInfoId, userId, posX, posY);
 	}
+
+
 
 	// 예매 취소
 	@DeleteMapping("/{ticketId}")

@@ -17,8 +17,8 @@ Content-Type: application/json
 Authorization: {{access_token}}
 
 {
-  "userId" : 4,
+  "userId" : 5,
   "ticketInfoId" : 1,
   "posX" : 12,
-  "posY" : 17
+  "posY" : 20
 }
