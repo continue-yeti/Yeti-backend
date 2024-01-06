@@ -32,7 +32,6 @@ public class WaitingQueueSortedSetService {
 
 	private final String USER_QUEUE_WAIT_KEY = "ticketInfo:queue:%s:wait";
 
-	private final String USER_QUEUE_PROCEED_KEY = "ticketInfo:queue:%s:proceed";
 	private final String TICKETINFO_OCCUPY_SEAT = "ticketInfo:%s:reserved:seat";
 	private final String TICKETINFO_STOCK_COUNT = "ticketInfo:%s:stock";
 
@@ -64,9 +63,9 @@ public class WaitingQueueSortedSetService {
 	private void setTicketStock(Long ticketInfoId) throws JsonProcessingException {
 		// Redis에 해당 stock가 없으면 redis에 넣기
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketInfoId).get();
-		if(redisRepository.get(TICKETINFO_STOCK_COUNT)==null){
+		if(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId))==null){
 			// Redis에 해당 stock가 없으면 redis에 넣는다.
-			redisRepository.set(TICKETINFO_STOCK_COUNT, String.valueOf(ticketInfo.getStock()));
+			redisRepository.set(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId), String.valueOf(ticketInfo.getStock()));
 		}
 	}
 
@@ -75,10 +74,9 @@ public class WaitingQueueSortedSetService {
 		final long end = LAST_ELEMENT;
 
 		Set<String> queue = redisRepository.zRange("ticket", start, end);
-
 		for ( String ticketRequest : queue) {
 			Long rank = redisRepository.zRank("ticket", ticketRequest);
-//			log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", ticketRequest, rank);
+			//log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", ticketRequest, rank);
 		}
 	}
 
@@ -95,10 +93,8 @@ public class WaitingQueueSortedSetService {
 		LocalDateTime openDate = ticketInfoRepository.findById(ticketInfoId).get().getOpenDate();
 		LocalDateTime closeDate = ticketInfoRepository.findById(ticketInfoId).get().getCloseDate();
 
-		if(
-			(ChronoUnit.SECONDS.between(openDate, today) > 0) &&
-				(ChronoUnit.SECONDS.between(today, closeDate) > 0)
-		){
+		if((ChronoUnit.SECONDS.between(openDate, today) > 0) &&
+				(ChronoUnit.SECONDS.between(today, closeDate) > 0)){
 			return true;
 		}
 		return false;

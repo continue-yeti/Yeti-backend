@@ -43,7 +43,7 @@ public class WaitingQueueListService {
         LocalDateTime nowTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.systemDefault());
 
         requestDto.setUserId(user.getUserId());
-        requestDto.setNow(now);
+        //requestDto.setNow(now);
         String jsonString = objectMapper.writeValueAsString(requestDto);
 
         // redis에 저장

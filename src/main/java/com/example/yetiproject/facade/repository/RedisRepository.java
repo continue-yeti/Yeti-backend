@@ -1,5 +1,6 @@
 package com.example.yetiproject.facade.repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -52,7 +53,7 @@ public class RedisRepository {
 	}
 
 	public Long zRemove(String key, String jsonObject){
-		return redisTemplate.opsForZSet().remove("ticket", jsonObject);
+		return redisTemplate.opsForZSet().remove(key, jsonObject);
 	}
 
 	public Long zSize(String key){
@@ -97,6 +98,9 @@ public class RedisRepository {
 	public Boolean hashSetNx(String key, String field, Long userId){
 		// 값이 없을때만 값을 설정
 		return redisTemplate.opsForHash().putIfAbsent(key, field, userId.toString());
+	}
+	public Set<ZSetOperations.TypedTuple<String>> popMin(String key, Long count){
+		return redisTemplate.opsForZSet().popMin(key, count);
 	}
 
 }

@@ -21,7 +21,6 @@ import java.util.List;
 @RequestMapping("/api/mytickets")
 public class TicketController {
 	private final TicketService ticketService;
-//	private final TicketKafkaService ticketKafkaService;
 	private final RedissonLockTicketFacade redissonLockTicketFacade;
 	private final WaitingQueueService waitingQueueService;
 	private final WaitingQueueListService waitingQueueListService;
@@ -33,7 +32,6 @@ public class TicketController {
 	public ApiResponse<List<TicketResponseDto>> viewListOfReservedTickets(@AuthenticationPrincipal UserDetailsImpl userDetails){
 		return ApiResponse.success("예매한 티켓 목록 조회에 성공했습니다.", ticketService.getUserTicketList(userDetails.getUser()));
 	}
-
 
 	// 예매한 티켓 상세 조회
 	@GetMapping("/ticketId/{ticketId}")
@@ -47,13 +45,6 @@ public class TicketController {
 	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
 		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
 	}
-
-	// 예매 - kafka
-//	@PostMapping("/reserve/kafka")
-//	public ApiResponse reserveTicketKafka(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
-//		ticketKafkaService.sendReserveTicket(userDetails.getUser().getUserId(), ticketRequestDto);
-//		return ApiResponse.success("예매가 완료되었습니다.", null);
-//	}
 
 	// 예매 - redis queue
 	@PostMapping("/reserve/queue")
@@ -71,9 +62,8 @@ public class TicketController {
 	}
 
 	//jungmin sorted set
-	@PostMapping("/reserve/queue/sortedset")
+	@PostMapping("/reserve/waiting/queue/sortedset")
 	public RegisterUserResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-		// log.info("queue start : {}", System.currentTimeMillis());
 		// user는 jwt 인증으로만 사용한다.
 		return new RegisterUserResponse(waitingQueueSortedSetService.registerQueue(ticketRequestDto));
 	}
