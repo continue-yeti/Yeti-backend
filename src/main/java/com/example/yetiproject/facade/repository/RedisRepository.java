@@ -1,14 +1,17 @@
 package com.example.yetiproject.facade.repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.util.function.Tuples;
 
 @Repository
 @RequiredArgsConstructor
@@ -50,7 +53,7 @@ public class RedisRepository {
 	}
 
 	public Long zRemove(String key, String jsonObject){
-		return redisTemplate.opsForZSet().remove("ticket", jsonObject);
+		return redisTemplate.opsForZSet().remove(key, jsonObject);
 	}
 
 	public Long zSize(String key){
@@ -90,6 +93,14 @@ public class RedisRepository {
 
 	public String listLeftPop(String key) {
 		return redisTemplate.opsForList().leftPop(key);
+	}
+
+	public Boolean hashSetNx(String key, String field, Long userId){
+		// 값이 없을때만 값을 설정
+		return redisTemplate.opsForHash().putIfAbsent(key, field, userId.toString());
+	}
+	public Set<ZSetOperations.TypedTuple<String>> popMin(String key, Long count){
+		return redisTemplate.opsForZSet().popMin(key, count);
 	}
 
 }

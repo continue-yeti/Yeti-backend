@@ -32,40 +32,74 @@ public class TicketIssueService {
 	private static final long PUBLISH_SIZE = 100;
 	private static final long LAST_INDEX = 1;
 
+	private final String USER_QUEUE_WAIT_KEY = "ticketInfo:queue:%s:wait";
+	private final String TICKETINFO_STOCK_COUNT = "ticketInfo:%s:stock";
 
 	@Transactional
-	public void publish() throws JsonProcessingException {
+	public void publish(String key) throws JsonProcessingException {
+		log.info("Publish ticketInfoId" + key);
+		final long start = FIRST_ELEMENT;
+		final long end = PUBLISH_SIZE - LAST_INDEX;
+
+		Set<String> queue = redisRepository.zRange(USER_QUEUE_WAIT_KEY.formatted(key), start, end);
+
+		for(String ticketRequest : queue){
+			TicketRequestDto ticketRequestDto = objectMapper.readValue(ticketRequest, TicketRequestDto.class);
+
+			if (Integer.parseInt(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(key))) == 0) {
+				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
+				return;
+			}
+
+			//reserve
+			ticketService.reserveTicketSortedSet(ticketRequestDto.getUserId(), ticketRequestDto);
+
+			log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
+				ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
+
+			log.info(ticketRequest);
+			log.info(USER_QUEUE_WAIT_KEY.formatted(key));
+			redisRepository.zRemove(USER_QUEUE_WAIT_KEY.formatted(key), ticketRequest);
+
+			decrease(ticketRequestDto.getTicketInfoId());
+			log.info("남은 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
+
+		}
+	}
+
+	@Transactional
+	public void publishBluk(String key) throws JsonProcessingException {
 		final long start = FIRST_ELEMENT;
 		final long end = PUBLISH_SIZE - LAST_INDEX;
 
 		Set<String> queue = redisRepository.zRange("ticket", start, end);
-		List<TicketRequestDto> ticketRequests = new ArrayList<>();
+		List<TicketRequestDto> ticketRequestDtoList = new ArrayList<>();
 
 		for (String ticketRequest : queue) {
 			TicketRequestDto ticketRequestDto = objectMapper.readValue(ticketRequest, TicketRequestDto.class);
-			ticketRequests.add(ticketRequestDto);
-//			if (Integer.parseInt(redisRepository.get("ticketInfo" + ticketRequestDto.getTicketInfoId())) == 0) {
-//				ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get().updateStockCount(0L);
-//				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
-//				redisRepository.delete("ticket"); //destory
-//				return;
-//			}
 
-//			ticketService.reserveTicketSortedSet(ticketRequestDto.getUserId(), ticketRequestDto); //티켓발행
+			if (Integer.parseInt(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(key))) == 0) {
+				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
+				return;
+			}
 
-//			log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
-//				ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
-//			redisRepository.zRemove("ticket", ticketRequest);
-//
-//			decrease(ticketRequestDto.getTicketInfoId());
-//			log.info("남은 티켓 수 " + redisRepository.get("ticketInfo" + ticketRequestDto.getTicketInfoId()));
+			ticketRequestDtoList.add(ticketRequestDto);
+			//reserve
+			ticketService.reserveTicketSortedSet(ticketRequestDto.getUserId(), ticketRequestDto);
+
+			log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
+				ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
+			redisRepository.zRemove(USER_QUEUE_WAIT_KEY.formatted(key), ticketRequest);
+
+			decrease(ticketRequestDto.getTicketInfoId());
+			log.info("남은 티켓 수 " + redisRepository.get("ticketInfo" + ticketRequestDto.getTicketInfoId()));
 		}
 
 		// 티켓 일괄 발급
-		ticketService.reserveTicketsInBatch(ticketRequests);
+		ticketService.reserveTicketsInBatch(ticketRequestDtoList);
 	}
 
 	public Long decrease(Long ticketInfoId){
-		return redisRepository.decrease("ticketInfo"+ticketInfoId);
+		return redisRepository.decrease(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId));
 	}
 }
