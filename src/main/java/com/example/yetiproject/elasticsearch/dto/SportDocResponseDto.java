@@ -1,8 +1,6 @@
-package com.example.yetiproject.dto.sports;
+package com.example.yetiproject.elasticsearch.dto;
 
-import java.time.LocalDateTime;
-
-import com.example.yetiproject.document.SportDoc;
+import com.example.yetiproject.elasticsearch.document.SportDoc;
 
 import lombok.Data;
 

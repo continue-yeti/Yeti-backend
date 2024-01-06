@@ -1,4 +1,4 @@
-package com.example.yetiproject.service;
+package com.example.yetiproject.elasticsearch.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,8 +14,8 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.example.yetiproject.document.SportDoc;
-import com.example.yetiproject.dto.sports.SportDocResponseDto;
+import com.example.yetiproject.elasticsearch.document.SportDoc;
+import com.example.yetiproject.elasticsearch.dto.SportDocResponseDto;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;

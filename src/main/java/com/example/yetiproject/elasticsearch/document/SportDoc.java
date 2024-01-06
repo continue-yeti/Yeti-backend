@@ -1,4 +1,4 @@
-package com.example.yetiproject.document;
+package com.example.yetiproject.elasticsearch.document;
 
 import java.time.LocalDateTime;
 

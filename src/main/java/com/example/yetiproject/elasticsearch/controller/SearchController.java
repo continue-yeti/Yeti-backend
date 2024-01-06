@@ -1,4 +1,4 @@
-package com.example.yetiproject.controller;
+package com.example.yetiproject.elasticsearch.controller;
 
 import java.util.Map;
 
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.yetiproject.service.SearchService;
+import com.example.yetiproject.elasticsearch.service.SearchService;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.example.yetiproject.config;
+package com.example.yetiproject.elasticsearch.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
