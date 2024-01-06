@@ -6,7 +6,6 @@ import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
 import com.example.yetiproject.dto.user.RegisterUserResponse;
 import com.example.yetiproject.facade.*;
-import com.example.yetiproject.facade.wait.UserQueueService;
 import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import java.util.List;
 @RequestMapping("/api/mytickets")
 public class TicketController {
 	private final TicketService ticketService;
-	private final UserQueueService userQueueService;
 //	private final TicketKafkaService ticketKafkaService;
 	private final RedissonLockTicketFacade redissonLockTicketFacade;
 	private final WaitingQueueService waitingQueueService;
