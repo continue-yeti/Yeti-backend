@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "Search 시간 비교")
 public class ExecutionTimeAspect {
 
-	@Around("execution(* com.example.yetiproject.controller.*.*(..))")
+	@Around("execution(* com.example.yetiproject.elasticsearch.controller.*.*(..))")
 	public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
 		long startTime = System.currentTimeMillis();
 		Object proceed = joinPoint.proceed();
