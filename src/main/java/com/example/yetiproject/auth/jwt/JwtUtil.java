@@ -37,7 +37,7 @@ public class JwtUtil {
 	// Token 식별자
 	public static final String BEARER_PREFIX = "Bearer ";
 	// 토큰 만료시간
-	private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
+	private final long TOKEN_TIME = 60 * 60 * 1000L * 24; // 60분 * 24
 
 	@Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
 	private String secretKey;
@@ -67,7 +67,7 @@ public class JwtUtil {
 	// header 에서 JWT 가져오기
 	public String getJwtFromHeader(HttpServletRequest request) {
 		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-		log.info("[JwtUtil]bearerToken : " + bearerToken);
+//		log.info("[JwtUtil]bearerToken : " + bearerToken);
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
 			return bearerToken.substring(7);
 		}
