@@ -2,7 +2,8 @@
 
 ---
 
-![1_360.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/76069a67-bbe8-437e-b3bc-6afc7dcff7d5/7676347e-7ae4-4dab-bc5a-068b2f2b52fb/1_360.png)
+![image](https://github.com/Yeti-spring-project/Yeti/assets/76715487/5174be80-f960-491b-84a4-750d2ff94ea9)
+
 
 # 🎫 01. 프로젝트 소개
 
@@ -34,35 +35,10 @@
 
 # 🎫 02. 기술 스택
 
-## Frontend
+| Frontend                                                                                                  | Backend                                                                                                                                                                                                                                              | Database                                                                                                                                                                                                                              | DevOps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Others                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+|-----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"><br/> | <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"/><br/> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white"/> <br/> | <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"><br/>  <img src="https://img.shields.io/badge/postgreSQL-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white"><br/> | <img src="https://img.shields.io/badge/amazon%20ec2-FF9900?style=for-the-badge&logo=amazon%20ec2&logoColor=white"><br/> <img src="https://img.shields.io/badge/amazon%20rds-527FFF?style=for-the-badge&logo=amazon%20rds&logoColor=white"><br/> <img src="https://img.shields.io/badge/amazon%20s3-569A31?style=for-the-badge&logo=amazons3&logoColor=white"><br/> <img src="https://img.shields.io/badge/amazon%20alb-FF9900?style=for-the-badge"/><br/> <img src="https://img.shields.io/badge/amazon%20codedeploy-569A31?style=for-the-badge"/><br/>  <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"><br/> <img src="https://img.shields.io/badge/github%20actions-2088FF?style=for-the-badge&logo=github%20actions&logoColor=white"><br/> <img src="https://img.shields.io/badge/vercel-%23000000?style=for-the-badge&logo=vercel&logoColor=white"> | <img src="https://img.shields.io/badge/elasticsearch-4053D6?style=for-the-badge&logo=elasticsearch&logoColor=white"><br/> <img src="https://img.shields.io/badge/logstash-FCC624?style=for-the-badge&logo=logstash&logoColor=white"><br/> <img src="https://img.shields.io/badge/kibana-00bfb3?style=for-the-badge&logo=kibana"/><br/> <img src="https://img.shields.io/badge/pinpoint-007ACC?style=for-the-badge"/><br/> <img src="https://img.shields.io/badge/jmeter-FF4500?style=for-the-badge"/><br/> |
 
-- React
-
-## Backend
-
-- Spring Boot
-- Spring Security
-
-## DevOps
-
-- Docker
-- Github Actions
-- AWS EC2
-- AWS ALB
-- AWS S3
-- AWS Codedeploy
-
-## Database
-
-- PostgreSQL
-- Redis
-- AWS RDS
-
-## Others
-
-- Pinpoint
-- JMeter
-- Elasticsearch
 
 ---
 
