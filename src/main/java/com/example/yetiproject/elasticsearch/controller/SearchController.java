@@ -23,4 +23,10 @@ public class SearchController {
 		@RequestParam("queryText") String queryText, @RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize) {
 		return searchService.searchNativeQuery(queryText, pageNumber, pageSize);
 	}
+
+	@GetMapping("/rdbms")
+	public Map<String, Object> searchQuery(
+		@RequestParam("queryText") String queryText, @RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize) {
+		return searchService.searchQuery(queryText, pageNumber, pageSize);
+	}
 }

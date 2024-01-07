@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.yetiproject.elasticsearch.document.SportDoc;
 import com.example.yetiproject.elasticsearch.dto.SportDocResponseDto;
+import com.example.yetiproject.repository.SportsRepository;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class SearchService {
 
 	private final ElasticsearchOperations elasticsearchOperations;
+	private final SportsRepository sportsRepository;
 
 	public Map<String, Object> searchNativeQuery(String queryText, int pageNumber, int pageSize) {
 
@@ -62,5 +64,10 @@ public class SearchService {
 		}
 		result.put("data", responseDtoList);
 		return result;
+	}
+
+	public Map<String, Object> searchQuery(String queryText, int pageNumber, int pageSize) {
+		//TODO
+		return null;
 	}
 }
