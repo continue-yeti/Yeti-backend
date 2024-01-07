@@ -22,6 +22,12 @@ repositories {
 }
 
 dependencies {
+    // spring AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // elasticsearch
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
     //kafka
 //    implementation 'org.springframework.kafka:spring-kafka'
 

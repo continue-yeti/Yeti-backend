@@ -1,5 +1,7 @@
 package com.example.yetiproject.entity;
 
+import java.time.LocalDateTime;
+
 import com.example.yetiproject.dto.sports.SportsRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
