@@ -34,7 +34,6 @@ public class SearchService {
 
 	private final ElasticsearchOperations elasticsearchOperations;
 	private final SportsRepository sportsRepository;
-	private final SportsRepository sportsRepository;
 
 	public Map<String, Object> searchNativeQuery(String queryText, int pageNumber, int pageSize) {
 
