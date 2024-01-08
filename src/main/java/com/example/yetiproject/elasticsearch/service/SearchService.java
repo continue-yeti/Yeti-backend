@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.yetiproject.entity.Ticket;
 import com.example.yetiproject.exception.entity.sports.SportsNotFoundException;
 import com.example.yetiproject.repository.TicketInfoRepository;
+import com.example.yetiproject.repository.TicketRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ public class SearchService {
 
 	private final ElasticsearchOperations elasticsearchOperations;
 	private final SportsRepository sportsRepository;
+	private final TicketRepository ticketRepository;
 
 	public Map<String, Object> searchNativeQuery(String queryText, int pageNumber, int pageSize) {
 
@@ -67,9 +70,7 @@ public class SearchService {
 		// 검색 결과 추가
 		List<SportDocResponseDto> responseDtoList = new ArrayList<>();
 		for(SearchHit<SportDoc> hit : searchHits) {
-			Sports sports = sportsRepository.findById(hit.getContent().getSportId())
-					.orElseThrow(() -> new SportsNotFoundException("스포츠를 찾을 수 없습니다."));
-			responseDtoList.add(new SportDocResponseDto(hit.getContent(), sports));
+			responseDtoList.add(new SportDocResponseDto(hit.getContent()));
 		}
 		result.put("data", responseDtoList);
 		return result;
