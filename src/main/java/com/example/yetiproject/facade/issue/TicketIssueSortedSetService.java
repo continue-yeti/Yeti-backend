@@ -1,15 +1,12 @@
-package com.example.yetiproject.facade;
+package com.example.yetiproject.facade.issue;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.example.yetiproject.entity.Ticket;
 import org.springframework.stereotype.Service;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
-import com.example.yetiproject.entity.TicketInfo;
 import com.example.yetiproject.facade.repository.RedisRepository;
 import com.example.yetiproject.repository.TicketInfoRepository;
 import com.example.yetiproject.service.TicketService;
@@ -23,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "TicketIssueService")
 @Service
 @RequiredArgsConstructor
-public class TicketIssueService {
+public class TicketIssueSortedSetService {
 	private final RedisRepository redisRepository;
 	private final TicketService ticketService;
 	private final ObjectMapper objectMapper;
@@ -46,7 +43,9 @@ public class TicketIssueService {
 		for(String ticketRequest : queue){
 			TicketRequestDto ticketRequestDto = objectMapper.readValue(ticketRequest, TicketRequestDto.class);
 
-			if (Integer.parseInt(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(key))) == 0) {
+			if (Integer.parseInt(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(key))) ==
+				ticketInfoRepository.getStockforTicketInfo(ticketRequestDto.getTicketInfoId())
+			) {
 				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
 				return;
 			}
@@ -57,13 +56,13 @@ public class TicketIssueService {
 			log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
 				ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
 
+			increase(ticketRequestDto.getTicketInfoId());
 			log.info(ticketRequest);
 			log.info(USER_QUEUE_WAIT_KEY.formatted(key));
 			redisRepository.zRemove(USER_QUEUE_WAIT_KEY.formatted(key), ticketRequest);
 
-			decrease(ticketRequestDto.getTicketInfoId());
-			log.info("남은 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
-
+			log.info("예약된 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
+			return;
 		}
 	}
 
@@ -89,9 +88,10 @@ public class TicketIssueService {
 
 			log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
 				ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
+
+			increase(ticketRequestDto.getTicketInfoId());
 			redisRepository.zRemove(USER_QUEUE_WAIT_KEY.formatted(key), ticketRequest);
 
-			decrease(ticketRequestDto.getTicketInfoId());
 			log.info("남은 티켓 수 " + redisRepository.get("ticketInfo" + ticketRequestDto.getTicketInfoId()));
 		}
 
@@ -101,5 +101,9 @@ public class TicketIssueService {
 
 	public Long decrease(Long ticketInfoId){
 		return redisRepository.decrease(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId));
+	}
+
+	public Long increase(Long ticketInfoId) {
+		return redisRepository.increase(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId));
 	}
 }

@@ -17,4 +17,7 @@ public interface TicketInfoRepository extends JpaRepository<TicketInfo, Long> {
 	@EntityGraph(attributePaths = {"sports","sports.stadium"})
 	Optional<TicketInfo> findById(Long ticketId);
 
+	@Query(value="select stock from ticket_info where ticket_info_id = ?", nativeQuery = true)
+	Long getStockforTicketInfo(Long ticketInfoId);
+
 }
