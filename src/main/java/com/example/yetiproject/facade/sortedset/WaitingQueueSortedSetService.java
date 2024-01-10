@@ -1,4 +1,4 @@
-package com.example.yetiproject.facade;
+package com.example.yetiproject.facade.sortedset;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -35,11 +35,11 @@ public class WaitingQueueSortedSetService {
 	private final String TICKETINFO_OCCUPY_SEAT = "ticketInfo:%s:reserved:seat";
 	private final String TICKETINFO_STOCK_COUNT = "ticketInfo:%s:stock";
 
-	public Long registerQueue(TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+	public Long registerQueue(Long userId, TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		// 좌석 체크
 		String seatObject = objectMapper.writeValueAsString(new Seat(ticketRequestDto.getPosX(), ticketRequestDto.getPosY()));
 		if(checkSelectedSeat(TICKETINFO_OCCUPY_SEAT.formatted(ticketRequestDto.getTicketInfoId())
-			, seatObject, ticketRequestDto.getUserId()) == false){
+			, seatObject, userId) == false){
 			log.info("이미 선택된 좌석입니다.");
 			throw ErrorCode.QUEUE_ALREADY_REGISTERED_USER.build();
 		}
@@ -50,6 +50,7 @@ public class WaitingQueueSortedSetService {
 		}
 		// redis ticketInfo check
 		setTicketStock(ticketRequestDto.getTicketInfoId());
+		ticketRequestDto.setUserId(userId); //user 등록
 
 		//객체 -> String 변형
 		String jsonObject = objectMapper.writeValueAsString(ticketRequestDto); //ticketRequestDto -> String
@@ -61,11 +62,10 @@ public class WaitingQueueSortedSetService {
 	}
 
 	private void setTicketStock(Long ticketInfoId) throws JsonProcessingException {
-		// Redis에 해당 stock가 없으면 redis에 넣기
-		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketInfoId).get();
+		// Redis에 해당 갯수를 0으로 셋팅한다.
 		if(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId))==null){
-			// Redis에 해당 stock가 없으면 redis에 넣는다.
-			redisRepository.set(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId), String.valueOf(ticketInfo.getStock()));
+			// Redis에 해당 stock 0으로 초기화해준다.
+			redisRepository.set(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId), String.valueOf(0));
 		}
 	}
 

@@ -6,6 +6,8 @@ import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
 import com.example.yetiproject.dto.user.RegisterUserResponse;
 import com.example.yetiproject.facade.*;
+import com.example.yetiproject.facade.sortedset.WaitingQueueService;
+import com.example.yetiproject.facade.sortedset.WaitingQueueSortedSetService;
 import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -53,11 +55,11 @@ public class TicketController {
 		return new RegisterUserResponse(waitingQueueService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
 	}
 
-	//jungmin sorted set 날짜체크O, 좌석체크X
+	//jungmin sorted set 날짜체크O, 좌석체크O
 	@PostMapping("/reserve/waiting/queue/sortedset")
 	public RegisterUserResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		// user는 jwt 인증으로만 사용한다.
-		return new RegisterUserResponse(waitingQueueSortedSetService.registerQueue(ticketRequestDto));
+		return new RegisterUserResponse(waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
 	}
 
 	@PostMapping("/reserve/queue/list")

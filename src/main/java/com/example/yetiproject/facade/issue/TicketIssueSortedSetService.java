@@ -17,7 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j(topic = "TicketIssueService")
+@Slf4j(topic = "TicketIssueSortedSetService")
 @Service
 @RequiredArgsConstructor
 public class TicketIssueSortedSetService {
@@ -34,7 +34,6 @@ public class TicketIssueSortedSetService {
 
 	@Transactional
 	public void publish(String key) throws JsonProcessingException {
-		log.info("Publish ticketInfoId" + key);
 		final long start = FIRST_ELEMENT;
 		final long end = PUBLISH_SIZE - LAST_INDEX;
 
@@ -57,8 +56,6 @@ public class TicketIssueSortedSetService {
 				ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
 
 			increase(ticketRequestDto.getTicketInfoId());
-			log.info(ticketRequest);
-			log.info(USER_QUEUE_WAIT_KEY.formatted(key));
 			redisRepository.zRemove(USER_QUEUE_WAIT_KEY.formatted(key), ticketRequest);
 
 			log.info("예약된 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
@@ -97,10 +94,6 @@ public class TicketIssueSortedSetService {
 
 		// 티켓 일괄 발급
 		ticketService.reserveTicketsInBatch(ticketRequestDtoList);
-	}
-
-	public Long decrease(Long ticketInfoId){
-		return redisRepository.decrease(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId));
 	}
 
 	public Long increase(Long ticketInfoId) {

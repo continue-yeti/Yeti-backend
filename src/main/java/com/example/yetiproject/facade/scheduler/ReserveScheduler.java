@@ -21,7 +21,7 @@ public class ReserveScheduler {
 
 	private final String USER_QUEUE_WAIT_KEY_FOR_SCAN = "ticketInfo:queue:*:wait";
 
-	@Scheduled(initialDelay = 5000, fixedDelay = 3000)
+	@Scheduled(initialDelay = 5000, fixedDelay = 1000)
 	private void ticketReserveScheduler() throws JsonProcessingException {
 		log.info("start scheduling...");
 
@@ -29,8 +29,6 @@ public class ReserveScheduler {
 		try(Cursor<String> cursor = redisTemplate.scan(options)){
 			while(cursor.hasNext()){
 				String key = cursor.next();
-				System.out.println("Found key : " + key);
-				System.out.println("ticketInfo : " + key.split(":")[2]);
 
 				ticketIssueSortedSetService.publish(key.split(":")[2]);
 			}
