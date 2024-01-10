@@ -2,7 +2,8 @@
 
 ---
 
-![1_360.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/76069a67-bbe8-437e-b3bc-6afc7dcff7d5/7676347e-7ae4-4dab-bc5a-068b2f2b52fb/1_360.png)
+![image](https://github.com/Yeti-spring-project/Yeti/assets/76715487/5174be80-f960-491b-84a4-750d2ff94ea9)
+
 
 # 🎫 01. 프로젝트 소개
 
@@ -34,42 +35,24 @@
 
 # 🎫 02. 기술 스택
 
-## Frontend
+| Frontend                                                                                                  | Backend                                                                                                                                                                                                                                              | Database                                                                                                                                                                                                                              | DevOps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Others                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+|-----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"><br/> | <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"/><br/> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white"/> <br/> | <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"><br/>  <img src="https://img.shields.io/badge/postgreSQL-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white"><br/> | <img src="https://img.shields.io/badge/amazon%20ec2-FF9900?style=for-the-badge&logo=amazon%20ec2&logoColor=white"><br/> <img src="https://img.shields.io/badge/amazon%20rds-527FFF?style=for-the-badge&logo=amazon%20rds&logoColor=white"><br/> <img src="https://img.shields.io/badge/amazon%20s3-569A31?style=for-the-badge&logo=amazons3&logoColor=white"><br/> <img src="https://img.shields.io/badge/amazon%20alb-FF9900?style=for-the-badge"/><br/> <img src="https://img.shields.io/badge/amazon%20codedeploy-569A31?style=for-the-badge"/><br/>  <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"><br/> <img src="https://img.shields.io/badge/github%20actions-2088FF?style=for-the-badge&logo=github%20actions&logoColor=white"><br/> <img src="https://img.shields.io/badge/vercel-%23000000?style=for-the-badge&logo=vercel&logoColor=white"> | <img src="https://img.shields.io/badge/elasticsearch-4053D6?style=for-the-badge&logo=elasticsearch&logoColor=white"><br/> <img src="https://img.shields.io/badge/logstash-FCC624?style=for-the-badge&logo=logstash&logoColor=white"><br/> <img src="https://img.shields.io/badge/kibana-00bfb3?style=for-the-badge&logo=kibana"/><br/> <img src="https://img.shields.io/badge/pinpoint-007ACC?style=for-the-badge"/><br/> <img src="https://img.shields.io/badge/jmeter-FF4500?style=for-the-badge"/><br/> |
 
-- React
-
-## Backend
-
-- Spring Boot
-- Spring Security
-
-## DevOps
-
-- Docker
-- Github Actions
-- AWS EC2
-- AWS ALB
-- AWS S3
-- AWS Codedeploy
-
-## Database
-
-- PostgreSQL
-- Redis
-- AWS RDS
-
-## Others
-
-- Pinpoint
-- JMeter
-- Elasticsearch
 
 ---
 
 # 🎫 03. 기술적 의사 결정
 
-![image](https://github.com/Yeti-spring-project/Yeti/assets/76715487/110c308c-69f0-444e-8023-ec2c03cb7fc8)
 
+| 요구사항 | 선택지 | 기술 선택 이유 |
+| --- | --- | --- |
+| CI/CD | Jenkins<br/> Github Action<br/> | Github Action<br/> 클라우드에서 동작하므로 다른 서버를 설치 하지 않아도 되기 때문에 가격적 측면과 자원 소모를 줄일 수 있었습니다. 또한 GitHub에 push, PR 이벤트가 발생할 때 자동 배포가 가능하여 개발에 몰두 할 수 있습니다. Blue/Green 전략을 이용해 무중단 배포로 서비스를 끊김없이 계속 이용 가능하도록 구성하였습니다. |
+| 모니터링 | Elastic APM <br/>Prometheus <br/>Grafana <br/>PinPoint ✔️ | Pinpoint<br/> 전체적인 트랜잭션의 흐름을 쉽게 파악이 가능하고, 사용자가 직접 그래프를 그리지 않아도 되면서 그래프가 매우 알기 쉽게 표현됩니다. 대규모 시스템의 분산 트랜잭션 추적 및 시각화가 용이해 모니터링 APM을 Pinpoint로 선택하였습니다 |
+| 검색 성능 개선 | MongoDB<br/>Elasticsearch✔️ | Elasticsearch <br/> RDBMS에서도 텍스트 검색을 위한 기능을 제공하지만, 와일드카드를 사용하거나 복잡한 패턴을 사용한 검색에 있어서 성능저하가 우려되었습니다. 따라서 검색 성능 개선을 위해 NoSQL DB인 MongoDB와 Elasticsearch를 고려했고, 최종적으로 Elasticsearch를 선택하게 되었습니다.  Elasticsearch를 선택한 이유로는 Elasticsearch가 제공하는 강력한 풀 텍스트 검색 기능과 QueryDSL이 프로젝트에 좀 더 적합하다고 생각했기 때문입니다. 또한 이후 확장성을 고려해보았을 때에도 분산형 시스템으로 설계된 Elasticsearch를 사용하는 것이 유리하다고 생각되었습니다. |
+| 데이터베이스 | MySQL <br/> PostgreSQL ✔️ <br/> MongDB | PostgreSQL <br/> 동시성 제어 성능이 MySQL에 비해 뛰어나며 다중 버전 동시성 제어를 제공합니다. 또한 쓰기 및 조회 성능이 다른 RDB에 비해 우수하다고 알려져 있기 때문에 대용량 트래픽 처리에 용이하다고 판단하였습니다. |
+| 데이터 파이프 라인 | Kafka <br/> Redis ✔️ | Redis <br/> 성능이 뛰어나고 간단한 데이터 모델을 지원해 사용이 용이합니다. 그리고 메모리를 사용하면서 영속적으로 데이터를 보존 가능하며 리스트형 데이터 입력과 삭제가 데이터베이스보다 매우 빠르다는 장점이 있습니다. Kafka도 후보에 있었지만, 프로젝트의 규모나 기간을 고려할 때 추가적인 학습이 필요한 Kafka를 도입하기보다는 기존에 사용해보았던 Redis를 사용하는것이 좋다고 판단했습니다. |
+| 부하테스트 | JMeter ✔️ <br/> nGrinder | JMeter <br/>간단하게 테스트하기 용이하고, GUI 기반으로 사용하기 쉽우며 플러그인 지원이 풍부합니다. 결정적으로, nGrinder가 프로젝트에서 사용하는 Java 17 버전을 지원하지 않아서 JMeter를 선택하였습니다. |
 
 # 🎫 04. 아키텍쳐
 

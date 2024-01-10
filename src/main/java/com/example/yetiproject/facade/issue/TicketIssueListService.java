@@ -1,4 +1,4 @@
-package com.example.yetiproject.facade;
+package com.example.yetiproject.facade.issue;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.facade.repository.RedisRepository;
