@@ -6,6 +6,8 @@ import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
 import com.example.yetiproject.dto.user.RegisterUserResponse;
 import com.example.yetiproject.facade.*;
+import com.example.yetiproject.facade.sortedset.WaitingQueueService;
+import com.example.yetiproject.facade.sortedset.WaitingQueueSortedSetService;
 import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j(topic = "Ticket Controller")
+@Slf4j(topic = "TicketController")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mytickets")
@@ -46,27 +48,27 @@ public class TicketController {
 		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
 	}
 
-	// 예매 - redis queue
-	@PostMapping("/reserve/queue")
-	public ApiResponse reserveTicketQueue(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-//		log.info("queue start : {}", System.currentTimeMillis());
-		waitingQueueService.addQueue(userDetails.getUser(), ticketRequestDto);
-		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
+	// redis sortedset 날짜확인X, 좌석체크X
+	@PostMapping("/reserve/queue/sortedset")
+	public RegisterUserResponse reserveTicketQueue(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+		waitingQueueService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto);
+		return new RegisterUserResponse(waitingQueueService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
+	}
+
+	//jungmin sorted set 날짜체크O, 좌석체크O
+	@PostMapping("/reserve/waiting/queue/sortedset")
+	public RegisterUserResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+		// user는 jwt 인증으로만 사용한다.
+		return new RegisterUserResponse(waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
 	}
 
 	@PostMapping("/reserve/queue/list")
 	public ApiResponse reserveTicketQueueList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-//		log.info("queue start : {}", System.currentTimeMillis());
 		waitingQueueListService.addQueue(userDetails.getUser(), ticketRequestDto);
 		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
 	}
 
-	//jungmin sorted set
-	@PostMapping("/reserve/waiting/queue/sortedset")
-	public RegisterUserResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-		// user는 jwt 인증으로만 사용한다.
-		return new RegisterUserResponse(waitingQueueSortedSetService.registerQueue(ticketRequestDto));
-	}
+
 
 	@PostMapping("/reserve/queue/list/bulk")
 	public ApiResponse reserveTicketQueueListBulk(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
