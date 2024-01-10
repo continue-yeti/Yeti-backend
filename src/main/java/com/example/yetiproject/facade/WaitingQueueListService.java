@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-@Slf4j
+@Slf4j(topic = "WaitingQueueListService")
 @Service
 @RequiredArgsConstructor
 public class WaitingQueueListService {
@@ -51,13 +51,6 @@ public class WaitingQueueListService {
 
 //        log.info("대기열에 추가 - Value : {} ({}초)", jsonString, nowTime);
     }
-
-//    @Scheduled(fixedDelay = 1000) // 1초마다 반복
-//    public void reserveTicket() throws JsonProcessingException {
-//        getOrder();
-//        publish();
-//    }
-
     // 대기열 조회
     public void getOrder() {
         // Redis Sorted Set에서 가져올 범위 설정

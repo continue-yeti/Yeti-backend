@@ -62,13 +62,12 @@ public class TicketController {
 		return new RegisterUserResponse(waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
 	}
 
+	// redis list
 	@PostMapping("/reserve/queue/list")
 	public ApiResponse reserveTicketQueueList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		waitingQueueListService.addQueue(userDetails.getUser(), ticketRequestDto);
 		return ApiResponse.successWithNoContent("예매가 완료되었습니다.");
 	}
-
-
 
 	@PostMapping("/reserve/queue/list/bulk")
 	public ApiResponse reserveTicketQueueListBulk(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
