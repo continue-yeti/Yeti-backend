@@ -23,7 +23,7 @@ import com.example.yetiproject.repository.TicketRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-@Slf4j
+@Slf4j(topic = "TicketService")
 @Service
 @RequiredArgsConstructor
 public class TicketService {
