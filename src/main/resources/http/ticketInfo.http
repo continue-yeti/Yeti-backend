@@ -3,7 +3,7 @@ POST http://localhost:8080/api/user/signin
 Content-Type: application/json
 
 {
-  "username":"administrator",
+  "username":"jungmin",
   "password":"@Qkrwjdals96"
 }
 > {%
@@ -11,7 +11,7 @@ Content-Type: application/json
     client.log(client.global.get("access_token"));
 %}
 
-### 2. 티켓 생성
+### 2. ticketInfo 생성
 POST http://localhost:8080/api/tickets
 Content-Type: application/json
 Authorization: {{access_token}}
