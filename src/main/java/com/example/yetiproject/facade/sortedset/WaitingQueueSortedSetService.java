@@ -40,12 +40,12 @@ public class WaitingQueueSortedSetService {
 		String seatObject = objectMapper.writeValueAsString(new Seat(ticketRequestDto.getPosX(), ticketRequestDto.getPosY()));
 		if(checkSelectedSeat(TICKETINFO_OCCUPY_SEAT.formatted(ticketRequestDto.getTicketInfoId())
 			, seatObject, userId) == false){
-			log.info("이미 선택된 좌석입니다.");
+			//log.info("이미 선택된 좌석입니다.");
 			throw ErrorCode.QUEUE_ALREADY_REGISTERED_USER.build();
 		}
 		//오픈날짜 종료날짜를 체크한다.
 		if(checkTicketInfoDate(ticketRequestDto.getTicketInfoId()) == false){
-			log.info("예매가능한 날짜가 아닙니다.");
+			//log.info("예매가능한 날짜가 아닙니다.");
 			throw ErrorCode.NOT_AVAILABLE_RESERVATION_DATES.build();
 		}
 		// redis ticketInfo check
