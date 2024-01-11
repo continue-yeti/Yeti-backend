@@ -45,20 +45,20 @@ public class TicketIssueSortedSetService {
 			if (Integer.parseInt(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(key))) ==
 				ticketInfoRepository.getStockforTicketInfo(ticketRequestDto.getTicketInfoId())
 			) {
-				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
+				//log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
 				return;
 			}
 
 			//reserve
 			ticketService.reserveTicketSortedSet(ticketRequestDto.getUserId(), ticketRequestDto);
 
-			log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
-				ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
+			//log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
+				//ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
 
 			increase(ticketRequestDto.getTicketInfoId());
 			redisRepository.zRemove(USER_QUEUE_WAIT_KEY.formatted(key), ticketRequest);
 
-			log.info("예약된 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
+			//log.info("예약된 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
 			return;
 		}
 	}
