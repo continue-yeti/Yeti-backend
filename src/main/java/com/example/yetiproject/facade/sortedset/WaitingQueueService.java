@@ -41,7 +41,7 @@ public class WaitingQueueService {
         ticketRequestDto.setUserId(userId); //user 추가
         String jsonObject = objectMapper.writeValueAsString(ticketRequestDto);
         double timeStamp = Instant.now().getEpochSecond();
-        log.info("대기열에 추가 - userId : {} requestDto : {} ({}초)", ticketRequestDto.getUserId(), jsonObject, System.currentTimeMillis());
+        //log.info("대기열에 추가 - userId : {} requestDto : {} ({}초)", ticketRequestDto.getUserId(), jsonObject, System.currentTimeMillis());
 
         redisRepository.zAddIfAbsent(USER_QUEUE_WAIT_KEY.formatted(ticketRequestDto.getTicketInfoId()), jsonObject, timeStamp);
         return redisRepository.zRank(USER_QUEUE_WAIT_KEY.formatted(ticketRequestDto.getTicketInfoId()),jsonObject);

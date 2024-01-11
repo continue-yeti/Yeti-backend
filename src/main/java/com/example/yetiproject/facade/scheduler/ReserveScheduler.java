@@ -23,7 +23,7 @@ public class ReserveScheduler {
 
 	@Scheduled(initialDelay = 5000, fixedDelay = 1000)
 	private void ticketReserveScheduler() throws JsonProcessingException {
-		log.info("start scheduling...");
+		//log.info("start scheduling...");
 
 		ScanOptions options = ScanOptions.scanOptions().match(USER_QUEUE_WAIT_KEY_FOR_SCAN).build();
 		try(Cursor<String> cursor = redisTemplate.scan(options)){
