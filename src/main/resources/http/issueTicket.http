@@ -11,7 +11,7 @@ Content-Type: application/json
     client.log(client.global.get("access_token"));
 %}
 
-### 2. 티켓 예매하기
+### 2. 티켓 예매하기(sorted-set)
 POST http://localhost:8080/api/mytickets/reserve/waiting/queue/sortedset
 Content-Type: application/json
 Authorization: {{access_token}}
