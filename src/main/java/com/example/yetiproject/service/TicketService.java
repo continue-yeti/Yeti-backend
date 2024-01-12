@@ -31,7 +31,6 @@ public class TicketService {
 	private final TicketInfoRepository ticketInfoRepository;
 	private final RedisRepository redisRepository;
 
-	ObjectMapper objectMapper = new ObjectMapper();
 	private final String TICKETINFO_STOCK_COUNT = "ticketInfo:%s:stock";
 
 	public List<TicketResponseDto> getUserTicketList(User user) {
@@ -119,7 +118,8 @@ public class TicketService {
 				User user = User.builder().userId(ticketRequestDto.getUserId()).email("admin@test.com").username("jungmin").build();
 				Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 				ticketList.add(ticket);
-				redisRepository.zRemove("ticket", objectMapper.writeValueAsString(ticketRequestDto));
+				incrementTicketCounter("ticketInfo" + ticketInfo.getTicketInfoId());
+				redisRepository.listLeftPop("ticket");
 
 			} else {
 				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
