@@ -1,0 +1,24 @@
+### 1.로그인후 토큰 받기
+POST http://localhost:8080/api/user/signin
+Content-Type: application/json
+
+{
+  "username":"administrator",
+  "password":"@Qkrwjdals96"
+}
+> {%
+    client.global.set("access_token", response.headers.valueOf("Authorization"));
+    client.log(client.global.get("access_token"));
+%}
+
+### 2. 티켓 예매하기(sorted-set)
+POST http://localhost:8080/api/mytickets/reserve/waiting/queue/sortedset
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "userId" : 1,
+  "ticketInfoId" : 1,
+  "posX" : 12,
+  "posY" : 20
+}

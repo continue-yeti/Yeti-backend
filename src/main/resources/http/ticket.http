@@ -3,7 +3,7 @@ POST http://localhost:8080/api/user/signin
 Content-Type: application/json
 
 {
-  "username":"administrator",
+  "username":"jungmin",
   "password":"@Qkrwjdals96"
 }
 > {%
@@ -20,7 +20,7 @@ Authorization: {{access_token}}
 GET http://localhost:8080/api/mytickets/ticketId/4
 Authorization: {{access_token}}
 
-### 3. 티켓 예매하기
+### 3. local - 티켓 예매하기
 POST http://localhost:8080/api/mytickets/reserve
 Content-Type: application/json
 Authorization: {{access_token}}
@@ -31,6 +31,28 @@ Authorization: {{access_token}}
   "posY" : 18
 }
 
+
+### 3-1. local - 티켓 예매하기(sortedset - 좌석, 날짜 체크 확인)
+POST http://localhost:8080/api/mytickets/reserve/queue/sortedset
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "ticketInfoId" : 1,
+  "posX" : 20,
+  "posY" : 21
+}
+
+### 3-1. local - 티켓 예매하기(sortedset - 좌석, 날짜 체크 확인)
+POST http://localhost:8080/api/mytickets/reserve/waiting/queue/sortedset
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "ticketInfoId" : 1,
+  "posX" : 20,
+  "posY" : 21
+}
 ### 3-1. 티켓 예매하기-Ec2
 POST http://13.209.247.218/api/mytickets/reserve
 Content-Type: application/json
@@ -39,7 +61,7 @@ Authorization: {{access_token}}
 {
   "ticketInfoId" : 1,
   "posX" : 12,
-  "posY" : 20
+  "posY" : 21
 }
 
 ### 4. 예매한 티켓 취소하기
