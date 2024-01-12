@@ -10,7 +10,9 @@ import org.springframework.data.repository.query.Param;
 
 import com.example.yetiproject.entity.Bookmark;
 import com.example.yetiproject.entity.Notification;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
 	// 북마크 추가, 제거

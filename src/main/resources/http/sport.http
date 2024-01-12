@@ -27,8 +27,18 @@ GET http://localhost:8080/api/sports
 Content-Type: application/json
 Authorization: {{access_token}}
 
+### 2. 경기 리스트 조회 - EC2
+GET https://yetiyt.shop/api/sports
+Content-Type: application/json
+Authorization: {{access_token}}
+
 ### 3. 경기 상세 조회
 GET http://localhost:8080/api/sports/1
+Content-Type: application/json
+Authorization: {{access_token}}
+
+### 3. 경기 상세 조회 - EC2
+GET https://yetiyt.shop/api/sports/1
 Content-Type: application/json
 Authorization: {{access_token}}
 
