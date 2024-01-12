@@ -21,7 +21,15 @@ Authorization: {{access_token}}
   "stadiumName": "인천 문학경기장"
 }
 
+### 1. 경기장 생성 - EC2
+POST https://yetiyt.shop/api/stadiums
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "stadiumName": "인천 문학경기장151"
 }
+
 
 ### 2. 경기장 조회
 GET http://localhost:8080/api/stadiums/1
