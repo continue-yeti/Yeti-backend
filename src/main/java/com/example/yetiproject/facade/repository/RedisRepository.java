@@ -1,17 +1,13 @@
 package com.example.yetiproject.facade.repository;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import reactor.util.function.Tuples;
+import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
