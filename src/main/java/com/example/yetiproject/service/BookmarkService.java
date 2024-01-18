@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "북마크 서비스")
 public class BookmarkService {
 
-	private final NotificationService notificationService;
 	private final BookmarkRepository bookmarkRepository;
 	private final TicketInfoRepository ticketInfoRepository;
 	private final UserRepository userRepository;
@@ -50,33 +49,5 @@ public class BookmarkService {
 			bookmarkRepository.delete(bookmark);
 			return "찜하기 해제";
 		}
-	}
-
-	@Scheduled(cron = "0 0/15 * * * *")
-	@Transactional
-	public void notificationScheduler() {
-		log.info("스케쥴러에 의해 동작");
-		List<Bookmark> bookmarkList = bookmarkRepository.findByOpenDateJpql(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-		for (Bookmark bookmark : bookmarkList) {
-			Long bookmarkId = bookmark.getBookmarkId();
-			Long userId = bookmark.getUser().getUserId();
-			notificationToUser(bookmarkId, userId);
-		}
-	}
-
-	private void notificationToUser(Long bookmarkId, Long userId) {
-		Bookmark bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow(
-			() -> new EntityNotFoundException("찜 내역이 없습니다."));
-
-		User user = userRepository.findById(userId).orElseThrow(
-			() -> new UserNotFoundException("회원정보가 없습니다."));
-
-		String sportName = bookmark.getTicketInfo().getSports().getSportName();
-		String gameDate = bookmark.getTicketInfo().getSports().getMatchDate();
-		LocalDateTime openDate = bookmark.getTicketInfo().getOpenDate();
-		Duration diff = Duration.between(LocalDateTime.now(), openDate);
-		Long diffMins = diff.toMinutes();
-		String content = diffMins + "분 뒤 " + "[" + gameDate + " " + sportName + "] 경기의 예매가 시작됩니다.";
-		notificationService.send(content, user);
 	}
 }
