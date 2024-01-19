@@ -23,6 +23,7 @@ public class RedissonLockTicketFacade {
 
     // 예매하기 부분에 Redisson으로 락을 걸어줌
     public TicketResponseDto reserveTicket(User user, TicketRequestDto requestDto) {
+        log.info("posx, posy" + requestDto.getPosX() + "," + requestDto.getPosY());
         Long ticketInfoId = requestDto.getTicketInfoId();
         RLock lock = redissonClient.getLock(ticketInfoId.toString());
         TicketResponseDto responseDto;
