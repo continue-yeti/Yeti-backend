@@ -45,7 +45,7 @@ public class TicketController {
 	// 예매 - redisson
 	@PostMapping("/reserve")
 	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
-		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails, ticketRequestDto));
+		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails.getUser(), ticketRequestDto));
 	}
 
 	// redis sortedset 날짜확인X, 좌석체크X
