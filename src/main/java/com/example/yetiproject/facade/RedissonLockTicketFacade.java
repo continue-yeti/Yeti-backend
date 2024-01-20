@@ -36,7 +36,7 @@ public class RedissonLockTicketFacade {
                 return new TicketResponseDto();
             }
             log.info("lock 획득 성공");
-            log.info("( posX, posY ) = " + requestDto.getPosX() + " , " + requestDto.getPosY());
+            log.info("( posX, posY ) = " + requestDto.getSeat());
             responseDto = ticketService.reserveTicket(user, requestDto);
 
         } catch (InterruptedException e) {

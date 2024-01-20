@@ -83,8 +83,8 @@ public class TicketIssueSortedSetService {
 			//reserve
 			ticketService.reserveTicketSortedSet(ticketRequestDto.getUserId(), ticketRequestDto);
 
-			log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
-				ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
+			log.info("[예매완료] UserID = {} , seat = {}", ticketRequestDto.getUserId(),
+				ticketRequestDto.getSeat());
 
 			increase(ticketRequestDto.getTicketInfoId());
 			redisRepository.zRemove(USER_QUEUE_WAIT_KEY.formatted(key), ticketRequest);
