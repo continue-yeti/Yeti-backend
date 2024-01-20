@@ -53,7 +53,6 @@ public class TicketController {
 	// redis sortedset 날짜확인X, 좌석체크X
 	@PostMapping("/reserve/queue/sortedset")
 	public RegisterUserResponse reserveTicketQueue(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-		waitingQueueService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto);
 		return new RegisterUserResponse(waitingQueueService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
 	}
 

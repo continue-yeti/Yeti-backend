@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.example.yetiproject.exception.entity.TicketInfo.TicketInfoNotFoundException;
 import com.example.yetiproject.facade.repository.RedisRepository;
+import com.example.yetiproject.repository.TicketJdbcBatchRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
@@ -30,6 +31,7 @@ public class TicketService {
 	private final TicketRepository ticketRepository;
 	private final TicketInfoRepository ticketInfoRepository;
 	private final RedisRepository redisRepository;
+	private final TicketJdbcBatchRepository ticketJdbcBatchRepository;
 
 	private final String TICKETINFO_STOCK_COUNT = "ticketInfo:%s:stock";
 
@@ -62,14 +64,16 @@ public class TicketService {
 	}
 
 	@Transactional
-	public TicketResponseDto reserveTicketSortedSet(Long userId, TicketRequestDto ticketRequestDto) {
+	public String reserveTicketSortedSet(Long userId, TicketRequestDto ticketRequestDto) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
 		User user = User.builder().userId(userId).email("...").username("...").build();
 		//log.info("ticketRequestDto 좌석 : " + ticketRequestDto.getPosX() + " , " + ticketRequestDto.getPosY());
 
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
-		ticketRepository.save(ticket);
-		return new TicketResponseDto(ticket);
+		increase(ticketRequestDto.getTicketInfoId()); // ticket 예매 수 증가
+		ticketRepository.save(ticket); // ticket 저장
+//		return new TicketResponseDto(ticket);
+		return "예매 완료";
 	}
 
 	@Transactional
@@ -78,44 +82,38 @@ public class TicketService {
 
 		// 티켓 일괄 발급 처리
 		for (TicketRequestDto ticketRequestDto : ticketRequestDtoList) {
-			log.info("ticketRequestDto : {}", ticketRequestDto);
+			TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
+			User user = User.builder().userId(ticketRequestDto.getUserId()).email("...").username("...").build();
+			Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
+
+			// 매진 확인
+			if (Integer.parseInt(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketInfo.getTicketInfoId()))) ==
+					ticketInfoRepository.getStockforTicketInfo(ticketRequestDto.getTicketInfoId())
+			) {
+				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
+				return;
+			}
+
+			tickets.add(ticket);
+			increase(ticketRequestDto.getTicketInfoId()); // ticket 예매 수 증가
+		}
+
+		// 티켓 한번에 저장
+		ticketJdbcBatchRepository.batchUpdate(tickets);
+//		ticketRepository.saveAll(tickets);
+	}
+
+	@Transactional
+	public List<Ticket> reserveTicketsInBatchList(List<TicketRequestDto> ticketRequestDtolist) throws JsonProcessingException {
+		List<Ticket> ticketList = new ArrayList<>();
+
+		// 티켓 일괄 발급 처리
+		for (TicketRequestDto ticketRequestDto : ticketRequestDtolist) {
 			TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
 			Long ticketCount = getTicketCounter(TICKETINFO_STOCK_COUNT.formatted(ticketInfo.getTicketInfoId()));
 
 			if (ticketCount < ticketInfo.getStock()) {
 				User user = User.builder().userId(ticketRequestDto.getUserId()).email("...").username("...").build();
-				Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
-
-			} else {
-				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
-				// 티켓이 매진된 경우 처리
-				return;
-			}
-		}
-
-		// 배치로 티켓 저장
-		ticketRepository.saveAll(tickets);
-	}
-
-	@Transactional
-	public List<Ticket> reserveTicketsInBatchList(List<TicketRequestDto> ticketRequestDtos) throws JsonProcessingException {
-		List<Ticket> ticketList = new ArrayList<>();
-
-		// 티켓 요청들에 대한 정보를 미리 가져오기
-		Map<Long, TicketInfo> ticketInfoMap = new HashMap<>();
-		for (TicketRequestDto ticketRequestDto : ticketRequestDtos) {
-			TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId())
-					.orElseThrow(() -> new TicketInfoNotFoundException("티켓 정보를 찾을 수 없습니다."));
-			ticketInfoMap.put(ticketRequestDto.getTicketInfoId(), ticketInfo);
-		}
-
-		// 티켓 일괄 발급 처리
-		for (TicketRequestDto ticketRequestDto : ticketRequestDtos) {
-			TicketInfo ticketInfo = ticketInfoMap.get(ticketRequestDto.getTicketInfoId());
-			Long ticketCount = getTicketCounter("ticketInfo" + ticketInfo.getTicketInfoId());
-
-			if (ticketCount < ticketInfo.getStock()) {
-				User user = User.builder().userId(ticketRequestDto.getUserId()).email("admin@test.com").username("jungmin").build();
 				Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 				ticketList.add(ticket);
 				incrementTicketCounter("ticketInfo" + ticketInfo.getTicketInfoId());
@@ -123,7 +121,7 @@ public class TicketService {
 
 			} else {
 				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
-				redisRepository.delete("ticket");
+//				redisRepository.delete("ticket");
 				// 티켓이 매진된 경우 처리
 				return Collections.emptyList();
 			}
@@ -158,6 +156,10 @@ public class TicketService {
 	public void incrementTicketCounter(String key) {
 		// ValueOperations를 이용하여 INCR 명령어 실행
 		redisRepository.increase(key);
+	}
+
+	public Long increase(Long ticketInfoId) {
+		return redisRepository.increase(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId));
 	}
 
 	// 예매한 티켓 개수 GET
