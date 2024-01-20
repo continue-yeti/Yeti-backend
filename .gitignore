@@ -51,6 +51,7 @@ application-dev.yml
 application-redis.yml
 ### log file ###
 logs/*
+logs/catalina.*
 
 ### application ###
 application.yml
