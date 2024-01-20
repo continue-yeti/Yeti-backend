@@ -33,9 +33,8 @@ public class DBTest {
 		for (int i = 0; i < 50000; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
 				.ticketInfoId(1L)
-				.posX((long)i)
-				.posY((long)i).build();
-			//ticketRepository.save(new Ticket(user, ticketInfo, ticketRequestDto));
+				.seat(String.valueOf(i)+i)
+				.build();
 		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("TicketRepository 저장 속도 = " + (endTime - startTime));
@@ -49,8 +48,8 @@ public class DBTest {
 		for (int i = 0; i < 50000; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
 				.ticketInfoId(1L)
-				.posX((long)i)
-				.posY((long)i).build();
+				.seat(String.valueOf(i)+i)
+				.build();
 			//ticketService.reserveTicket(user, ticketRequestDto);
 		}
 		long endTime = System.currentTimeMillis();
@@ -66,9 +65,8 @@ public class DBTest {
 		for (int i = 0; i < 50000; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
 				.ticketInfoId(1L)
-				.posX((long)i)
-				.posY((long)i).build();
-			//ticketRepository.save(new Ticket(user, ticketInfo, ticketRequestDto));
+				.seat(String.valueOf(i)+i)
+				.build();
 		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("TicketRepository 저장 속도 = " + (endTime - startTime));
@@ -82,9 +80,8 @@ public class DBTest {
 		for (int i = 0; i < 50000; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
 				.ticketInfoId(1L)
-				.posX((long)i)
-				.posY((long)i).build();
-			//ticketService.reserveTicket(user, ticketRequestDto);
+				.seat(String.valueOf(i)+i)
+				.build();
 		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("TicketService 저장 속도 = " + (endTime - startTime));

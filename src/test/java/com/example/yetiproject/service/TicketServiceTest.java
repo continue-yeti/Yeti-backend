@@ -40,8 +40,7 @@ public class TicketServiceTest {
 		ticketRequestDto = TicketRequestDto.builder()
 			.userId(1L)
 			.ticketInfoId(1L)
-			.posX(12L)
-			.posY(14L)
+			.seat(String.valueOf(1) + 'A' + 12)
 			.build();
 	}
 
@@ -76,7 +75,8 @@ public class TicketServiceTest {
 		//given
 		Long ticketId = 2L;
 		User user = User.builder().userId(1L).build();
-		Ticket ticket = Ticket.builder().posY(12L).build();
+		Ticket ticket = Ticket.builder().seat(String.valueOf(1+'A'+12))
+			.build();
 		given(ticketRepository.findById(ticketId)).willReturn(Optional.of(ticket));
 
 		//when

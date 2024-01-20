@@ -1,5 +1,6 @@
 package com.example.yetiproject.repository;
 
+import java.util.List;
 import java.util.Set;
 
 import org.assertj.core.api.Assertions;
@@ -21,6 +22,7 @@ public class RedisRepositoryTest {
 	private RedisRepository redisRepository;
 
 	private static final String KEY = "zset_test_key";
+	private static final String LIST_KEY = "list_key";
 
 	@Test
 	@DisplayName("zAdd 중복 value는 distinct된다")
@@ -102,5 +104,22 @@ public class RedisRepositoryTest {
 		Set<String> result = redisRepository.zRange(KEY, 1L, 2L);
 		//then
 		Assertions.assertThat(result.size()).isEqualTo(2);
+	}
+
+	@Test
+	@DisplayName("redis list 순서를 보장하는가?")
+	void test5(){
+		//given
+		for (int i = 1; i < 10; i++) {
+			String value = "test %s".formatted(i);
+			redisRepository.listRightPush(LIST_KEY, value);
+		}
+
+		//when
+		List<String> result = redisRepository.listRange(LIST_KEY, 0, -1);
+
+		for(String data : result){
+			System.out.println(data);
+		}
 	}
 }

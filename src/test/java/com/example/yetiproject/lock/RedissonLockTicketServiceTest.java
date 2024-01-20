@@ -43,7 +43,8 @@ public class RedissonLockTicketServiceTest {
 		User user = User.builder().userId(1L).build();
 		for (int i = 0; i < threadCount; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
-				.ticketInfoId(1L).posX((long)i).posY((long)i).build();
+				.ticketInfoId(1L).seat(String.valueOf(i)+i)
+				.build();
 			executorService.submit(() ->{
 				try{
 					ticketService.reserveTicket(user, ticketRequestDto);
@@ -67,12 +68,13 @@ public class RedissonLockTicketServiceTest {
 		User user = User.builder().userId(1L).build();
 		for (int i = 0; i < threadCount; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
-				.ticketInfoId(1L).posX((long)i).posY((long)i).build();
+				.ticketInfoId(1L).seat(String.valueOf(i)+i)
+				.build();
 
 			executorService.submit(() ->{
 				try{
 					TicketResponseDto ticketResponseDto = redissonLockTicketFacade.reserveTicket(user, ticketRequestDto);
-					System.out.println("( posX, posY ) = " + ticketResponseDto.getPosX() + " , " + ticketResponseDto.getPosY());
+					System.out.println("( posX, posY ) = " + ticketResponseDto.getSeat());
 				}finally {
 					latch.countDown();
 				}
