@@ -23,25 +23,26 @@ public class RedissonLockTicketFacade {
 
     // 예매하기 부분에 Redisson으로 락을 걸어줌
     public TicketResponseDto reserveTicket(User user, TicketRequestDto requestDto) {
-        log.info("posx, posy" + requestDto.getPosX() + "," + requestDto.getPosY());
         Long ticketInfoId = requestDto.getTicketInfoId();
         RLock lock = redissonClient.getLock(ticketInfoId.toString());
         TicketResponseDto responseDto;
         log.info("lock 획득 시도");
         try {
             // lock 획득 시도 시간, lock 점유 시간
-            boolean available = lock.tryLock(30, 1, TimeUnit.SECONDS);
+            boolean available = lock.tryLock(5, 1, TimeUnit.SECONDS);
 
             if (!available) {
                 log.info("lock 획득 실패");
                 return new TicketResponseDto();
             }
             log.info("lock 획득 성공");
+            log.info("( posX, posY ) = " + requestDto.getPosX() + " , " + requestDto.getPosY());
             responseDto = ticketService.reserveTicket(user, requestDto);
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        } finally {
+        }
+        finally {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }

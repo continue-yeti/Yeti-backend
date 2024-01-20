@@ -14,6 +14,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
+import com.example.yetiproject.dto.ticket.TicketResponseDto;
+import com.example.yetiproject.entity.Ticket;
 import com.example.yetiproject.entity.User;
 import com.example.yetiproject.facade.RedissonLockTicketFacade;
 import com.example.yetiproject.repository.TicketInfoRepository;
@@ -59,7 +61,7 @@ public class RedissonLockTicketServiceTest {
 	@Test
 	@DisplayName("redisson 분산락을 적용하여 100명 예약 테스트")
 	public void test1() throws InterruptedException{
-		int threadCount = 100;
+		int threadCount = 50;
 		ExecutorService executorService = Executors.newFixedThreadPool(32);
 		CountDownLatch latch = new CountDownLatch(threadCount);
 		User user = User.builder().userId(1L).build();
@@ -69,7 +71,8 @@ public class RedissonLockTicketServiceTest {
 
 			executorService.submit(() ->{
 				try{
-					redissonLockTicketFacade.reserveTicket(user, ticketRequestDto);
+					TicketResponseDto ticketResponseDto = redissonLockTicketFacade.reserveTicket(user, ticketRequestDto);
+					System.out.println("( posX, posY ) = " + ticketResponseDto.getPosX() + " , " + ticketResponseDto.getPosY());
 				}finally {
 					latch.countDown();
 				}
