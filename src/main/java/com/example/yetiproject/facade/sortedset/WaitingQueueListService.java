@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.facade.repository.RedisRepository;
-import com.example.yetiproject.repository.TicketInfoRepository;
-import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,10 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "WaitingQueueService")
 @Service
 @RequiredArgsConstructor
-public class WaitingQueueService {
+public class WaitingQueueListService {
     private final RedisRepository redisRepository;
-    private final TicketService ticketService;
-    private final TicketInfoRepository ticketInfoRepository;
+
     private final ObjectMapper objectMapper;
 
     private static final long FIRST_ELEMENT = 0;
