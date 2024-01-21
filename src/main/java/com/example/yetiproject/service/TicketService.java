@@ -52,10 +52,11 @@ public class TicketService {
 	}
 
 	@Transactional
-	public TicketResponseDto reserveTicketQueue(User user, TicketRequestDto ticketRequestDto) {
+	public TicketResponseDto reserveTicketQueue(Long userId, TicketRequestDto ticketRequestDto) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
-		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
+		User user = User.builder().userId(userId).email("...").username("...").build();
 
+		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 		ticketRepository.save(ticket);
 //		log.info("{}, {} 티켓 발급에 성공하였습니다.", ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
 		return new TicketResponseDto(ticket);

@@ -67,7 +67,7 @@ public class RedisWaitingListQueueTest {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
 				.ticketInfoId(1L).seat(String.valueOf(i+"A")+i)
 				.build();
-			long userId = i;
+			long userId = 1;
 			waitingQueueListService.registerQueue(userId, ticketRequestDto);
 		}
 		long endTime = System.currentTimeMillis();
