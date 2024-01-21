@@ -23,19 +23,20 @@ public class TicketIssueListService {
 	private final TicketService ticketService;
 	private final ObjectMapper objectMapper;
 	private final TicketInfoRepository ticketInfoRepository;
+	private static final long FIRST_ELEMENT = 0;
 	private static final long PUBLISH_SIZE = 100;
 	private static final long LAST_INDEX = 1;
 
 	private final String USER_QUEUE_WAIT_KEY = "ticketInfo:queue:%s:wait";
 	private final String TICKETINFO_STOCK_COUNT = "ticketInfo:%s:stock";
 
-
-	@Transactional
 	public void publish(String key) throws JsonProcessingException {
+		final long start = FIRST_ELEMENT;
 		final long end = PUBLISH_SIZE - LAST_INDEX;
 
-		for (int i = 0; i <= end; i++) {
-			String ticketRequest = redisRepository.listLeftPop(USER_QUEUE_WAIT_KEY.formatted(key));
+		List<String> queue = redisRepository.listRange(USER_QUEUE_WAIT_KEY.formatted(key), start, end);
+
+		for(String ticketRequest : queue){
 			TicketRequestDto ticketRequestDto = objectMapper.readValue(ticketRequest, TicketRequestDto.class);
 
 			if (Integer.parseInt(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(key))) ==
@@ -52,11 +53,11 @@ public class TicketIssueListService {
 				ticketRequestDto.getSeat());
 
 			increase(ticketRequestDto.getTicketInfoId());
+			redisRepository.listLeftPop(USER_QUEUE_WAIT_KEY.formatted(key));
 
 			log.info("발행된 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
+
 		}
-
-
 	}
 
 	public Long decrease(Long ticketInfoId){
