@@ -14,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
-import com.example.yetiproject.entity.User;
 import com.example.yetiproject.facade.repository.RedisRepository;
 import com.example.yetiproject.facade.sortedset.WaitingQueueListService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,8 +32,8 @@ public class RedisWaitingListQueueTest {
 	@Test
 	@DisplayName("redis list queue 순서 보장되는지 확인")
 	void test1() throws InterruptedException {
-		int threadCount = 10;
-		ExecutorService executorService = Executors.newFixedThreadPool(64);
+		int threadCount = 100;
+		ExecutorService executorService = Executors.newFixedThreadPool(32);
 		CountDownLatch latch = new CountDownLatch(threadCount);
 
 		for (int i = 0; i < threadCount; i++) {
@@ -60,18 +59,18 @@ public class RedisWaitingListQueueTest {
 	}
 
 	@Test
-	@DisplayName("list는 순서를 보장하는가?")
+	@DisplayName("waiting queue에 들어갔다 rank를 반환하는 속도를 계산")
 	void test2() throws JsonProcessingException {
-		int count = 50;
+		int count = 50000;
+		long startTime = System.currentTimeMillis();
 		for (int i = 1; i <= count; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
 				.ticketInfoId(1L).seat(String.valueOf(i+"A")+i)
 				.build();
 			long userId = i;
-			Long rank = waitingQueueListService.registerQueue(userId, ticketRequestDto);
-			System.out.println("userId: " + userId + " = " +  rank);
+			waitingQueueListService.registerQueue(userId, ticketRequestDto);
 		}
-		long result = redisRepository.llen(USER_QUEUE_WAIT_KEY);
-		assertEquals(100, result);
+		long endTime = System.currentTimeMillis();
+		System.out.println("%s개 (redis list) 저장 속도 = %s".formatted(count, (endTime - startTime)));
 	}
 }

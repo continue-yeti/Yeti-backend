@@ -1,6 +1,5 @@
 package com.example.yetiproject.facade.sortedset;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
@@ -8,7 +7,6 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
-import com.example.yetiproject.entity.Seat;
 import com.example.yetiproject.exception.ErrorCode;
 import com.example.yetiproject.facade.repository.RedisRepository;
 import com.example.yetiproject.repository.TicketInfoRepository;
@@ -41,7 +39,6 @@ public class WaitingQueueListService {
             log.info("예매가능한 날짜가 아닙니다.");
             throw ErrorCode.NOT_AVAILABLE_RESERVATION_DATES.build();
         }
-        //
         // // 좌석 체크
         if(checkSelectedSeat(TICKETINFO_OCCUPY_SEAT.formatted(ticketRequestDto.getTicketInfoId())
             , ticketRequestDto.getSeat(), userId) == false){
