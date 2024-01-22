@@ -39,7 +39,7 @@ public class WaitingQueueListService {
             log.info("예매가능한 날짜가 아닙니다.");
             throw ErrorCode.NOT_AVAILABLE_RESERVATION_DATES.build();
         }
-        // // 좌석 체크
+        // 좌석 체크
         if(checkSelectedSeat(TICKETINFO_OCCUPY_SEAT.formatted(ticketRequestDto.getTicketInfoId())
             , ticketRequestDto.getSeat(), userId) == false){
             log.info("이미 선택된 좌석입니다.");
@@ -51,7 +51,7 @@ public class WaitingQueueListService {
         ticketRequestDto.setUserId(userId); //user 추가
 
         String jsonObject = objectMapper.writeValueAsString(ticketRequestDto);
-        log.info("대기열에 추가 - userId : {} requestDto : {}", ticketRequestDto.getUserId(), jsonObject);
+        //log.info("대기열에 추가 - userId : {} requestDto : {}", ticketRequestDto.getUserId(), jsonObject);
 
         redisRepository.listRightPush(USER_QUEUE_WAIT_KEY.formatted(ticketRequestDto.getTicketInfoId()), jsonObject);
         return redisRepository.indexOfRank(USER_QUEUE_WAIT_KEY.formatted(ticketRequestDto.getTicketInfoId()),jsonObject)+1;

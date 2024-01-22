@@ -33,7 +33,6 @@ public class ReserveScheduler {
 				String key = cursor.next();
 				//ticketIssueSortedSetService.publish(key.split(":")[2]); // sorted set
 				ticketIssueListService.publish(key.split(":")[2]);
-
 			}
 		}
 	}

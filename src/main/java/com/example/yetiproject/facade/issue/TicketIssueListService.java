@@ -55,7 +55,7 @@ public class TicketIssueListService {
 			increase(ticketRequestDto.getTicketInfoId());
 			redisRepository.listLeftPop(USER_QUEUE_WAIT_KEY.formatted(key));
 
-			log.info("발행된 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
+			//log.info("발행된 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
 
 		}
 	}
