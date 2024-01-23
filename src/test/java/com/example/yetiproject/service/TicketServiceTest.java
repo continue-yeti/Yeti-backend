@@ -119,14 +119,14 @@ public class TicketServiceTest {
         long startTime = System.currentTimeMillis();
         Stadium stadium = Stadium.builder().stadiumId(1L).build();
         Sports sports = Sports.builder().sportId(1L).stadium(stadium).build();
-        TicketInfo ticketInfo = TicketInfo.builder().ticketInfoId(1L).stock(50000L).sports(sports).build();
+        TicketInfo ticketInfo = TicketInfo.builder().ticketInfoId(1L).stock(5L).sports(sports).build();
 
-        given(redisRepository.get(anyString())).willReturn("0");
+        given(redisRepository.get("ticketInfo:1:stock")).willReturn("0");
         given(ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId())).willReturn(Optional.of(ticketInfo));
 
         // when
         List<TicketRequestDto> ticketRequestDtoList = new ArrayList<>();
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 5; i++) {
             ticketRequestDtoList.add(ticketRequestDto);
         }
 

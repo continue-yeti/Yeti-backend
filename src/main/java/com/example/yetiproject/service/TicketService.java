@@ -1,16 +1,5 @@
 package com.example.yetiproject.service;
 
-import java.util.*;
-
-import com.example.yetiproject.exception.entity.TicketInfo.TicketInfoNotFoundException;
-import com.example.yetiproject.facade.repository.RedisRepository;
-import com.example.yetiproject.repository.TicketJdbcBatchRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
 import com.example.yetiproject.entity.Ticket;
@@ -18,11 +7,21 @@ import com.example.yetiproject.entity.TicketInfo;
 import com.example.yetiproject.entity.User;
 import com.example.yetiproject.exception.entity.Ticket.TicketCancelException;
 import com.example.yetiproject.exception.entity.Ticket.TicketNotFoundException;
+import com.example.yetiproject.facade.repository.RedisRepository;
 import com.example.yetiproject.repository.TicketInfoRepository;
+import com.example.yetiproject.repository.TicketJdbcBatchRepository;
 import com.example.yetiproject.repository.TicketRepository;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j(topic = "TicketService")
 @Service
@@ -66,8 +65,16 @@ public class TicketService {
 	@Transactional
 	public String reserveTicketSortedSet(Long userId, TicketRequestDto ticketRequestDto) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
+		log.info("ticketInfo : {}", ticketInfo.getTicketInfoId());
+		log.info("redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketInfo.getTicketInfoId()) : {}", redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketInfo.getTicketInfoId())));
 		User user = User.builder().userId(userId).email("...").username("...").build();
 		//log.info("ticketRequestDto 좌석 : " + ticketRequestDto.getPosX() + " , " + ticketRequestDto.getPosY());
+		if (Integer.parseInt(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketInfo.getTicketInfoId()))) ==
+				ticketInfoRepository.getStockforTicketInfo(ticketInfo.getTicketInfoId())
+		) {
+			log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
+			return "매진";
+		}
 
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 		increase(ticketRequestDto.getTicketInfoId()); // ticket 예매 수 증가
