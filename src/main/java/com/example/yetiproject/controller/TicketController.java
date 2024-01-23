@@ -12,6 +12,9 @@ import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +51,9 @@ public class TicketController {
 	}
 
 	// redis list
-	@PostMapping("/reserve/queue/list")
+	//@PostMapping("/reserve/queue/list")
+	@MessageMapping("/reserve/queue/list")
+	@SendTo("/topic/{userId}")
 	public RegisterUserResponse reserveTicketQueueList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		return new RegisterUserResponse(
 			waitingQueueListService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto)
