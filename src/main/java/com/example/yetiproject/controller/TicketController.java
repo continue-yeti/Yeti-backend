@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mytickets")
-public class TicketController {
+public class TicketController{
 	private final TicketService ticketService;
 	private final RedissonLockTicketFacade redissonLockTicketFacade;
 	private final WaitingQueueListService waitingQueueListService;
@@ -40,7 +40,6 @@ public class TicketController {
 	// 예매한 티켓 상세 조회
 	@GetMapping("/ticketId/{ticketId}")
 	public ApiResponse<TicketResponseDto> detailViewReservedTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable(name = "ticketId") Long ticketId){
-		log.info("[Controller : detailViewReservedTicket userId = ] " + userDetails.getUser().getUserId());
 		return ApiResponse.success("티켓 상세 조회에 성공했습니다", ticketService.showDetailTicket(userDetails.getUser().getUserId(), ticketId));
 	}
 
@@ -60,7 +59,7 @@ public class TicketController {
 		);
 	}
 
-	// redis sortedset 날짜확인X, 좌석체크X
+	// redis sortedset
 	@PostMapping("/reserve/queue/sortedset")
 	public RegisterUserResponse reserveTicketQueue(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		return new RegisterUserResponse(
