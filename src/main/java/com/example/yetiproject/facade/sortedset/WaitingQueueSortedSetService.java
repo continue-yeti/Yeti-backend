@@ -67,8 +67,6 @@ public class WaitingQueueSortedSetService {
 		}
 	}
 
-
-
 	public Long getRank(Long ticketInfoId, Long userId, String seat) throws JsonProcessingException {
 		String jsonObject = objectMapper.writeValueAsString(new TicketRequestDto(userId, ticketInfoId, seat));
 		Long rank = redisRepository.zRank(USER_QUEUE_WAIT_KEY.formatted(ticketInfoId), jsonObject);

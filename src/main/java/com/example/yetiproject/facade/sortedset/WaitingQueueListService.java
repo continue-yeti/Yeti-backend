@@ -51,7 +51,7 @@ public class WaitingQueueListService {
         ticketRequestDto.setUserId(userId); //user 추가
 
         String jsonObject = objectMapper.writeValueAsString(ticketRequestDto);
-        //log.info("대기열에 추가 - userId : {} requestDto : {}", ticketRequestDto.getUserId(), jsonObject);
+        log.info("대기열에 추가 - userId : {} requestDto : {}", ticketRequestDto.getUserId(), jsonObject);
 
         redisRepository.listRightPush(USER_QUEUE_WAIT_KEY.formatted(ticketRequestDto.getTicketInfoId()), jsonObject);
         return redisRepository.indexOfRank(USER_QUEUE_WAIT_KEY.formatted(ticketRequestDto.getTicketInfoId()),jsonObject)+1;
