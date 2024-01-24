@@ -67,13 +67,6 @@ public class TicketController {
 			waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
 	}
 
-	//jungmin sorted set 날짜체크O, 좌석체크O
-	@PostMapping("/reserve/waiting/queue/sortedset")
-	public RegisterUserResponse reserveTicketQueueSortedSet(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-		// user는 jwt 인증으로만 사용한다.
-		return new RegisterUserResponse(waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
-	}
-
 	@PostMapping("/reserve/queue/list/bulk")
 	public ApiResponse reserveTicketQueueListBulk(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		// log.info("queue start : {}", System.currentTimeMillis());
