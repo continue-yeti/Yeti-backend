@@ -16,19 +16,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		//config.setApplicationDestinationPrefixes("/app"); //미정
-		//config.enableSimpleBroker("/topic");
+		config.setApplicationDestinationPrefixes("/pub"); //미정
+		config.enableSimpleBroker("/sub");
 
-		config.enableSimpleBroker("/topic"); //subscription
-		config.setApplicationDestinationPrefixes("/api/mytickets"); // pulication
 	}
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/reserve/queue/list")
-			.setAllowedOriginPatterns("*")
-			.withSockJS()
-			.setClientLibraryUrl("<https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.3.0/sockjs.min.js>");
+		registry.addEndpoint("/connect")
+			.setAllowedOriginPatterns("*");
 	}
 
 }

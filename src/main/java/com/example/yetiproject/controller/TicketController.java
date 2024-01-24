@@ -50,9 +50,7 @@ public class TicketController{
 	}
 
 	// redis list
-	@PostMapping("/reserve/queue/list")
-	//@MessageMapping("/reserve/queue/list")
-	//@SendTo("/topic/{userId}")
+	@PostMapping("/reserve/waiting/queue/list")
 	public RegisterUserResponse reserveTicketQueueList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		return new RegisterUserResponse(
 			waitingQueueListService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto)
