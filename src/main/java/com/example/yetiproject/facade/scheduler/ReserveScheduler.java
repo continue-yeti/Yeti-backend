@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ReserveScheduler {
 	private final RedisTemplate<String, String> redisTemplate;
 	private final TicketIssueSortedSetService ticketIssueSortedSetService;
-	private final TicketIssueListService ticketIssueListService;
 
 	private final String USER_QUEUE_WAIT_KEY_FOR_SCAN = "ticketInfo:queue:*:wait";
 
@@ -32,7 +31,6 @@ public class ReserveScheduler {
 			while(cursor.hasNext()){
 				String key = cursor.next();
 				ticketIssueSortedSetService.publish(key.split(":")[2]); // sorted set
-				//ticketIssueListService.publish(key.split(":")[2]);
 			}
 		}
 	}

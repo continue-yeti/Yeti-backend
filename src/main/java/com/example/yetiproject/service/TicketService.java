@@ -62,7 +62,7 @@ public class TicketService {
 
 		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
 		ticketRepository.save(ticket);
-//		log.info("{}, {} 티켓 발급에 성공하였습니다.", ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
+		log.info("{} 좌석 티켓 발급에 성공하였습니다.", ticketRequestDto.getSeat());
 		return new TicketResponseDto(ticket);
 	}
 

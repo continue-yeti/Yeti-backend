@@ -27,7 +27,7 @@ Authorization: {{access_token}}
 
 {
   "ticketInfoId" : 1,
-  "seat" : "1A11"
+  "seat" : "1A13"
 }
 
 

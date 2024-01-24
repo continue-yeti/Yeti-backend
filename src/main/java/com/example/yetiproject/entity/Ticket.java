@@ -24,9 +24,9 @@ public class Ticket {
 	@Column(name="seat")
 	String seat;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private User user;
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "user_id")
+	// private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ticketInfo_id")
