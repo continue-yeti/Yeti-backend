@@ -59,7 +59,4 @@ public class TicketInfo {
         this.stock += amount;
 	}
 
-    public void updateStockCount(Long amount){
-        this.stock = amount;
-    }
 }

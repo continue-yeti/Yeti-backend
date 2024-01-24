@@ -21,11 +21,6 @@ public class Ticket {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long ticketId;
 
-	// @Column(name="posX")
-	// Long posX;
-	// @Column(name="posY")
-	// Long posY;
-
 	@Column(name="seat")
 	String seat;
 
