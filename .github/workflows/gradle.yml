@@ -84,16 +84,16 @@ jobs:
             --deployment-group-name yeti-codedeploy-deployment-group \
             --s3-location bucket=yeti-github-actions-s3-bucket,bundleType=zip,key=seniors-build.zip
 
-      # 배포 결과 Slack 알람 전송
-      - name: Slack 알람 발송 test
-        uses: rtCamp/action-slack-notify@v2
-        with:
-          status: ${{ job.status }}
-        env:
-          SLACK_COLOR: $ # or a specific color like 'good' or '#ff00ff'
-          SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: 배포 결과 => ${{ job.status }}
-          SLACK_TITLE: 배포 결과 알람
-          SLACK_USERNAME: Yeti-Bot
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: always()
+#      # 배포 결과 Slack 알람 전송
+#      - name: Slack 알람 발송 test
+#        uses: rtCamp/action-slack-notify@v2
+#        with:
+#          status: ${{ job.status }}
+#        env:
+#          SLACK_COLOR: $ # or a specific color like 'good' or '#ff00ff'
+#          SLACK_ICON: https://github.com/rtCamp.png?size=48
+#          SLACK_MESSAGE: 배포 결과 => ${{ job.status }}
+#          SLACK_TITLE: 배포 결과 알람
+#          SLACK_USERNAME: Yeti-Bot
+#          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+#        if: always()
