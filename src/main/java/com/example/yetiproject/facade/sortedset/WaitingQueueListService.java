@@ -81,17 +81,4 @@ public class WaitingQueueListService {
         return redisRepository.hashSetNx(key, seat, userId);
     }
 
-    public void getWaitingNumber(Long ticketInfoId) {
-        final long start = FIRST_ELEMENT;
-        final long end = LAST_ELEMENT;
-
-        Set<String> queue = redisRepository.zRange(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId), start, end);
-
-        // 대기열 상황
-        for (String data : queue) {
-            Long rank = redisRepository.zRank(TICKETINFO_STOCK_COUNT.formatted(ticketInfoId), data);
-           //log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", data, rank);
-        }
-    }
-
 }
