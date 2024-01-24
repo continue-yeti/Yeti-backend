@@ -32,7 +32,6 @@ public class TicketIssueSortedSetService {
 	private final String USER_QUEUE_WAIT_KEY = "ticketInfo:queue:%s:wait";
 	private final String TICKETINFO_STOCK_COUNT = "ticketInfo:%s:stock";
 
-	@Transactional
 	public void publish(String key) throws JsonProcessingException {
 		final long start = FIRST_ELEMENT;
 		final long end = PUBLISH_SIZE - LAST_INDEX;
@@ -45,21 +44,20 @@ public class TicketIssueSortedSetService {
 			if (Integer.parseInt(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(key))) ==
 				ticketInfoRepository.getStockforTicketInfo(ticketRequestDto.getTicketInfoId())
 			) {
-				//log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
+				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
 				return;
 			}
 
 			//reserve
-			ticketService.reserveTicketSortedSet(ticketRequestDto.getUserId(), ticketRequestDto);
+			ticketService.reserveTicketQueue(ticketRequestDto.getUserId(), ticketRequestDto);
 
-			//log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
-				//ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
+			log.info("[예매완료] UserID = {} , seat = {}", ticketRequestDto.getUserId(),
+				ticketRequestDto.getSeat());
 
 			increase(ticketRequestDto.getTicketInfoId());
 			redisRepository.zRemove(USER_QUEUE_WAIT_KEY.formatted(key), ticketRequest);
 
-			//log.info("예약된 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
-			return;
+			//log.info("발행된 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
 		}
 	}
 
@@ -81,10 +79,10 @@ public class TicketIssueSortedSetService {
 
 			ticketRequestDtoList.add(ticketRequestDto);
 			//reserve
-			ticketService.reserveTicketSortedSet(ticketRequestDto.getUserId(), ticketRequestDto);
+			ticketService.reserveTicketQueue(ticketRequestDto.getUserId(), ticketRequestDto);
 
-			log.info("[예매완료] UserID = {} , posX = {}, poxY = {}", ticketRequestDto.getUserId(),
-				ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
+			log.info("[예매완료] UserID = {} , seat = {}", ticketRequestDto.getUserId(),
+				ticketRequestDto.getSeat());
 
 			increase(ticketRequestDto.getTicketInfoId());
 			redisRepository.zRemove(USER_QUEUE_WAIT_KEY.formatted(key), ticketRequest);
