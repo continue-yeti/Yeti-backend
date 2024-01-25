@@ -27,14 +27,18 @@ public class Ticket {
 	// @ManyToOne(fetch = FetchType.LAZY)
 	// @JoinColumn(name = "user_id")
 	// private User user;
+	@Column(name = "user_id", nullable = false)
+	Long userId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ticketInfo_id")
-	private TicketInfo ticketInfo;
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "ticketInfo_id")
+	// private TicketInfo ticketInfo;
+	@Column(name = "ticketInfo_id", nullable = false)
+	Long ticketInfoId;
 
-	public Ticket(User user, TicketInfo ticketInfo, TicketRequestDto ticketRequestDto) {
+	public Ticket(Long userId, TicketRequestDto ticketRequestDto) {
 		this.seat = ticketRequestDto.getSeat();
-		this.user = user;
-		this.ticketInfo = ticketInfo;
+		this.userId = userId;
+		this.ticketInfoId = ticketRequestDto.getTicketInfoId();
 	}
 }

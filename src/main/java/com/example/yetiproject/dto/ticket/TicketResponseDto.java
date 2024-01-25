@@ -14,13 +14,12 @@ import lombok.NoArgsConstructor;
 public class TicketResponseDto {
 	Long ticketId;
 	String seat;
-	User userId;
+	Long userId;
 	TicketInfoResponseDto ticketInfo;
 
 	public TicketResponseDto(Ticket ticket) {
 		this.ticketId = ticket.getTicketId();
 		this.seat = ticket.getSeat();
-		this.userId = ticket.getUser();
-		this.ticketInfo = new TicketInfoResponseDto(ticket.getTicketInfo());
+		this.userId = ticket.getUserId();
 	}
 }

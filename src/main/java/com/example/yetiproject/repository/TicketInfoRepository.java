@@ -1,5 +1,7 @@
 package com.example.yetiproject.repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +22,6 @@ public interface TicketInfoRepository extends JpaRepository<TicketInfo, Long> {
 	@Query(value="select stock from ticket_info where ticket_info_id = ?", nativeQuery = true)
 	Long getStockforTicketInfo(Long ticketInfoId);
 
+	@Query(value="select open_date, close_date from ticket_info where ticket_info_id = ?", nativeQuery = true)
+	List<Timestamp[]> getOpenDateCloseDateforTicketInfo(Long ticketInfoId);
 }

@@ -1,8 +1,10 @@
 package com.example.yetiproject.facade.sortedset;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -74,12 +76,12 @@ public class WaitingQueueSortedSetService {
 		return rank;
 	}
 	private Boolean checkTicketInfoDate(Long ticketInfoId){
-		LocalDateTime today = LocalDateTime.now();
-		LocalDateTime openDate = ticketInfoRepository.findById(ticketInfoId).get().getOpenDate();
-		LocalDateTime closeDate = ticketInfoRepository.findById(ticketInfoId).get().getCloseDate();
+		Timestamp today = new Timestamp(System.currentTimeMillis());
+		List<Timestamp[]> dates = ticketInfoRepository.getOpenDateCloseDateforTicketInfo(ticketInfoId);
+		Timestamp openDate = dates.get(0)[0];
+		Timestamp closeDate = dates.get(0)[1];
 
-		if((ChronoUnit.SECONDS.between(openDate, today) > 0) &&
-				(ChronoUnit.SECONDS.between(today, closeDate) > 0)){
+		if((today.getTime() - openDate.getTime() > 0) && (closeDate.getTime() - today.getTime() > 0)){
 			return true;
 		}
 		return false;

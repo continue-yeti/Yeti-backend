@@ -30,17 +30,6 @@ Authorization: {{access_token}}
   "seat" : "1A13"
 }
 
-
-### 3-1. local - 티켓 예매하기(sortedset - 좌석, 날짜 체크 확인)
-POST http://localhost:8080/api/mytickets/reserve/queue/list
-Content-Type: application/json
-Authorization: {{access_token}}
-
-{
-  "ticketInfoId" : 1,
-  "seat" : "1A14"
-}
-
 ### 3-1. local - 티켓 예매하기(sortedset - 좌석, 날짜 체크 확인)
 POST http://localhost:8080/api/mytickets/reserve/queue/sortedset
 Content-Type: application/json
@@ -49,15 +38,6 @@ Authorization: {{access_token}}
 {
   "ticketInfoId" : 1,
   "seat" : "1A14"
-}
-### 3-1. 대기열에 등록하기
-POST http://localhost:8080/reserve/queue/list
-Content-Type: application/json
-Authorization: {{access_token}}
-
-{
-  "ticketInfoId" : 1,
-  "seat" : "1A11"
 }
 
 ### 4. 예매한 티켓 취소하기

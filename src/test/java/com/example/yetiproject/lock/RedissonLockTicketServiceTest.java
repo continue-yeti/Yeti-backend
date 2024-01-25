@@ -40,14 +40,14 @@ public class RedissonLockTicketServiceTest {
 		ExecutorService executorService = Executors.newFixedThreadPool(64);
 		//다른 스레드에서 수행이 완료될 때 까지 대기할 수 있도록 도와주는 API - 요청이 끝날때 까지 기다림
 		CountDownLatch latch = new CountDownLatch(threadCount);
-		User user = User.builder().userId(1L).build();
+		Long userId = 1L;
 		for (int i = 0; i < threadCount; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
 				.ticketInfoId(1L).seat(String.valueOf(i)+i)
 				.build();
 			executorService.submit(() ->{
 				try{
-					ticketService.reserveTicket(user, ticketRequestDto);
+					ticketService.reserveTicket(userId, ticketRequestDto);
 					System.out.println("예약 완료");
 				}finally {
 					latch.countDown();
@@ -65,7 +65,7 @@ public class RedissonLockTicketServiceTest {
 		int threadCount = 50;
 		ExecutorService executorService = Executors.newFixedThreadPool(32);
 		CountDownLatch latch = new CountDownLatch(threadCount);
-		User user = User.builder().userId(1L).build();
+		Long userId = 1L;
 		for (int i = 0; i < threadCount; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
 				.ticketInfoId(1L).seat(String.valueOf(i)+i)
@@ -73,7 +73,7 @@ public class RedissonLockTicketServiceTest {
 
 			executorService.submit(() ->{
 				try{
-					TicketResponseDto ticketResponseDto = redissonLockTicketFacade.reserveTicket(user, ticketRequestDto);
+					TicketResponseDto ticketResponseDto = redissonLockTicketFacade.reserveTicket(userId, ticketRequestDto);
 					System.out.println("( posX, posY ) = " + ticketResponseDto.getSeat());
 				}finally {
 					latch.countDown();
