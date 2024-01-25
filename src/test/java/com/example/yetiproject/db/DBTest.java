@@ -73,15 +73,15 @@ public class DBTest {
 	}
 
 	@Test
-	@DisplayName("Postgresql을 이용하여 ticketService save 티켓을 저장한다.")
+	@DisplayName("Postgresql을 이용하여 ticketService reserveTicketQueue save 티켓을 저장한다.")
 	void test4() {
 		long startTime = System.currentTimeMillis();
-		User user = User.builder().userId(1L).build();
 		for (int i = 0; i < 50000; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
 				.ticketInfoId(1L)
 				.seat(String.valueOf(i)+i)
 				.build();
+			ticketService.reserveTicketQueue(1L, ticketRequestDto);
 		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("TicketService 저장 속도 = " + (endTime - startTime));

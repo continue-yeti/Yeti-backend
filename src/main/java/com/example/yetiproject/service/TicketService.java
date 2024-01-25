@@ -63,11 +63,6 @@ public class TicketService {
 		ticketRepository.save(ticket);
 		log.info("{} 좌석 티켓 발급에 성공하였습니다.", ticketRequestDto.getSeat());
 		return new TicketResponseDto(ticket);
-		// List<TicketJoinSportDto> result = ticketRepository.ticketJoinSport(ticketRequestDto.getTicketInfoId(), ticketRequestDto.getSeat());
-		// TicketJoinSportDto dto = result.get(0);
-		// String sportName = dto.getSportName();
-		// String matchDate = dto.getMatchDate();
-
 		//return new TicketCreateResponseDto(ticketRepository.ticketJoinSport(ticketRequestDto.getTicketInfoId(), ticketRequestDto.getSeat()).get(0));
 	}
 
