@@ -12,9 +12,6 @@ import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,13 +43,11 @@ public class TicketController{
 	// 예매 - redisson
 	@PostMapping("/reserve")
 	public ApiResponse reserveTicket(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) {
-		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails.getUser(), ticketRequestDto));
+		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails.getUser().getUserId(), ticketRequestDto));
 	}
 
 	// redis list
-	@PostMapping("/reserve/queue/list")
-	//@MessageMapping("/reserve/queue/list")
-	//@SendTo("/topic/{userId}")
+	@PostMapping("/reserve/waiting/queue/list")
 	public RegisterUserResponse reserveTicketQueueList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		return new RegisterUserResponse(
 			waitingQueueListService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto)
@@ -80,7 +75,6 @@ public class TicketController{
 		@RequestParam(name="seat") String seat) throws JsonProcessingException {
 		return waitingQueueSortedSetService.getRank(ticketInfoId, userId, seat);
 	}
-
 
 	// 예매 취소
 	@DeleteMapping("/{ticketId}")

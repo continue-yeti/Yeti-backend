@@ -25,9 +25,6 @@ public class WaitingQueueListService {
     private final TicketInfoRepository ticketInfoRepository;
     private final ObjectMapper objectMapper;
 
-    private static final long FIRST_ELEMENT = 0;
-    private static final long LAST_ELEMENT = -1;
-
     private final String USER_QUEUE_WAIT_KEY = "ticketInfo:queue:%s:wait";
     private final String TICKETINFO_OCCUPY_SEAT = "ticketInfo:%s:reserved:seat";
     private final String TICKETINFO_STOCK_COUNT = "ticketInfo:%s:stock";

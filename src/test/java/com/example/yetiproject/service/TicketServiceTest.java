@@ -54,9 +54,9 @@ public class TicketServiceTest {
 		given(userRepository.findById(ticketRequestDto.getUserId())).willReturn(Optional.of(user));
 		given(ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId())).willReturn(Optional.of(ticketInfo));
 
-		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
+		Ticket ticket = new Ticket(user.getUserId(),ticketRequestDto);
 		//when
-		TicketResponseDto result = ticketService.reserveTicket(user, ticketRequestDto);
+		TicketResponseDto result = ticketService.reserveTicket(user.getUserId(), ticketRequestDto);
 
 		//then
 		// verify 메서드를 사용해 특정 메서드가 호출되었는지 확인할 수 있어

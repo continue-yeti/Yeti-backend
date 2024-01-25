@@ -2,6 +2,7 @@ package com.example.yetiproject.dto.ticket;
 
 import com.example.yetiproject.dto.ticketinfo.TicketInfoResponseDto;
 import com.example.yetiproject.entity.Ticket;
+import com.example.yetiproject.entity.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,6 @@ public class TicketResponseDto {
 	public TicketResponseDto(Ticket ticket) {
 		this.ticketId = ticket.getTicketId();
 		this.seat = ticket.getSeat();
-		this.userId = ticket.getUser().getUserId();
-		this.ticketInfo = new TicketInfoResponseDto(ticket.getTicketInfo());
+		this.userId = ticket.getUserId();
 	}
 }

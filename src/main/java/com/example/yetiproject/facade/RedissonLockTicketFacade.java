@@ -22,7 +22,7 @@ public class RedissonLockTicketFacade {
     private final TicketService ticketService;
 
     // 예매하기 부분에 Redisson으로 락을 걸어줌
-    public TicketResponseDto reserveTicket(User user, TicketRequestDto requestDto) {
+    public TicketResponseDto reserveTicket(Long userId, TicketRequestDto requestDto) {
         Long ticketInfoId = requestDto.getTicketInfoId();
         RLock lock = redissonClient.getLock(ticketInfoId.toString());
         TicketResponseDto responseDto;
@@ -37,7 +37,7 @@ public class RedissonLockTicketFacade {
             }
             log.info("lock 획득 성공");
             log.info("( posX, posY ) = " + requestDto.getSeat());
-            responseDto = ticketService.reserveTicket(user, requestDto);
+            responseDto = ticketService.reserveTicket(userId, requestDto);
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

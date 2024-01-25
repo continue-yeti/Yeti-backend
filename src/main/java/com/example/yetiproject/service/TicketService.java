@@ -10,10 +10,12 @@ import java.util.Objects;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.example.yetiproject.dto.ticket.TicketCreateResponseDto;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
 import com.example.yetiproject.entity.Ticket;
 import com.example.yetiproject.entity.TicketInfo;
+import com.example.yetiproject.entity.TicketJoinSportDto;
 import com.example.yetiproject.entity.User;
 import com.example.yetiproject.exception.entity.Ticket.TicketCancelException;
 import com.example.yetiproject.exception.entity.Ticket.TicketNotFoundException;
@@ -46,9 +48,9 @@ public class TicketService {
 	}
 
 	@Transactional
-	public TicketResponseDto reserveTicket(User user, TicketRequestDto ticketRequestDto) {
+	public TicketResponseDto reserveTicket(Long userId, TicketRequestDto ticketRequestDto) {
 		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
-		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
+		Ticket ticket = new Ticket(userId, ticketRequestDto);
 		ticketRepository.save(ticket);
 
 		ticketInfo.updateStock(-1L);
@@ -57,13 +59,11 @@ public class TicketService {
 
 	@Transactional
 	public TicketResponseDto reserveTicketQueue(Long userId, TicketRequestDto ticketRequestDto) {
-		TicketInfo ticketInfo = ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId()).get();
-		User user = User.builder().userId(userId).email("...").username("...").build();
-
-		Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
+		Ticket ticket = new Ticket(userId, ticketRequestDto);
 		ticketRepository.save(ticket);
-//		log.info("{}, {} 티켓 발급에 성공하였습니다.", ticketRequestDto.getPosX(), ticketRequestDto.getPosY());
+		log.info("{} 좌석 티켓 발급에 성공하였습니다.", ticketRequestDto.getSeat());
 		return new TicketResponseDto(ticket);
+		//return new TicketCreateResponseDto(ticketRepository.ticketJoinSport(ticketRequestDto.getTicketInfoId(), ticketRequestDto.getSeat()).get(0));
 	}
 
 	@Transactional
@@ -77,8 +77,7 @@ public class TicketService {
 			Long ticketCount = getTicketCounter(TICKETINFO_STOCK_COUNT.formatted(ticketInfo.getTicketInfoId()));
 
 			if (ticketCount < ticketInfo.getStock()) {
-				User user = User.builder().userId(ticketRequestDto.getUserId()).email("...").username("...").build();
-				Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
+				Ticket ticket = new Ticket(ticketRequestDto.getUserId(), ticketRequestDto);
 
 			} else {
 				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
@@ -109,8 +108,7 @@ public class TicketService {
 			Long ticketCount = getTicketCounter("ticketInfo" + ticketInfo.getTicketInfoId());
 
 			if (ticketCount < ticketInfo.getStock()) {
-				User user = User.builder().userId(ticketRequestDto.getUserId()).email("admin@test.com").username("jungmin").build();
-				Ticket ticket = new Ticket(user, ticketInfo, ticketRequestDto);
+				Ticket ticket = new Ticket(ticketRequestDto.getUserId(), ticketRequestDto);
 				ticketList.add(ticket);
 				incrementTicketCounter("ticketInfo" + ticketInfo.getTicketInfoId());
 				redisRepository.listLeftPop("ticket");
@@ -132,13 +130,13 @@ public class TicketService {
 	public ResponseEntity cancelUserTicket(User user, Long ticketId) {
 		Ticket ticket = ticketRepository.findUserTicket(user.getUserId(), ticketId)
 			.orElseThrow(() -> new TicketNotFoundException("해당된 티켓정보가 없습니다."));
-		TicketInfo ticketInfo = ticket.getTicketInfo();
+		TicketInfo ticketInfo = ticketInfoRepository.findById(ticket.getTicketInfoId())
+			.orElseThrow(()-> new IllegalArgumentException("조회되지 않는 경기정보입니다."));
 
 		// 티켓을 산 유저와 접근한 유저가 같은지 확인
-		if (!Objects.equals(user.getUserId(), ticket.getUser().getUserId())) {
+		if (!Objects.equals(user.getUserId(), ticket.getUserId())) {
 			throw new RuntimeException("회원님이 구매하신 티켓이 아닙니다.");
 		}
-
 		try {
 			ticketInfo.updateStock(1L);
 			ticketRepository.delete(ticket);

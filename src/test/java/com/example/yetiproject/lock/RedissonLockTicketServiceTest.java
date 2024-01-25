@@ -35,19 +35,19 @@ public class RedissonLockTicketServiceTest {
 	@Test
 	@DisplayName("일반 ticketservice 100명 예약 테스트/ 비관적 락 / 낙관적락")
 	public void test() throws InterruptedException {
-		int threadCount = 500;
+		int threadCount = 100;
 		//멀티스레드 이용 ExecutorService : 비동기를 단순하게 처리할 수 있또록 해주는 java api
 		ExecutorService executorService = Executors.newFixedThreadPool(64);
 		//다른 스레드에서 수행이 완료될 때 까지 대기할 수 있도록 도와주는 API - 요청이 끝날때 까지 기다림
 		CountDownLatch latch = new CountDownLatch(threadCount);
-		User user = User.builder().userId(1L).build();
+		Long userId = 1L;
 		for (int i = 0; i < threadCount; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
 				.ticketInfoId(1L).seat(String.valueOf(i)+i)
 				.build();
 			executorService.submit(() ->{
 				try{
-					ticketService.reserveTicket(user, ticketRequestDto);
+					ticketService.reserveTicket(userId, ticketRequestDto);
 					System.out.println("예약 완료");
 				}finally {
 					latch.countDown();
@@ -62,10 +62,10 @@ public class RedissonLockTicketServiceTest {
 	@Test
 	@DisplayName("redisson 분산락을 적용하여 100명 예약 테스트")
 	public void test1() throws InterruptedException{
-		int threadCount = 50;
+		int threadCount = 100;
 		ExecutorService executorService = Executors.newFixedThreadPool(32);
 		CountDownLatch latch = new CountDownLatch(threadCount);
-		User user = User.builder().userId(1L).build();
+		Long userId = 1L;
 		for (int i = 0; i < threadCount; i++) {
 			TicketRequestDto ticketRequestDto = TicketRequestDto.builder()
 				.ticketInfoId(1L).seat(String.valueOf(i)+i)
@@ -73,8 +73,7 @@ public class RedissonLockTicketServiceTest {
 
 			executorService.submit(() ->{
 				try{
-					TicketResponseDto ticketResponseDto = redissonLockTicketFacade.reserveTicket(user, ticketRequestDto);
-					System.out.println("( posX, posY ) = " + ticketResponseDto.getSeat());
+					redissonLockTicketFacade.reserveTicket(userId, ticketRequestDto);
 				}finally {
 					latch.countDown();
 				}
