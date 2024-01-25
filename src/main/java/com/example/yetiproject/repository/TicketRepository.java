@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.example.yetiproject.entity.Ticket;
+import com.example.yetiproject.entity.TicketJoinSportDto;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
@@ -19,4 +20,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
 	@Query(value="select * from tickets where ticket_info_id = ? and posx = ? and posy = ?", nativeQuery = true)
 	Optional<Ticket> findByTicketPosition(Long ticketInfoId,Long posX, Long posY);
+
+	@Query(value="select t.user_id, t.seat, s.sport_name, s.match_date from tickets as t, sports as s where ticket_info_id = ? and t.seat = ?", nativeQuery = true)
+	List<TicketJoinSportDto> ticketJoinSport(Long ticketInfoId, String seat);
 }

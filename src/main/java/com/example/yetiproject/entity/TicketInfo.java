@@ -9,12 +9,15 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 @Getter
 @Setter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicUpdate
 @Table(name = "ticket_info")
 public class TicketInfo {
     @Id

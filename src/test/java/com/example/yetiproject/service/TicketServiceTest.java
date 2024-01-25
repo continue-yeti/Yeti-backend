@@ -54,7 +54,7 @@ public class TicketServiceTest {
 		given(userRepository.findById(ticketRequestDto.getUserId())).willReturn(Optional.of(user));
 		given(ticketInfoRepository.findById(ticketRequestDto.getTicketInfoId())).willReturn(Optional.of(ticketInfo));
 
-		Ticket ticket = new Ticket(user.getUserId(), ticketInfo, ticketRequestDto);
+		Ticket ticket = new Ticket(user.getUserId(),ticketRequestDto);
 		//when
 		TicketResponseDto result = ticketService.reserveTicket(user.getUserId(), ticketRequestDto);
 

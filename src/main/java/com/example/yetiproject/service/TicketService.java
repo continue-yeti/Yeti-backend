@@ -10,10 +10,12 @@ import java.util.Objects;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.example.yetiproject.dto.ticket.TicketCreateResponseDto;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
 import com.example.yetiproject.entity.Ticket;
 import com.example.yetiproject.entity.TicketInfo;
+import com.example.yetiproject.entity.TicketJoinSportDto;
 import com.example.yetiproject.entity.User;
 import com.example.yetiproject.exception.entity.Ticket.TicketCancelException;
 import com.example.yetiproject.exception.entity.Ticket.TicketNotFoundException;
@@ -61,6 +63,12 @@ public class TicketService {
 		ticketRepository.save(ticket);
 		log.info("{} 좌석 티켓 발급에 성공하였습니다.", ticketRequestDto.getSeat());
 		return new TicketResponseDto(ticket);
+		// List<TicketJoinSportDto> result = ticketRepository.ticketJoinSport(ticketRequestDto.getTicketInfoId(), ticketRequestDto.getSeat());
+		// TicketJoinSportDto dto = result.get(0);
+		// String sportName = dto.getSportName();
+		// String matchDate = dto.getMatchDate();
+
+		//return new TicketCreateResponseDto(ticketRepository.ticketJoinSport(ticketRequestDto.getTicketInfoId(), ticketRequestDto.getSeat()).get(0));
 	}
 
 	@Transactional
