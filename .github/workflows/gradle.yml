@@ -56,25 +56,25 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
-#
-#      # 빌드파일을 ZIP 파일로 생성
-#      - name: Make zip file
-#        run: |
-#          mkdir deploy
-#          cp ./appspec.yml ./deploy/
-#          cp ./Dockerfile ./deploy/
-#          cp ./docker-compose.blue.yml ./deploy/
-#          cp ./docker-compose.green.yml ./deploy/
-#          cp ./deploy.sh ./deploy/
-#          cp ./build/libs/*.jar ./deploy/
-#          zip -r -qq -j ./seniors-build.zip ./deploy
-#
-#      # S3에 zip 파일 업로드
-#      - name: Upload to S3
-#        run: |
-#          aws s3 cp \
-#            --region ap-northeast-2 \
-#            ./seniors-build.zip s3://yeti-github-actions-s3-bucket
+
+      # 빌드파일을 ZIP 파일로 생성
+      - name: Make zip file
+        run: |
+          mkdir deploy
+          cp ./appspec.yml ./deploy/
+          cp ./Dockerfile ./deploy/
+          cp ./docker-compose.blue.yml ./deploy/
+          cp ./docker-compose.green.yml ./deploy/
+          cp ./deploy.sh ./deploy/
+          cp ./build/libs/*.jar ./deploy/
+          zip -r -qq -j ./seniors-build.zip ./deploy
+
+      # S3에 zip 파일 업로드
+      - name: Upload to S3
+        run: |
+          aws s3 cp \
+            --region ap-northeast-2 \
+            ./seniors-build.zip s3://ticket-s3-bucket
 #
 #      # CodeDeploy에 배포 요청
 #      - name: Code Deploy Deployment Request
