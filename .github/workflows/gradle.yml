@@ -55,7 +55,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2a
+          aws-region: ap-northeast-2
 #
 #      # 빌드파일을 ZIP 파일로 생성
 #      - name: Make zip file
