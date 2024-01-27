@@ -63,8 +63,7 @@ jobs:
           mkdir deploy
           cp ./appspec.yml ./deploy/
           cp ./Dockerfile ./deploy/
-          cp ./docker-compose.blue.yml ./deploy/
-          cp ./docker-compose.green.yml ./deploy/
+          cp ./docker-compose.yml ./deploy/
           cp ./deploy.sh ./deploy/
           cp ./build/libs/*.jar ./deploy/
           zip -r -qq -j ./seniors-build.zip ./deploy
@@ -75,25 +74,25 @@ jobs:
           aws s3 cp \
             --region ap-northeast-2 \
             ./seniors-build.zip s3://ticket-s3-bucket
-#
-#      # CodeDeploy에 배포 요청
-#      - name: Code Deploy Deployment Request
-#        run: |
-#          aws deploy create-deployment --application-name yeti-codedeploy-app \
-#            --deployment-config-name CodeDeployDefault.OneAtATime \
-#            --deployment-group-name yeti-codedeploy-deployment-group \
-#            --s3-location bucket=yeti-github-actions-s3-bucket,bundleType=zip,key=seniors-build.zip
-#
-#      # 배포 결과 Slack 알람 전송
-#      - name: Slack 알람 발송 test
-#        uses: rtCamp/action-slack-notify@v2
-#        with:
-#          status: ${{ job.status }}
-#        env:
-#          SLACK_COLOR: $ # or a specific color like 'good' or '#ff00ff'
-#          SLACK_ICON: https://github.com/rtCamp.png?size=48
-#          SLACK_MESSAGE: 배포 결과 => ${{ job.status }}
-#          SLACK_TITLE: 배포 결과 알람
-#          SLACK_USERNAME: Yeti-Bot
-#          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-#        if: always()
+
+      # CodeDeploy에 배포 요청
+      - name: Code Deploy Deployment Request
+        run: |
+          aws deploy create-deployment --application-name my-codedeploy-app \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-group-name my-codedeploy-deployment-group \
+            --s3-location bucket=ticket-s3-bucket,bundleType=zip,key=seniors-build.zip
+
+      # 배포 결과 Slack 알람 전송
+      - name: Slack 알람 발송 test
+        uses: rtCamp/action-slack-notify@v2
+        with:
+          status: ${{ job.status }}
+        env:
+          SLACK_COLOR: $ # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 배포 결과 => ${{ job.status }}
+          SLACK_TITLE: 배포 결과 알람
+          SLACK_USERNAME: Yeti-Bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
