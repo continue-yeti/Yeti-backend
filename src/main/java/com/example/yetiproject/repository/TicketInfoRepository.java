@@ -15,11 +15,11 @@ import java.util.Optional;
 public interface TicketInfoRepository extends JpaRepository<TicketInfo, Long> {
 	@Override //기본 적으로 findById 을 제공하기 때문에 Override 하여 재정의 후 사용
 	@EntityGraph(attributePaths = {"sports","sports.stadium"})
-	@Cacheable(key = "#ticketInfoId", unless = "#result == null")
+	@Cacheable(value = "ticketInfo", key = "#ticketInfoId", unless = "#result == null")
 	Optional<TicketInfo> findById(Long ticketInfoId);
 
 	@Query(value="select stock from ticket_info where ticket_info_id = ?", nativeQuery = true)
-	@Cacheable(key = "#ticketInfo + '_stock'", unless = "#result == null")
+	@Cacheable(value = "ticketInfo", key = "#ticketInfo + '_stock'", unless = "#result == null")
 	Long getStockforTicketInfo(Long ticketInfo);
 
 }

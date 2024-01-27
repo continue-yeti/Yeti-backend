@@ -52,7 +52,8 @@ public class InsertTest {
 
         long endTime = System.currentTimeMillis();
         System.out.println("TicketRepository 저장 속도 = " + (endTime - startTime));
-    } // 10000개 1분 23초, 2분 1초
+    } // Cache O : 10000개 1분 23초, 2분 1초
+      // Cache X : 10000개 2분 21초, 3분 43초
 
     @Test
     @DisplayName("bulk insert")
@@ -72,5 +73,6 @@ public class InsertTest {
 
         long endTime = System.currentTimeMillis();
         System.out.println("TicketRepository 저장 속도 = " + (endTime - startTime));
-    } // 10000개 24초, 33초
+    } // Cache O : 10000개 24초, 33초
+      // Cache X : 10000개 1분 9초, 1분 26초
 }

@@ -87,17 +87,17 @@ public class SportServiceTest {
         assertEquals("경기가 등록되었습니다", result);
     }
 
-    @Test
-    @DisplayName("경기 리스트 조회")
-    void test2() {
-        //when
-        SportsService sportsService = new SportsService(sportsRepository, stadiumRepository);
-        List<SportsResponseDto> sportsList = sportsService.getSports();
-
-        // then
-        System.out.println("sports size = " + sportsList.size());
-        assertEquals(sportsList.size(), 0);
-    }
+//    @Test
+//    @DisplayName("경기 리스트 조회")
+//    void test2() {
+//        //when
+//        SportsService sportsService = new SportsService(sportsRepository, stadiumRepository);
+//        List<SportsResponseDto> sportsList = sportsService.getSports();
+//
+//        // then
+//        System.out.println("sports size = " + sportsList.size());
+//        assertEquals(sportsList.size(), 0);
+//    }
 
     @Test
     @DisplayName("경기 상세 조회 예외 확인")

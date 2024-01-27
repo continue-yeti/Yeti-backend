@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +85,7 @@ public class TicketService {
 	}
 
 	@Transactional
-	public void reserveTicketsInBatch(List<TicketRequestDto> ticketRequestDtoList) throws JsonProcessingException {
+	public void reserveTicketsInBatch(List<TicketRequestDto> ticketRequestDtoList) {
 		List<Ticket> tickets = new ArrayList<>();
 
 		// 티켓 일괄 발급 처리
@@ -107,7 +108,6 @@ public class TicketService {
 
 		// 티켓 한번에 저장
 		ticketJdbcBatchRepository.batchUpdate(tickets);
-//		ticketRepository.saveAll(tickets);
 	}
 
 	@Transactional
@@ -184,5 +184,4 @@ public class TicketService {
 		ticketCount = Long.parseLong(ticketCountString);
 		return ticketCount;
 	}
-
 }
