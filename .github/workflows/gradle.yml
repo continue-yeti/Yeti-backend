@@ -1,54 +1,54 @@
-#name: Seniors CICD(deploy)
-#
-#on:
-#  push:
-#    branches: [ "main" ]
-#
-#permissions:
-#  contents: read
-#
-#jobs:
-#  build:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: checkout
-#        uses: actions/checkout@v3
-#
-#      # JDK를 17 버전으로 세팅
-#      - name: Set up JDK 17
-#        uses: actions/setup-java@v3
-#        with:
-#          java-version: '17'
-#          distribution: 'temurin'
-#
-#      # Gradle 캐싱-> 빌드 속도 UP
-#      - name: Gradle caching
-#        uses: actions/cache@v3
-#        with:
-#          path: |
-#            ~/.gradle/caches
-#            ~/.gradle/wrapper
-#          key: $-gradle-$
-#          restore-keys: |
-#            $-gradle-
-#
-#      # application.yml 파일 생성
-#      - name: make application.yaml
-#        run: |
-#          cd ./src/main/resources
-#          touch ./application.yml
-#          echo "${{ secrets.APPLICATION }}" > ./application.yml
-#        shell: bash
-#
-#      # gradlew에 실행 권한을 부여
-#      - name: Grant execute permission for gradlew
-#        run: chmod +x gradlew
-#
-#      # Build Gradle
-#      - name: Build with Gradle
-#        run: ./gradlew clean build -x test --stacktrace
-#        shell: bash
-#
+name: Seniors CICD(deploy)
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      # JDK를 17 버전으로 세팅
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Gradle 캐싱-> 빌드 속도 UP
+      - name: Gradle caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: $-gradle-$
+          restore-keys: |
+            $-gradle-
+
+      # application.yml 파일 생성
+      - name: make application.yaml
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.APPLICATION }}" > ./application.yml
+        shell: bash
+
+      # gradlew에 실행 권한을 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Build Gradle
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test --stacktrace
+        shell: bash
+
 #      # AWS에 연결
 #      - name: Connect to AWS
 #        uses: aws-actions/configure-aws-credentials@v1
@@ -83,7 +83,7 @@
 #            --deployment-config-name CodeDeployDefault.OneAtATime \
 #            --deployment-group-name yeti-codedeploy-deployment-group \
 #            --s3-location bucket=yeti-github-actions-s3-bucket,bundleType=zip,key=seniors-build.zip
-
+#
 #      # 배포 결과 Slack 알람 전송
 #      - name: Slack 알람 발송 test
 #        uses: rtCamp/action-slack-notify@v2
