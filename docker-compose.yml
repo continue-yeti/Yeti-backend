@@ -3,10 +3,10 @@ services:
   backend:
     build: .
     ports:
-      - "80:8080"
+      - "8080:8080"
     container_name: seniors-blue
     environment:
-      - REDIS_HOST = 43.203.78.235
+      - REDIS_HOST = 13.124.149.235
       - REDIS_PORT = 6379
 volumes:
   redis_data:
