@@ -1,12 +1,13 @@
 package com.example.yetiproject.facade.sortedset;
 
+import static com.example.yetiproject.config.CacheConfig.*;
+
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
@@ -34,6 +35,7 @@ public class WaitingQueueSortedSetService {
 
 	public Long registerQueue(Long userId, TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		//오픈날짜 종료날짜를 체크한다.
+
 		if(checkTicketInfoDate(ticketRequestDto.getTicketInfoId()) == false){
 			log.info("예매가능한 날짜가 아닙니다.");
 			throw ErrorCode.NOT_AVAILABLE_RESERVATION_DATES.build();
@@ -75,11 +77,11 @@ public class WaitingQueueSortedSetService {
 		}
 		return rank;
 	}
+
 	private Boolean checkTicketInfoDate(Long ticketInfoId){
 		Timestamp today = new Timestamp(System.currentTimeMillis());
-		List<Timestamp[]> dates = ticketInfoRepository.getOpenDateCloseDateforTicketInfo(ticketInfoId);
-		Timestamp openDate = dates.get(0)[0];
-		Timestamp closeDate = dates.get(0)[1];
+		Timestamp openDate = ticketInfoRepository.getOpenDateTicketInfo(ticketInfoId);
+		Timestamp closeDate = ticketInfoRepository.getCloseDateTicketInfo(ticketInfoId);
 
 		if((today.getTime() - openDate.getTime() > 0) && (closeDate.getTime() - today.getTime() > 0)){
 			return true;
