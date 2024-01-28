@@ -42,12 +42,11 @@ public class TicketIssueSortedSetService {
 			TicketRequestDto ticketRequestDto = objectMapper.readValue(ticketRequest, TicketRequestDto.class);
 
 			if (Integer.parseInt(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(key))) ==
-				ticketInfoRepository.getStockforTicketInfo(ticketRequestDto.getTicketInfoId())
+				Integer.parseInt(ticketInfoRepository.getStockforTicketInfo(ticketRequestDto.getTicketInfoId()))
 			) {
 				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
 				return;
 			}
-
 			//reserve
 			ticketService.reserveTicketQueue(ticketRequestDto.getUserId(), ticketRequestDto);
 
@@ -60,6 +59,7 @@ public class TicketIssueSortedSetService {
 			//log.info("발행된 티켓 수 " + redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(ticketRequestDto.getTicketInfoId())));
 		}
 	}
+
 
 	@Transactional
 	public void publishBluk(String key) throws JsonProcessingException {

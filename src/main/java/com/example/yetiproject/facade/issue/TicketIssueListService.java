@@ -39,8 +39,8 @@ public class TicketIssueListService {
 			TicketRequestDto ticketRequestDto = objectMapper.readValue(ticketRequest, TicketRequestDto.class);
 
 			if (Integer.parseInt(redisRepository.get(TICKETINFO_STOCK_COUNT.formatted(key))) ==
-				ticketInfoRepository.getStockforTicketInfo(ticketRequestDto.getTicketInfoId())
-			) {
+				Integer.parseInt(ticketInfoRepository.getStockforTicketInfo(ticketRequestDto.getTicketInfoId())
+				)) {
 				log.info("[ticketInfo : " + ticketRequestDto.getTicketInfoId() + " 은 매진입니다.]");
 				return;
 			}

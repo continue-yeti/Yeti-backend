@@ -30,9 +30,12 @@ public class ReserveScheduler {
 		try(Cursor<String> cursor = redisTemplate.scan(options)){
 			while(cursor.hasNext()){
 				String key = cursor.next();
-				ticketIssueSortedSetService.publish(key.split(":")[2]); // sorted set
+				if(key.split(":")[1].equals("queue")){
+					ticketIssueSortedSetService.publish(key.split(":")[2]); // sorted set
+				}
 			}
 		}
+
 	}
 
 }
