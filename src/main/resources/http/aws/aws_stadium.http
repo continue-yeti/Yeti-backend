@@ -20,3 +20,12 @@ Authorization: {{access_token}}
 {
   "stadiumName": "인천 문학경기장"
 }
+
+### 1. 경기장 생성 - EC2
+POST https://13.124.233.97:8080/api/stadiums
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "stadiumName": "인천 문학경기장151"
+}
