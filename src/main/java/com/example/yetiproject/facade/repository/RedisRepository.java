@@ -1,5 +1,7 @@
 package com.example.yetiproject.facade.repository;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -10,9 +12,8 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import reactor.util.function.Tuples;
+import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -83,6 +84,7 @@ public class RedisRepository {
 	public Long listRightPush(String key, String value){
 		return redisTemplate.opsForList().rightPush(key, value);
 	}
+
 	public List<String> listRange(String key, long start, long end) {
 		return redisTemplate.opsForList().range(key, start, end);
 	}
