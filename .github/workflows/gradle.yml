@@ -21,16 +21,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # Gradle 캐싱-> 빌드 속도 UP
-      - name: Gradle caching
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: $-gradle-$
-          restore-keys: |
-            $-gradle-
+#      # Gradle 캐싱-> 빌드 속도 UP
+#      - name: Gradle caching
+#        uses: actions/cache@v3
+#        with:
+#          path: |
+#            ~/.gradle/caches
+#            ~/.gradle/wrapper
+#          key: $-gradle-$
+#          restore-keys: |
+#            $-gradle-
 
       # application.yml 파일 생성
       - name: make application.yaml
