@@ -6,7 +6,7 @@ import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
 import com.example.yetiproject.dto.user.RegisterUserResponse;
 import com.example.yetiproject.facade.*;
-import com.example.yetiproject.facade.sortedset.WaitingQueueListService;
+import com.example.yetiproject.facade.sortedset.WaitingQueueService;
 import com.example.yetiproject.facade.sortedset.WaitingQueueSortedSetService;
 import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,9 +21,10 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mytickets")
-public class TicketController{
+public class TicketController {
 	private final TicketService ticketService;
 	private final RedissonLockTicketFacade redissonLockTicketFacade;
+	private final WaitingQueueService waitingQueueService;
 	private final WaitingQueueListService waitingQueueListService;
 	private final WaitingQueueListBulkService waitingQueueListBulkService;
 	private final WaitingQueueSortedSetService waitingQueueSortedSetService;
@@ -46,13 +47,6 @@ public class TicketController{
 		return ApiResponse.success("예매가 완료되었습니다.", redissonLockTicketFacade.reserveTicket(userDetails.getUser().getUserId(), ticketRequestDto));
 	}
 
-	// redis list
-	@PostMapping("/reserve/waiting/queue/list")
-	public RegisterUserResponse reserveTicketQueueList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-		return new RegisterUserResponse(
-			waitingQueueListService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto)
-		);
-	}
 
 	// redis sortedset
 	@PostMapping("/reserve/queue/sortedset")
@@ -72,9 +66,12 @@ public class TicketController{
 	public Long getRankUser(@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestParam(name="ticketInfo_id") Long ticketInfoId,
 		@RequestParam(name="user_id") Long userId,
-		@RequestParam(name="seat") String seat) throws JsonProcessingException {
-		return waitingQueueSortedSetService.getRank(ticketInfoId, userId, seat);
+		@RequestParam(name="posx") Long posX,
+		@RequestParam(name = "posy") Long posY) throws JsonProcessingException {
+		return waitingQueueSortedSetService.getRank(ticketInfoId, userId, posX, posY);
 	}
+
+
 
 	// 예매 취소
 	@DeleteMapping("/{ticketId}")

@@ -8,6 +8,7 @@ import com.example.yetiproject.exception.entity.sports.SportsNotFoundException;
 import com.example.yetiproject.exception.entity.stadium.StadiumNotFoundException;
 import com.example.yetiproject.repository.SportsRepository;
 import com.example.yetiproject.repository.StadiumRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class SportsService {
         return new SportsResponseDto(sports);
     }
 
+    @Transactional
     public SportsResponseDto updateSport(Long sportId, SportsRequestDto sportsRequestDto) {
         Sports sports = sportsRepository.findById(sportId)
                 .orElseThrow(() -> new SportsNotFoundException("존재하지 않는 경기입니다"));
@@ -50,7 +52,7 @@ public class SportsService {
             sports.setStadium(newStadium);
         }
         sports.update(sportsRequestDto);
-        sportsRepository.save(sports);
+//        sportsRepository.save(sports);
         return new SportsResponseDto(sports);
     }
 

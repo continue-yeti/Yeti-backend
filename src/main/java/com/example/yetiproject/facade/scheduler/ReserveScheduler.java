@@ -6,7 +6,6 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.example.yetiproject.facade.issue.TicketIssueListService;
 import com.example.yetiproject.facade.issue.TicketIssueSortedSetService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -31,7 +30,8 @@ public class ReserveScheduler {
 			while(cursor.hasNext()){
 				String key = cursor.next();
 				if(key.split(":")[1].equals("queue")){
-					ticketIssueSortedSetService.publish(key.split(":")[2]); // sorted set
+					//ticketIssueSortedSetService.publish(key.split(":")[2]); // sorted set
+					//ticketIssueSortedSetService.waitingQueueBulk(key.split(":")[2]);
 				}
 			}
 		}
