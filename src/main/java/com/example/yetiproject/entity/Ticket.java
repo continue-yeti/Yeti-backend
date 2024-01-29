@@ -24,15 +24,9 @@ public class Ticket {
 	@Column(name="seat")
 	String seat;
 
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "user_id")
-	// private User user;
 	@Column(name = "user_id", nullable = false)
 	Long userId;
 
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "ticketInfo_id")
-	// private TicketInfo ticketInfo;
 	@Column(name = "ticketInfo_id", nullable = false)
 	Long ticketInfoId;
 
