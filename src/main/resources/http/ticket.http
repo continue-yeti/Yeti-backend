@@ -37,7 +37,7 @@ Authorization: {{access_token}}
 
 {
   "ticketInfoId" : 1,
-  "seat" : "1A07"
+  "seat" : "1A09"
 }
 
 ### 4. 예매한 티켓 취소하기

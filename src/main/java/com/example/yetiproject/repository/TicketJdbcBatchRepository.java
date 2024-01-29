@@ -17,15 +17,14 @@ public class TicketJdbcBatchRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public List<Long> batchUpdate(List<Ticket> tickets) {
-        String sql = "INSERT INTO tickets (ticket_info_id, posX, posY) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO tickets (ticket_info_id, seat) VALUES (?, ?, ?)";
         return Arrays.stream(
                 jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
                         Ticket ticket = tickets.get(i);
-                        ps.setLong(1, ticket.getTicketInfo().getTicketInfoId());
-                        ps.setLong(2, ticket.getPosX());
-                        ps.setLong(3, ticket.getPosY());
+                        ps.setLong(1, ticket.getTicketInfoId());
+                        ps.setString(2, ticket.getSeat());
                     }
 
                     @Override

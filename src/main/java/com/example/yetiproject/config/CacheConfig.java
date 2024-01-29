@@ -22,7 +22,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class CacheConfig {
 	public static final String CACHE_DATE = "cache:date";
-	public static final String CACHE_STOCK = "ticketInfoStock";
+	public static final String CACHE_STOCK = "cache:stock";
 	@Bean
 	public CacheManager cacheManager(RedisConnectionFactory cf){
 		RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
@@ -36,19 +36,6 @@ public class CacheConfig {
 			.cacheDefaults(redisCacheConfiguration)
 			.build();
 	}
-
-	// @Bean
-	// public RedisCacheConfiguration redisCacheConfiguration() {
-	// 	return RedisCacheConfiguration.defaultCacheConfig()
-	// 		.entryTtl(Duration.ofSeconds(60))
-	// 		.disableCachingNullValues()
-	// 		.serializeKeysWith(
-	// 			RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())
-	// 		)
-	// 		.serializeValuesWith(
-	// 			RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())
-	// 		);
-	// }
 
 	@Bean
 	public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer(){

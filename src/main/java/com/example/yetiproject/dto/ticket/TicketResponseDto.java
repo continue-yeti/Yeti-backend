@@ -15,7 +15,6 @@ public class TicketResponseDto {
 	Long ticketId;
 	String seat;
 	Long userId;
-	TicketInfoResponseDto ticketInfo;
 
 	public TicketResponseDto(Ticket ticket) {
 		this.ticketId = ticket.getTicketId();
