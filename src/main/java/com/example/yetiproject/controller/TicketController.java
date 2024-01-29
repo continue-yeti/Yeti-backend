@@ -5,7 +5,7 @@ import com.example.yetiproject.dto.ApiResponse;
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
 import com.example.yetiproject.dto.ticket.TicketResponseDto;
 import com.example.yetiproject.dto.user.RegisterUserResponse;
-import com.example.yetiproject.facade.*;
+import com.example.yetiproject.facade.RedissonLockTicketFacade;
 import com.example.yetiproject.facade.sortedset.WaitingQueueSortedSetService;
 import com.example.yetiproject.service.TicketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,7 +23,6 @@ import java.util.List;
 public class TicketController {
 	private final TicketService ticketService;
 	private final RedissonLockTicketFacade redissonLockTicketFacade;
-	private final WaitingQueueListBulkService waitingQueueListBulkService;
 	private final WaitingQueueSortedSetService waitingQueueSortedSetService;
 
 	// 예매한 티켓 목록 조회
@@ -51,10 +50,10 @@ public class TicketController {
 			waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
 	}
 
-	@PostMapping("/reserve/queue/list/bulk")
-	public ApiResponse reserveTicketQueueListBulk(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
-		waitingQueueListBulkService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto);
-		return ApiResponse.success("예매 완료", null);
+	@PostMapping("/reserve/queue/sortedset/bulk")
+	public RegisterUserResponse reserveTicketQueueListBulk(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody TicketRequestDto ticketRequestDto) throws JsonProcessingException {
+		return new RegisterUserResponse(
+			waitingQueueSortedSetService.registerQueue(userDetails.getUser().getUserId(), ticketRequestDto));
 	}
 
 	@GetMapping("/rank")

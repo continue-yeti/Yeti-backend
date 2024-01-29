@@ -30,8 +30,8 @@ public class ReserveScheduler {
 			while(cursor.hasNext()){
 				String key = cursor.next();
 				if(key.split(":")[1].equals("queue")){
-					ticketIssueSortedSetService.publish(key.split(":")[2]); // sorted set
-					//ticketIssueSortedSetService.waitingQueueBulk(key.split(":")[2]);
+//					ticketIssueSortedSetService.publish(key.split(":")[2]); // sorted set
+					ticketIssueSortedSetService.waitingQueueBulk(key.split(":")[2]); // bulk sortedset
 				}
 			}
 		}

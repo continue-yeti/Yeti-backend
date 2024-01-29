@@ -76,7 +76,7 @@ public class TicketService {
 		Ticket ticket = new Ticket(userId, ticketRequestDto);
 		increase(ticketRequestDto.getTicketInfoId()); // ticket 예매 수 증가
 		ticketRepository.save(ticket); // ticket 저장
-		//		return new TicketResponseDto(ticket);
+
 		return "예매 완료";
 	}
 

@@ -3,6 +3,10 @@ package com.example.yetiproject.entity;
 import com.example.yetiproject.dto.ticketinfo.TicketInfoRequestDto;
 import com.example.yetiproject.exception.entity.TicketInfo.OutOfStockException;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.*;
@@ -31,9 +35,13 @@ public class TicketInfo {
     private Long stock;
 
     @Column(nullable = false)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime openDate;
 
     @Column(nullable = false)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime closeDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
