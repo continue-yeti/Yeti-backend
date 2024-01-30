@@ -9,11 +9,9 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.example.yetiproject.entity.Notification;
 import com.example.yetiproject.entity.User;
 import com.example.yetiproject.repository.EmitterRepository;
 import com.example.yetiproject.repository.EmitterRepositoryImpl;
-import com.example.yetiproject.repository.NotificationRepository;
 import com.example.yetiproject.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -29,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
 
 	private final UserRepository userRepository;
-	private final NotificationRepository notificationRepository;
 
 	@Autowired
 	private final EmitterRepository emitterRepository = new EmitterRepositoryImpl();
@@ -43,8 +40,6 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
 		String userId = user.getUserId().toString();
 		Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByUserId(userId);
 		emitters.forEach((id, emitter) -> emitter.complete());
-		Map<String, Object> eventCache = emitterRepository.findAllEventCacheStartWithByUserId(userId);
-		eventCache.forEach((id, event) -> notificationRepository.delete((Notification)event));
 		emitterRepository.deleteAllEmitterStartWithId(userId);
 		emitterRepository.deleteAllEventCacheStartWithId(userId);
 	}

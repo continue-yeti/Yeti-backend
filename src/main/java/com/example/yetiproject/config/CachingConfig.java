@@ -8,14 +8,14 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-@EnableCaching
-@Configuration
-public class CachingConfig {
-    @Bean
-    public CacheManager cacheManager() {
-        ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
-        cacheManager.setAllowNullValues(false);
-        cacheManager.setCacheNames(List.of("ticketInfo"));
-        return cacheManager;
-    }
-}
+// @EnableCaching
+// @Configuration
+// public class CachingConfig {
+//     @Bean
+//     public CacheManager cacheManager() {
+//         ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
+//         cacheManager.setAllowNullValues(false);
+//         cacheManager.setCacheNames(List.of("ticketInfo"));
+//         return cacheManager;
+//     }
+// }
