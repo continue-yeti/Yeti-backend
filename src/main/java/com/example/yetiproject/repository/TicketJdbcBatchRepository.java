@@ -25,7 +25,6 @@ public class TicketJdbcBatchRepository {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
                         Ticket ticket = tickets.get(i);
-                        log.info("ticket : " + ticket);
                         ps.setLong(1, ticket.getTicketInfoId());
                         ps.setString(2, ticket.getSeat());
                         ps.setLong(3, ticket.getUserId());

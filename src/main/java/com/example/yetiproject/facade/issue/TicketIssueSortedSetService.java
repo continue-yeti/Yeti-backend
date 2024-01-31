@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
@@ -25,12 +29,17 @@ public class TicketIssueSortedSetService {
 	private final TicketService ticketService;
 	private final ObjectMapper objectMapper;
 	private final TicketInfoRepository ticketInfoRepository;
+	private final RedisTemplate<String, String> redisTemplate;
+
 	private static final long FIRST_ELEMENT = 0;
 	private static final long PUBLISH_SIZE = 100;
 	private static final long LAST_INDEX = 1;
 
+
+	private final String USER_QUEUE_WAIT_KEY_FOR_SCAN = "ticketInfo:queue:*:wait";
 	private final String USER_QUEUE_WAIT_KEY = "ticketInfo:queue:%s:wait";
 	private final String TICKETINFO_STOCK_COUNT = "ticketInfo:%s:stock";
+
 
 	public void publish(String key) throws JsonProcessingException {
 		final long start = FIRST_ELEMENT;
@@ -60,7 +69,22 @@ public class TicketIssueSortedSetService {
 		}
 	}
 
-	@Transactional
+	@Async
+	public void processQueueAsync() throws JsonProcessingException {
+		ScanOptions options = ScanOptions.scanOptions().match(USER_QUEUE_WAIT_KEY_FOR_SCAN).build();
+		try(Cursor<String> cursor = redisTemplate.scan(options)){
+			while(cursor.hasNext()){
+				String key = cursor.next();
+				if(key.split(":")[1].equals("queue")){
+//					ticketIssueSortedSetService.publish(key.split(":")[2]); // sorted set
+					waitingQueueBulk(key.split(":")[2]); // bulk sortedset
+				}
+			}
+		}
+	}
+
+	@Async
+//	@Transactional
 	public void waitingQueueBulk(String key) throws JsonProcessingException {
 		final long start = FIRST_ELEMENT;
 		final long end = PUBLISH_SIZE - LAST_INDEX;

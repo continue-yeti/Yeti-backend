@@ -16,26 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 public class ReserveScheduler {
-	private final RedisTemplate<String, String> redisTemplate;
 	private final TicketIssueSortedSetService ticketIssueSortedSetService;
-
-	private final String USER_QUEUE_WAIT_KEY_FOR_SCAN = "ticketInfo:queue:*:wait";
 
 	@Scheduled(initialDelay = 5000, fixedDelay = 1000)
 	private void ticketReserveScheduler() throws JsonProcessingException {
-		//log.info("start scheduling...");
-
-		ScanOptions options = ScanOptions.scanOptions().match(USER_QUEUE_WAIT_KEY_FOR_SCAN).build();
-		try(Cursor<String> cursor = redisTemplate.scan(options)){
-			while(cursor.hasNext()){
-				String key = cursor.next();
-				if(key.split(":")[1].equals("queue")){
-//					ticketIssueSortedSetService.publish(key.split(":")[2]); // sorted set
-					ticketIssueSortedSetService.waitingQueueBulk(key.split(":")[2]); // bulk sortedset
-				}
-			}
-		}
-
+		ticketIssueSortedSetService.processQueueAsync();
 	}
 
 }

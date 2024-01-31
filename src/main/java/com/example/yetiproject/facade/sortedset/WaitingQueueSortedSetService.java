@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
@@ -33,9 +34,9 @@ public class WaitingQueueSortedSetService {
 	private final String TICKETINFO_OCCUPY_SEAT = "ticketInfo:%s:reserved:seat";
 	private final String TICKETINFO_STOCK_COUNT = "ticketInfo:%s:stock";
 
+	@Async
 	public Long registerQueue(Long userId, TicketRequestDto ticketRequestDto) throws JsonProcessingException {
 		//오픈날짜 종료날짜를 체크한다.
-
 		if(checkTicketInfoDate(ticketRequestDto.getTicketInfoId()) == false){
 			log.info("예매가능한 날짜가 아닙니다.");
 			throw ErrorCode.NOT_AVAILABLE_RESERVATION_DATES.build();

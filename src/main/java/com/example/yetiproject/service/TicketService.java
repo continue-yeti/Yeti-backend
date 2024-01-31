@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.example.yetiproject.dto.ticket.TicketRequestDto;
@@ -80,7 +81,8 @@ public class TicketService {
 		return "예매 완료";
 	}
 
-	@Transactional
+//	@Transactional
+	@Async
 	public void reserveTicketsInBatch(List<TicketRequestDto> ticketRequestDtoList) {
 		List<Ticket> tickets = new ArrayList<>();
 
